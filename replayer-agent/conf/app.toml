@@ -1,0 +1,32 @@
+pid = "var/run/nuwa.pid"
+version = "1.0.2"
+
+[http]
+addr = ":8998"           # 默认agent启动端口，可以修改
+handlerTimeout = 60000   # Handler timeout(ms), default 5000
+readHeaderTimeout = 2000 # Request header timeout(ms), default 2000
+readTimeout = 5000       # Recieve http request timeout(ms), including the body, default 5000
+writeTimeout = 21000     # Recieve http body and response timeout(ms), default 10000
+idleTimeout = 60000      # Keep-alive timeout(ms), default 60000
+
+[log]
+filename = "log/replayer.log.%Y%m%d%H" # 文件名格式
+linkname = "log/replayer.log"          # 软连接
+maxHourAge    = 168                    # 默认日志保留168小时（7天）
+maxHourRotate = 1                      # 默认日志按小时切分
+level = "info"
+
+[outbound]
+server_addr = "127.0.0.1:3515"         # mock server addr
+
+[http_api]
+# dsl_get = "http://{{your_domain}}/dsl?project=%s"
+# dsl_push = "http://{{your_domain}}/dsl"
+# noise_push = "http://{{your_domain}}/noise"
+# noise_del = "http://{{your_domain}}/noise/del"
+# noise_get = "http://{{your_domain}}/noise"
+# module_info = "http://{{your_domain}}/platform/module?per=1000"
+
+[es_url]
+# 确保回放机器可以访问，check：`curl http://127.0.0.1:9002/xxx/recorder_index/_search`能拿到数据
+# default = "http://{{es_domain}}/xxx"

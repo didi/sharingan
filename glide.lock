@@ -1,0 +1,181 @@
+hash: 4b4e43481c6670934ae16d7b1a7e167539d560008469ddd537ed528d6b1fe4a7
+updated: 2020-04-10T16:44:19.854929+08:00
+imports:
+- name: github.com/agiledragon/gomonkey
+  version: 0efac5c532e56ba54d129124fc3e76e8b863b214
+- name: github.com/fsnotify/fsnotify
+  version: c2828203cd70a50dcccfb2761f8b1f8ceef9a8e9
+- name: github.com/golang/protobuf
+  version: 84668698ea25b64748563aa20726db66a6b8d299
+  subpackages:
+  - proto
+  - ptypes
+  - ptypes/any
+  - ptypes/duration
+  - ptypes/timestamp
+- name: github.com/google/gopacket
+  version: 6d3e2615da4ed2ed2a349918fe74e7e6d03482fa
+  subpackages:
+  - layers
+- name: github.com/hashicorp/hcl
+  version: 8cb6e5b959231cc1119e43259c4a608f9c51a241
+  subpackages:
+  - hcl/ast
+  - hcl/parser
+  - hcl/printer
+  - hcl/scanner
+  - hcl/strconv
+  - hcl/token
+  - json/parser
+  - json/scanner
+  - json/token
+- name: github.com/json-iterator/go
+  version: acfec88f7a0d5140ace3dcdbee10184e3684a9e1
+- name: github.com/juju/ratelimit
+  version: 59fac5042749a5afb9af70e813da1dd5474f0167
+- name: github.com/julienschmidt/httprouter
+  version: 4eec211fa4e8df74ed978dc5681612131854144f
+- name: github.com/lestrrat-go/file-rotatelogs
+  version: e0a88b0fe8408240e1560882fc17cb0bf66765cd
+  subpackages:
+  - internal/option
+- name: github.com/lestrrat-go/strftime
+  version: 6b63b6de4db1514785520f626319d12516ee6932
+- name: github.com/magiconair/properties
+  version: de8848e004dd33dc07a2947b3d76f618a7fc7ef1
+- name: github.com/mitchellh/mapstructure
+  version: 3536a929edddb9a5b34bd6861dc4a9647cb459fe
+- name: github.com/modern-go/concurrent
+  version: bacd9c7ef1dd9b15be4a9909b8ac7a4e313eec94
+- name: github.com/modern-go/parse
+  version: df475295147b722b8485fca53839e17290e7de7d
+  subpackages:
+  - model
+  - read
+- name: github.com/modern-go/reflect2
+  version: 94122c33edd36123c84d5368cfb2b69df93a0ec8
+- name: github.com/pelletier/go-toml
+  version: c01d1270ff3e442a8a57cddc1c92dc1138598194
+- name: github.com/pkg/errors
+  version: 614d223910a179a466c1767a985424175c39b465
+- name: github.com/ppltools/binding
+  version: a6ba4005d4f84a72c9a8329c7f9c5521ec5c2636
+- name: github.com/spf13/afero
+  version: d40851caa0d747393da1ffb28f7f9d8b4eeffebd
+  subpackages:
+  - mem
+- name: github.com/spf13/cast
+  version: 8c9545af88b134710ab1cd196795e7f2388358d7
+- name: github.com/spf13/jwalterweatherman
+  version: 4a4406e478ca629068e7768fc33f3f044173c0a6
+- name: github.com/spf13/pflag
+  version: 298182f68c66c05229eb03ac171abe6e309ee79a
+- name: github.com/spf13/viper
+  version: 59b19175035095196a623aac8d0f5c83481f3d77
+- name: github.com/subosito/gotenv
+  version: 2ef7124db659d49edac6aa459693a15ae36c671a
+- name: github.com/ugorji/go
+  version: 23ab95ef5dc3b70286760af84ce2327a2b64ed62
+  subpackages:
+  - codec
+- name: github.com/v2pro/plz
+  version: 03cb46d336e021ccc579800e033a9a48d09a87d0
+  subpackages:
+  - countlog
+- name: go.uber.org/atomic
+  version: df976f2515e274675050de7b3f42545de80594fd
+- name: go.uber.org/multierr
+  version: 3c4937480c32f4c13a875a1829af76c98ca3d40a
+- name: go.uber.org/zap
+  version: 2aa9fa25da83bdfff756c36a91442edc9a84576c
+  subpackages:
+  - buffer
+  - internal/bufferpool
+  - internal/color
+  - internal/exit
+  - zapcore
+- name: golang.org/x/net
+  version: d3edc9973b7eb1fb302b0ff2c62357091cea9a30
+  subpackages:
+  - context
+  - http/httpguts
+  - http2
+  - http2/hpack
+  - idna
+  - internal/timeseries
+  - trace
+- name: golang.org/x/sys
+  version: 59c9f1ba88faf592b225274f69c5ef1e4ebacf82
+  subpackages:
+  - unix
+- name: golang.org/x/text
+  version: f21a4dfb5e38f5895301dc265a8def02365cc3d0
+  subpackages:
+  - secure/bidirule
+  - transform
+  - unicode/bidi
+  - unicode/norm
+- name: google.golang.org/genproto
+  version: baae70f3302d3efdff74db41e48a5d476d036906
+  subpackages:
+  - googleapis/rpc/status
+- name: google.golang.org/grpc
+  version: ac54eec90516cee50fc6b9b113b34628a85f976f
+  subpackages:
+  - attributes
+  - backoff
+  - balancer
+  - balancer/base
+  - balancer/roundrobin
+  - binarylog/grpc_binarylog_v1
+  - codes
+  - connectivity
+  - credentials
+  - credentials/internal
+  - encoding
+  - encoding/proto
+  - grpclog
+  - internal
+  - internal/backoff
+  - internal/balancerload
+  - internal/binarylog
+  - internal/buffer
+  - internal/channelz
+  - internal/envconfig
+  - internal/grpclog
+  - internal/grpcrand
+  - internal/grpcsync
+  - internal/grpcutil
+  - internal/resolver/dns
+  - internal/resolver/passthrough
+  - internal/syscall
+  - internal/transport
+  - keepalive
+  - metadata
+  - naming
+  - peer
+  - resolver
+  - serviceconfig
+  - stats
+  - status
+  - tap
+- name: gopkg.in/go-playground/validator.v8
+  version: 5f57d2222ad794d0dffb07e664ea05e2ee07d60c
+- name: gopkg.in/ini.v1
+  version: 87e589f4917038ae250cff2446db7573f47e97ca
+- name: gopkg.in/yaml.v2
+  version: f221b8435cfb71e54062f6c6e99e9ade30b124d5
+testImports:
+- name: github.com/davecgh/go-spew
+  version: 8991bc29aa16c548c550c7ff78260e27b9ab7c73
+  subpackages:
+  - spew
+- name: github.com/pmezard/go-difflib
+  version: 792786c7400a136282c1664665ae0a8db921c6c2
+  subpackages:
+  - difflib
+- name: github.com/stretchr/testify
+  version: 3ebf1ddaeb260c4b1ae502a01c7844fa8c1fa0e9
+  subpackages:
+  - assert
+  - require

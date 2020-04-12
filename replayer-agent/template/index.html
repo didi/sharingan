@@ -1,0 +1,286 @@
+{{define "index"}}
+{{template "header"}}
+</head>
+
+<body>
+{{template "tab"}}
+<div id="search">
+    <el-row v-show="search_show">
+        <el-col :span="14">
+            <el-form label-position="right" label-width="90px" :model="search" size="small">
+                <el-row>
+                    <el-col :span="11">
+                        <el-form-item label="项目名称">
+                            <el-select v-model="search.project" placeholder="请选择项目" @change="changeProject">
+                                <el-option
+                                    v-for="item in search.projects"
+                                    :key="item.value"
+                                    :label="item.label"
+                                    :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="10">
+                        <el-form-item label="时间段">
+                            <el-date-picker
+                                    v-model="search.date"
+                                    type="daterange"
+                                    align="right"
+                                    unlink-panels
+                                    range-separator="至"
+                                    start-placeholder="开始日期"
+                                    end-placeholder="结束日期"
+                                    value-format="yyyy-MM-dd"
+                                    :picker-options="picker_options">
+                            </el-date-picker>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="24">
+                        <el-form-item label="快速查询">
+                            <el-autocomplete
+                                    style="width:100%;"
+                                    v-model="search.dsl"
+                                    :fetch-suggestions="querySearch"
+                                    placeholder="快速搜索"
+                                    resize="horizontal"
+                                    @select="handleSelect"
+                            ></el-autocomplete>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="12">
+                        <el-form-item label="接口请求">
+                            <span slot="label">接口请求
+                                <a href="https://github.com/didichuxing/sharingan/blob/master/doc/replayer/guide/search.md" target="_blank" style="color:black;" class="icon-block">
+                                    <i class="el-icon-question"></i>
+                                </a>
+                            </span>
+                            <el-input
+                                    type="textarea"
+                                    :rows="1"
+                                    placeholder="关键词，空格分割，否定搜索添加前缀'!'"
+                                    v-model="search.inbound_request">
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="接口返回">
+                            <span slot="label">接口返回
+                                <a href="https://github.com/didichuxing/sharingan/blob/master/doc/replayer/guide/search.md" target="_blank" style="color:black;" class="icon-block">
+                                    <i class="el-icon-question"></i>
+                                </a>
+                            </span>
+                            <el-input
+                                    sytle="width:100%"
+                                    type="textarea"
+                                    :rows="1"
+                                    placeholder="关键词，空格分割，否定搜索添加前缀'!'"
+                                    v-model="search.inbound_response">
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="12">
+                        <el-form-item label="下游请求">
+                            <span slot="label">下游请求
+                                <a href="https://github.com/didichuxing/sharingan/blob/master/doc/replayer/guide/search.md" target="_blank" style="color:black;" class="icon-block">
+                                    <i class="el-icon-question"></i>
+                                </a>
+                            </span>
+                            <el-input
+                                    type="textarea"
+                                    :rows="1"
+                                    placeholder="关键词，空格分割，否定搜索添加前缀'!'"
+                                    v-model="search.outbound_request">
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="下游返回">
+                            <span slot="label">下游返回
+                                <a href="https://github.com/didichuxing/sharingan/blob/master/doc/replayer/guide/search.md" target="_blank" style="color:black;" class="icon-block">
+                                    <i class="el-icon-question"></i>
+                                </a>
+                            </span>
+                            <el-input
+                                    sytle="width:100%"
+                                    type="textarea"
+                                    :rows="1"
+                                    placeholder="关键词，空格分割，否定搜索添加前缀'!'"
+                                    v-model="search.outbound_response">
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col :span="16">
+                        <el-form-item label="SessionId">
+                            <el-input v-model="search.session_id" placeholder="session id"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-form-item label=" ">
+                    <el-button type="primary" @click="onSearch(1)">流量查询</el-button>
+                    <el-button @click="reportDSL">保存查询</el-button>
+                    <el-button type="success" @click="batchReplay">批量回放</el-button>
+                </el-form-item>
+            </el-form>
+
+            <el-dialog title="上报查询" :visible.sync="dialogSubmitReport">
+                <el-row type="flex" justify="center">
+                    <el-col :span="12">
+                        <el-form :model="reportFrom" label-width="80px">
+                            <el-form-item label="名称" prop="tag">
+                                <span slot="label">名称
+                                    <a href="https://github.com/didichuxing/sharingan/blob/master/doc/replayer/guide/search.md" target="_blank" style="color:black;" class="icon-block">
+                                        <i class="el-icon-question"></i>
+                                    </a>
+                                </span>
+                                <el-input type="textarea" v-model="reportFrom.tag"></el-input>
+                            </el-form-item>
+                            ES查询：{{`{{ ESDSL }}`}}
+                        </el-form>
+                    </el-col>
+                </el-row>
+                <div slot="footer" class="dialog-footer">
+                    <el-button @click="dialogSubmitReport = false">取 消</el-button>
+                    <el-button type="primary" @click="submitReport('reportFrom')">确 定</el-button>
+                </div>
+            </el-dialog>
+
+            <el-dialog title="批量回放" :visible.sync="dialogBatchReplay">
+                <el-row type="flex" justify="center">
+                    <el-col :span="18">
+                        <el-form :model="replayForm" label-width="80px">
+                            <el-form-item label="项目名称" prop="project">
+                                <el-input v-model="search.project" disabled></el-input>
+                            </el-form-item>
+                            <el-form-item label="回放条件" prop="dsl">
+                                <el-tooltip class="item" effect="dark" content="空：回放所有推荐流量，非空：回放当前条件" placement="top-start">
+                                    <i class="el-icon-question"></i>
+                                </el-tooltip>
+                                {{`{{ ESDSL }}`}}
+                            </el-form-item>
+
+                            <el-form-item label="回放次数" prop="size">
+                                <el-input v-model="replayForm.size"  placeholder="每条case回放的数量"></el-input>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+                </el-row>
+                <div slot="footer" class="dialog-footer">
+                    <el-button @click="dialogBatchReplay = false">取 消</el-button>
+                    <el-button type="primary" @click="autoReplay">确 定</el-button>
+                </div>
+            </el-dialog>
+        </el-col>
+    </el-row>
+    <el-row type="flex" justify="end">
+        <el-col :span="2">
+            <el-button  size="mini" round icon="el-icon-arrow-up" @click="searchShow" v-show="search_show">隐藏搜索</el-button>
+            <el-button  size="mini" round icon="el-icon-arrow-down" @click="searchShow" v-show="!search_show">展开搜索</el-button>
+        </el-col>
+    </el-row>
+</div>
+<div class="line"></div>
+<div id="flow_list">
+    <el-table
+            v-loading="loading"
+            size="mini"
+            fit
+            :data="flowTable"
+            style="width: 100%">
+        <el-table-column type="expand">
+            <template slot-scope="session">
+                <el-table
+                        size="mini"
+                        :data="getActions(session.row.actions)"
+                        style="width: 50%"
+                        :row-class-name="masterReq">
+                    <el-table-column type="expand">
+                        <template slot-scope="action">
+                            <el-tabs value="request" type="border-card">
+                                <el-tab-pane label="请求" name="request"><pre class="pre">{{`{{ action.row.req }}`}}</pre></el-tab-pane>
+                                <el-tab-pane label="返回" name="response"><pre class="pre">{{`{{ action.row.res }}`}}</pre></el-tab-pane>
+                            </el-tabs>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            show-overflow-tooltip
+                            prop="req"
+                            label="请求">
+                    </el-table-column>
+                    <el-table-column
+                            prop=""
+                            label=""
+                            width="50">
+                        <template slot-scope="scope">
+                            <i class="el-icon-sort" style="transform:rotate(90deg) "></i>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            show-overflow-tooltip
+                            prop="res"
+                            label="返回">
+                    </el-table-column>
+                </el-table>
+            </template>
+        </el-table-column>
+        <el-table-column
+                label="项目"
+                prop="project"
+                width="100">
+        </el-table-column>
+        <el-table-column
+                label="sessionId"
+                prop="sessionId"
+                width="200">
+        </el-table-column>
+        <el-table-column
+                label="timestamp"
+                prop="timestamp"
+                width="150">
+        </el-table-column>
+        <el-table-column
+                show-overflow-tooltip
+                label="请求"
+                prop="req">
+        </el-table-column>
+        <el-table-column
+                show-overflow-tooltip
+                label="返回"
+                prop="res">
+        </el-table-column>
+        <el-table-column
+                label="操作"
+                width="100">
+            <template slot-scope = "scope">
+                <el-button type="success" size="mini" icon="el-icon-caret-right" @click="jump(scope.row)">运行</el-button>
+            </template>
+        </el-table-column>
+    </el-table>
+    <div style="margin: 40px"></div>
+    <el-row type="flex" justify="end">
+        <el-pagination
+                background
+                layout="prev, pager, next"
+                :page-size="20"
+                :total="1000"
+                @current-change="handleCurrentChange"
+                :current-page.sync="currentPage">
+        </el-pagination>
+    </el-row>
+</div>
+</body>
+<script>
+    Global.Version = {{.Version}}
+</script>
+<script type="module" src="/public/js/index.js?_v=9"></script>
+<script type="module" src="/public/js/menu.js?_v=2"></script>
+{{template "footer"}}
+{{end}}

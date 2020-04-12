@@ -1,0 +1,45 @@
+.line {
+    height: 1px;
+    background-color: #e0e6ed;
+    margin: 10px;
+}
+.el-table .primary-row {
+    background: rgba(64,158,255,.1);
+    font-weight: bold;
+    color:#409EFF;
+}
+
+.el-table .success-row {
+    background: #f0f9eb;
+}
+
+.el-table .warning-row {
+    background: #fdf6ec;
+}
+
+.el-table .error-row {
+    background: #f56c6c;
+}
+
+body {
+    font-family: Helvetica Neue,Helvetica,PingFang SC,Hiragino Sans GB,Microsoft YaHei,SimSun,sans-serif;
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
+
+.pre {
+    white-space: pre-wrap;       /* Since CSS 2.1 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;
+    word-break: break-all;
+}
+
+.diff table td {
+    padding: 0;
+    border-bottom:0px;
+}
+
+.diff .d2h-code-side-line {
+    margin-left: 0px;
+}

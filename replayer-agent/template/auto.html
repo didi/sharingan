@@ -1,0 +1,72 @@
+{{define "auto"}}
+{{template "header"}}
+</head>
+<body>
+    <div id="batchReplay" v-loading="loading">
+        <el-tooltip class="item" effect="dark" content="回放成功！" placement="bottom">
+            <el-button plain size="small" type="success">回放成功</el-button>
+        </el-tooltip>
+        <el-tooltip class="item" effect="dark" content="回访失败，请点击链接检查！" placement="bottom">
+            <el-button plain size="small" type="danger">回放失败</el-button>
+        </el-tooltip>
+        <el-tooltip class="item" effect="dark" content="搜索条件查询不到数据，或者本SessionId已回访！" placement="bottom">
+            <el-button plain size="small" type="warning">跳过回放</el-button>
+        </el-tooltip>
+        <br>
+        <br>
+        <el-progress :text-inside="true" :stroke-width="30" :percentage="getPercentage()" status="success"></el-progress>
+        <br>
+        <template v-if="badcase.data[0].children.length != 0">
+            <el-tree :data="badcase.data" :props="badcase.props">
+                <div slot-scope="{ node, data }" style="width: 50%">
+                    <el-row>
+                        <template v-if="node.id == 1">
+                            <el-col :span="24">{{`{{node.label}}`}}</el-col>
+                        </template>
+                        <template v-else>
+                            <el-col :span="24">{{`{{node.id - 1}}: `}}<a href="javascript:void(0)" v-on:click="jump(node)">{{`{{node.label}}`}}</a></el-col>
+                        </template>
+                    </el-row>
+                </div>
+            </el-tree>
+        </template>
+        <br>
+        <template v-for="(replay, key) in replays">
+            <template v-if="replay.result == 0">
+                <el-tag>{{`{{ replay.dsl }}`}} &nbsp; Times: {{`{{ key }}`}}</el-tag>
+                <br>
+                <a :href='"/replay/"+replay.sessionId+"?project="+replay.project' target="_blank">
+                    <el-button type="text">{{`{{ replay.sessionId }}`}}</el-button>
+                </a>
+                <el-tag type="success" size="small">success</el-tag>
+                <br>
+                <br>
+            </template>
+            <template v-else-if="replay.result == 1">
+                <el-tag type="warning">{{`{{ replay.dsl }}`}} &nbsp; Times: {{`{{ key }}`}}</el-tag>
+                <br>
+                <br>
+            </template>
+            <template v-else>
+                <el-tag type="danger">{{`{{ replay.dsl }}`}} &nbsp; Times: {{`{{ key }}`}}</el-tag>
+                <br>
+                <a :href='"/replay/"+replay.sessionId+"?project="+replay.project' target="_blank">
+                    <el-button type="text">{{`{{ replay.sessionId }}`}}</el-button>
+                </a>
+                <el-tag type="danger" size="small">fail</el-tag>
+                <br>
+                <br>
+            </template>
+        </template>
+    </div>
+</body>
+<script>
+    Global.Project = {{.Project}}
+    Global.Dsl = {{.Dsl}}
+    Global.Size = {{.Size}}
+    Global.Version = {{.Version}}
+</script>
+<script type="module" src="/public/js/auto.js?_v=6"></script>
+<script type="module" src="/public/js/mutex.js?_v=1"></script>
+{{template "footer"}}
+{{end}}
