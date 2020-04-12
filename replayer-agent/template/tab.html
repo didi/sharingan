@@ -1,0 +1,13 @@
+{{define "tab"}}
+<el-row>
+    <el-col :span="24">
+        <el-menu id="menu"
+                 :default-active="activeIndex"
+                 mode="horizontal"
+                 @select="handleSelect">
+            <el-menu-item index="1">流量回放</el-menu-item>
+        </el-menu>
+    </el-col>
+</el-row>
+<div style="margin:20px"></div>
+{{end}}

@@ -1,0 +1,336 @@
+{{define "replay"}}
+{{template "header"}}
+<link rel="stylesheet" href="/public/diff2html/diff2html.min.css">
+</head>
+<body>
+    <div id="session" style="width: 95%" @mouseup="onmouseup">
+        <template v-if="result == 2">
+            <el-alert
+                title="FAIL"
+                type="error"
+                :closable="false"
+                show-icon>
+                <slot>
+                    <p class="el-alert__description">
+                        <a href="https://github.com/didichuxing/sharingan/blob/master/doc/replayer/README.md#三使用手册" target="_blank">回放指南</a>
+                        <a href="/session/{{.Sid}}?project={{.Project}}" target="_blank">sessionId: {{`{{ sessionId }}`}}</a>
+                        <a href="https://github.com/didichuxing/sharingan/blob/master/doc/replayer/replayer-codecov.md" target="_blank">覆盖率使用手册</a>
+                        &nbsp;&nbsp;
+                        <a href="/coverage?project={{.Project}}" target="_blank"><button type="button" class="el-button--text"><span>覆盖率报告</span></button></a>
+                        <br>
+                        非常遗憾回放失败！失败的原因可能是有新的请求、协议解析失败、逻辑错误等等，建议你更新合并master，依赖库，查看项目日志，谢谢！
+                        <br>
+                        <a href="https://github.com/didichuxing/sharingan/blob/master/doc/replayer/guide/troubleshoot.md" target="_blank">排查手册</a>
+                    </p>
+                </slot>
+            </el-alert>
+        </template>
+        <template v-else-if="result == 1">
+            <el-alert
+                title="WARNING"
+                type="warning"
+                :closable="false"
+                show-icon>
+                <slot>
+                    <p class="el-alert__description">
+                        <a href="https://github.com/didichuxing/sharingan/blob/master/doc/replayer/README.md#三使用手册" target="_blank">回放指南</a>
+                        <a href="/session/{{.Sid}}?project={{.Project}}" target="_blank">sessionId: {{`{{ sessionId }}`}}</a>
+                        <br>
+                        回放异常，查看日志确认服务是否正常
+                    </p>
+                </slot>
+            </el-alert>
+        </template>
+        <template v-else>
+            <el-alert
+                title="SUCCESS"
+                type="success"
+                :closable="false"
+                show-icon>
+                <slot>
+                    <p class="el-alert__description">
+                        <a href="https://github.com/didichuxing/sharingan/blob/master/doc/replayer/README.md#三使用手册" target="_blank">回放指南</a>
+                        <a href="/session/{{.Sid}}?project={{.Project}}" target="_blank">sessionId: {{`{{ sessionId }}`}}</a>
+                        <a href="https://github.com/didichuxing/sharingan/blob/master/doc/replayer/replayer-codecov.md" target="_blank">覆盖率使用手册</a>
+                        &nbsp;&nbsp;
+                        <a href="/coverage?project={{.Project}}" target="_blank"><button type="button" class="el-button--text"><span>覆盖率报告</span></button></a>
+                        <br>
+                        恭喜你回放成功，但还是希望能够仔细查看回放流程，谢谢！
+                    </p>
+                </slot>
+            </el-alert>
+        </template>
+        <div style="margin:5px"></div>
+        <el-button  @click="clearFilter" size="small" style="background:rgba(64,158,255,.1)">清除协议过滤器</el-button>
+        <el-tag  type="success" title="回放结果无diff，完全一致" >success</el-tag>
+        <el-tag  type="danger" title="回放结果存在diff" >diff</el-tag>
+        <el-tag  type="danger" title="线上多出来的outbound子请求" >missing</el-tag>
+        <el-tag  type="danger" title="线下outbound子请求匹配失败" >not matched</el-tag>
+        <el-tag  type="warning" title="除噪音外，回放结果无其他diff，基本一致" >ignore noise</el-tag>
+        <div style="margin:5px"></div>
+        <el-table
+            size="mini"
+            ref="filterTable"
+            :data="actions"
+            style="width: 100%"
+            :cell-style="cellStyle"
+            :row-key="getRowKeys"
+            :expand-row-keys="expands"
+            :row-class-name="rowColor">
+            <el-table-column type="expand">
+                <template slot-scope="action">
+                    <el-tabs value="diff" type="border-card">
+                        <template v-if="action.$index == 0">
+                            <el-tab-pane label="O==T Diff" name="compare">
+                                <el-switch
+                                    v-model="action.row.diffBinary"
+                                    active-text="format"
+                                    inactive-text="binary"
+                                    @change="diffBinary(action.row.diffBinary, action, action.row.onlineRes, action.row.testRes)">
+                                </el-switch>
+                                <br>
+                                <br>
+                                <div class="diff" v-if="!action.row.diffBinary" v-html="action.row.diff"></div>
+                                <div class="diff" v-else>
+                                    <el-tree
+                                      :data="action.row.formatDiff"
+                                      node-key="id"
+                                      default-expand-all
+                                      :expand-on-click-node="false">
+                                      <span class="custom-tree-node" slot-scope="{ node, data }">
+                                        <template  v-if="node.level > 1">
+                                                <span>{{`{{ data.OoT }}`}} : {{`{{ node.label }}`}}</span>
+                                         </template>
+                                         <template v-else-if="node.level ==1 && data.is == 1">
+                                                <span style="background:#e6a23c; color:#FFFFFF; font-weight:bold;">&nbsp;{{`{{ node.label }}`}}&nbsp;</span>
+                                                <span>
+                                                  <el-button
+                                                    type="text"
+                                                    size="mini"
+                                                    @click="delNoise(node)">
+                                                    取消噪音
+                                                  </el-button>
+                                                </span>
+                                         </template>
+                                         <template v-else-if="node.level == 1 && data.is == 2">
+                                                <span style="background:#f56c6c; color:#FFFFFF; font-weight:bold;">&nbsp;{{`{{ node.label }}`}}&nbsp;</span>
+                                                <span>
+                                                  <el-button
+                                                    type="text"
+                                                    size="mini"
+                                                    @click="reportNoise(action.row.project, action.row.requestMark, action.row.noise+'.'+node.label, node)">
+                                                    上报噪音
+                                                  </el-button>
+                                                </span>
+                                         </template>
+                                         <template v-else>
+                                                <span style="background:#67c23a; color:#FFFFFF; font-weight:bold;">&nbsp;{{`{{ node.label }}`}}&nbsp;</span>
+                                         </template>
+                                      </span>
+                                    </el-tree>
+                                </div>
+                            </el-tab-pane>
+                            <el-tab-pane label="Online Request" name="onlineReq">
+                                <el-switch
+                                    v-model="action.row.onlineReqBinary"
+                                    active-text="binary"
+                                    inactive-text="text"
+                                    @change="if(!action.row.isBinaryOnlineReqDecode) {
+                                        base64(action.row.onlineReqBinary, action, 'binaryOnlineReq', action.row.binaryOnlineReq)
+                                        action.row.isBinaryOnlineReqDecode = true
+                                        }
+                                    ">
+                                </el-switch>
+                                <pre class="pre" v-if="!action.row.onlineReqBinary">{{`{{ action.row.onlineReq }}`}}</pre>
+                                <pre class="pre" v-else>{{`{{ action.row.binaryOnlineReq }}`}}</pre>
+                            </el-tab-pane>
+                            <el-tab-pane label="Online Response" name="onlineRes">
+                                <el-switch
+                                    v-model="action.row.onlineResBinary"
+                                    active-text="binary"
+                                    inactive-text="text"
+                                    @change="if(!action.row.isBinaryOnlineResDecode) {
+                                        base64(action.row.onlineResBinary, action, 'binaryOnlineRes', action.row.binaryOnlineRes)
+                                        action.row.isBinaryOnlineResDecode = true
+                                        }
+                                    ">
+                                </el-switch>
+                                <pre class="pre" v-if="!action.row.onlineResBinary">{{`{{ action.row.onlineRes }}`}}</pre>
+                                <pre class="pre" v-else>{{`{{ action.row.binaryOnlineRes }}`}}</pre>
+                            </el-tab-pane>
+                            <el-tab-pane label="Testing Response" name="diff">
+                                <el-switch
+                                    v-model="action.row.testResBinary"
+                                    active-text="binary"
+                                    inactive-text="text"
+                                    @change="if(!action.row.isBinaryTestResDecode) {
+                                        base64(action.row.testResBinary, action, 'binaryTestRes', action.row.binaryTestRes)
+                                        action.row.isBinaryTestResDecode = true
+                                        }
+                                    ">
+                                </el-switch>
+                                <pre class="pre" v-if="!action.row.testResBinary">{{`{{ action.row.testRes }}`}}</pre>
+                                <pre class="pre" v-else>{{`{{ action.row.binaryTestRes }}`}}</pre>
+                            </el-tab-pane>
+                        </template>
+                        <template v-else>
+                            <el-tab-pane label="O==T Diff" name="diff">
+                                <el-switch
+                                    v-model="action.row.diffBinary"
+                                    active-text="format"
+                                    inactive-text="binary"
+                                    @change="diffBinary(action.row.diffBinary, action, action.row.onlineReq, action.row.testReq)">
+                                </el-switch>
+                                <br>
+                                <br>
+                                <div class="diff" v-if="!action.row.diffBinary" v-html="action.row.diff"></div>
+                                <div class="diff" v-else>
+                                    <el-tree
+                                      :data="action.row.formatDiff"
+                                      node-key="id"
+                                      default-expand-all
+                                      :expand-on-click-node="false">
+                                      <span class="custom-tree-node" slot-scope="{ node, data }">
+                                        <template  v-if="node.level > 1">
+                                                <span>{{`{{ data.OoT }}`}} : {{`{{ node.label }}`}}</span>
+                                         </template>
+                                         <template v-else-if="node.level ==1 && data.is == 1">
+                                                <span style="background:#e6a23c; color:#FFFFFF; font-weight:bold;">&nbsp;{{`{{ node.label }}`}}&nbsp;</span>
+                                                <span>
+                                                  <el-button
+                                                    type="text"
+                                                    size="mini"
+                                                    @click="delNoise(node)">
+                                                    取消噪音
+                                                  </el-button>
+                                                </span>
+                                         </template>
+                                         <template v-else-if="node.level == 1 && data.is == 2">
+                                                <span style="background:#f56c6c; color:#FFFFFF; font-weight:bold;">&nbsp;{{`{{ node.label }}`}}&nbsp;</span>
+                                                <span>
+                                                  <el-button
+                                                    type="text"
+                                                    size="mini"
+                                                    @click="reportNoise(action.row.project, action.row.requestMark, action.row.noise+'.'+node.label, node)">
+                                                    上报噪音
+                                                  </el-button>
+                                                </span>
+                                         </template>
+                                         <template v-else>
+                                                <span style="background:#67c23a; color:#FFFFFF; font-weight:bold;">&nbsp;{{`{{ node.label }}`}}&nbsp;</span>
+                                         </template>
+                                      </span>
+                                    </el-tree>
+                                </div>
+                            </el-tab-pane>
+                            <el-tab-pane label="Online Request" name="onlineReq">
+                                <el-switch
+                                    v-model="action.row.onlineReqBinary"
+                                    active-text="binary"
+                                    inactive-text="text"
+                                    @change="if(!action.row.isBinaryOnlineReqDecode) {
+                                        base64(action.row.onlineReqBinary, action, 'binaryOnlineReq', action.row.binaryOnlineReq)
+                                        action.row.isBinaryOnlineReqDecode = true
+                                        }
+                                    ">
+                                </el-switch>
+                                <pre class="pre" v-if="!action.row.onlineReqBinary">{{`{{ action.row.onlineReq }}`}}</pre>
+                                <pre class="pre" v-else>{{`{{ action.row.binaryOnlineReq }}`}}</pre>
+                            </el-tab-pane>
+                            <el-tab-pane label="Testing Request" name="testReq">
+                                <el-switch
+                                    v-model="action.row.testReqBinary"
+                                    active-text="binary"
+                                    inactive-text="text"
+                                    @change="if(!action.row.isBinaryTestReqDecode) {
+                                            base64(action.row.testReqBinary, action, 'binaryTestReq', action.row.binaryTestReq)
+                                            action.row.isBinaryTestReqDecode = true
+                                        }
+                                    ">
+                                </el-switch>
+                                <pre class="pre" v-if="!action.row.testReqBinary">{{`{{ action.row.testReq }}`}}</pre>
+                                <pre class="pre" v-else>{{`{{ action.row.binaryTestReq }}`}}</pre>
+                            </el-tab-pane>
+                            <el-tab-pane label="Online Response" name="onlineRes">
+                                <el-switch
+                                    v-model="action.row.onlineResBinary"
+                                    active-text="binary"
+                                    inactive-text="text"
+                                    @change="if(!action.row.isBinaryOnlineResDecode) {
+                                            base64(action.row.onlineResBinary, action, 'binaryOnlineRes', action.row.binaryOnlineRes)
+                                            action.row.isBinaryOnlineResDecode = true
+                                        }
+                                    ">
+                                </el-switch>
+                                <pre class="pre" v-if="!action.row.onlineResBinary">{{`{{ action.row.onlineRes }}`}}</pre>
+                                <pre class="pre" v-else>{{`{{ action.row.binaryOnlineRes }}`}}</pre>
+                            </el-tab-pane>
+                            <template v-if="isMocked(action.row)">
+                                <el-tab-pane label="Mocked Response" name="mockedRes">
+                                    <el-switch
+                                        v-model="action.row.mockedResBinary"
+                                        active-text="binary"
+                                        inactive-text="text"
+                                        @change="if(!action.row.isBinaryMockedResDecode) {
+                                                base64(action.row.mockedResBinary, action, 'binaryMockedRes', action.row.binaryMockedRes)
+                                                action.row.isBinaryMockedResDecode = true
+                                            }
+                                        ">
+                                    </el-switch>
+                                    <pre class="pre" v-if="!action.row.mockedResBinary">{{`{{ action.row.mockedRes }}`}}</pre>
+                                    <pre class="pre" v-else>{{`{{ action.row.binaryMockedRes }}`}}</pre>
+                                </el-tab-pane>
+                            </template>
+                        </template>
+                    </el-tabs>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    prop="protocol"
+                    label="协议"
+                    width="120"
+                    :filters="[{text: 'HTTP', value: 'HTTP'}, {text: 'BinaryThrift', value: 'BinaryThrift'}, {text: 'CompactThrift', value: 'CompactThrift'}, {text: 'MYSQL', value: 'MYSQL'}, {text: 'REDIS', value: 'REDIS'}]"
+                    :filter-method="filterHandler">
+            </el-table-column>
+            <el-table-column
+                    show-overflow-tooltip
+                    prop="onlineReq"
+                    label="请求">
+            </el-table-column>
+            <el-table-column
+                    prop=""
+                    label=""
+                    width="50">
+                <template slot-scope="scope">
+                    <i class="el-icon-sort" style="transform:rotate(90deg) "></i>
+                </template>
+            </el-table-column>
+            <el-table-column
+                    show-overflow-tooltip
+                    prop="onlineRes"
+                    label="返回"
+                    :formatter="responseFormatter">
+            </el-table-column>
+            <el-table-column
+                    prop="scorePercentage"
+                    label="子请求匹配度"
+                    width="100">
+            </el-table-column>
+        </el-table>
+        <el-dialog title="json格式美化" :visible.sync="dialogVisible" append-to-body>
+            <span slot="footer" class="dialog-footer">
+                <el-button type="success" @click="dialogVisible = false">退 出</el-button>
+            </span>
+        </el-dialog>
+    </div>
+</body>
+<script>
+    Global.sid = {{.Sid}}
+    Global.Version = {{.Version}}
+    Global.Project = {{.Project}}
+</script>
+<script src="/public/diff2html/diff2html.js"></script>
+<script src="/public/diff2html/diff2html-ui.js"></script>
+<script type="module" src="/public/js/replay.js?_v=7"></script>
+{{template "footer"}}
+{{end}}

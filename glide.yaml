@@ -1,0 +1,53 @@
+package: github.com/didichuxing/sharingan
+import:
+- package: github.com/golang/protobuf
+  version: ^1.3.2
+  subpackages:
+  - proto
+- package: github.com/google/gopacket
+  version: ^1.1.17
+  subpackages:
+  - layers
+- package: github.com/json-iterator/go
+  version: ^1.1.9
+- package: github.com/juju/ratelimit
+  version: ^1.0.1
+- package: github.com/julienschmidt/httprouter
+  version: ^1.3.0
+- package: github.com/lestrrat-go/file-rotatelogs
+  version: ^2.3.0
+- package: github.com/modern-go/parse
+  version: ^0.9.3
+  subpackages:
+  - model
+  - read
+- package: github.com/pkg/errors
+  version: ^0.9.1
+- package: github.com/ppltools/binding
+  version: ^0.0.7
+- package: github.com/spf13/viper
+  version: ^1.6.2
+- package: github.com/v2pro/plz
+  version: 03cb46d336e021ccc579800e033a9a48d09a87d0
+  subpackages:
+  - countlog
+- package: go.uber.org/zap
+  version: ^1.14.0
+  subpackages:
+  - zapcore
+- package: golang.org/x/net
+  subpackages:
+  - context
+- package: golang.org/x/sys
+  subpackages:
+  - unix
+- package: google.golang.org/grpc
+  version: ^1.24.0
+- package: github.com/agiledragon/gomonkey
+  version: ^2.0.1
+testImport:
+- package: github.com/stretchr/testify
+  version: ^1.5.1
+  subpackages:
+  - assert
+  - require

@@ -1,0 +1,24 @@
+.idea/
+.statsd/
+.vscode/
+*.swp
+*.log
+*.log.*
+
+# example
+example/example
+example/example.test
+example/nohup.out
+example/replayer/replayer
+
+# agent
+recorder-agent/agent
+recorder-agent/recorder-agent
+recorder-agent/agent.log
+recorder-agent/agent.pid
+replayer-agent/agent
+replayer-agent/replayer-agent
+replayer-agent/agent.log
+replayer-agent/agent.pid
+
+vendor/

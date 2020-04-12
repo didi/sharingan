@@ -1,0 +1,111 @@
+package worker
+
+import (
+	"bytes"
+	"context"
+	"encoding/hex"
+	"errors"
+	"fmt"
+	"math/rand"
+	"net"
+	"os"
+	"strconv"
+	"time"
+
+	"github.com/didichuxing/sharingan/replayer-agent/common/handlers/tlog"
+	"github.com/didichuxing/sharingan/replayer-agent/logic/outbound"
+	"github.com/didichuxing/sharingan/replayer-agent/logic/replayed"
+	"github.com/didichuxing/sharingan/replayer-agent/model/replaying"
+	"github.com/didichuxing/sharingan/replayer-agent/model/station"
+)
+
+var hooks []func()
+
+func ExitHook() {
+	for _, hook := range hooks {
+		hook()
+	}
+}
+
+type Replayer struct {
+	BasePort int // the base port number of the outbound servers
+	OBSIdx   int // stands for the index of the outbound servers
+
+	Language string // language of module
+	Protocol string // protocol of module
+
+	ReplayAddr string
+
+	ReplayedSession *replayed.Session // replayed session
+}
+
+func (r *Replayer) ReplaySession(ctx context.Context, session *replaying.Session, project string) error {
+	if session == nil || session.CallFromInbound == nil || session.ReturnInbound == nil {
+		err := errors.New("CallFromInbound is nill or ReturnInbound is nil")
+		tlog.Handler.Errorf(ctx, tlog.DebugTag, "errmsg=", err)
+		return err
+	}
+
+	// replayed record
+	r.ReplayedSession = new(replayed.Session)
+	r.ReplayedSession.SessionId = session.SessionId
+	r.ReplayedSession.Context = session.Context
+	r.ReplayedSession.OnlineOutbounds = session.CallOutbounds
+	r.ReplayedSession.OnlineAppendFiles = session.AppendFiles
+
+	traceID := GenTraceID()
+
+	// store session
+	station.Store(traceID, session, r.ReplayedSession)
+	defer station.Remove(traceID)
+
+	// pass session to outbound-matcher
+	outbound.StoreHandler(ctx, traceID)
+	defer outbound.RemoveHandler(ctx, traceID)
+
+	request := session.CallFromInbound.Request
+	conn, err := newConn(ctx, r.ReplayAddr)
+	if err != nil {
+		return err
+	}
+
+	{
+		// add header
+		traceHeader := fmt.Sprintf("\r\nSharingan-Replayer-TraceID : %s", traceID)
+		timeHeader := fmt.Sprintf("\r\nSharingan-Replayer-Time : %d", session.CallFromInbound.OccurredAt)
+		s := bytes.Split(request, []byte("\r\n"))
+		s[0] = append(s[0], []byte(traceHeader+timeHeader)...)
+		request = bytes.Join(s, []byte("\r\n"))
+	}
+
+	testResponse, err := handleConn(ctx, conn, request, true, project)
+
+	tlog.Handler.Infof(ctx, tlog.DebugTag, "responseOfTest=%v", strconv.Quote(string(testResponse)))
+	tlog.Handler.Infof(ctx, tlog.DebugTag, "responseOfOnline=%v", strconv.Quote(string(session.ReturnInbound.Response)))
+
+	// fill with replayed response
+	r.ReplayedSession.Request = []byte(session.CallFromInbound.Request)
+	r.ReplayedSession.OnlineResponse = session.ReturnInbound.Response
+	r.ReplayedSession.TestResponse = testResponse
+	return nil
+}
+
+//GenTraceID 生成traceID
+func GenTraceID() string {
+	ip := "127.0.0.1"
+
+	now := time.Now()
+	timestamp := uint32(now.Unix())
+	timeNano := now.UnixNano()
+	pid := os.Getpid()
+	b := bytes.Buffer{}
+
+	b.WriteString(hex.EncodeToString(net.ParseIP(ip).To4()))
+	b.WriteString(fmt.Sprintf("%x", timestamp&0xffffffff))
+	b.WriteString(fmt.Sprintf("%04x", timeNano&0xffff))
+	b.WriteString(fmt.Sprintf("%04x", pid&0xffff))
+	b.WriteString(fmt.Sprintf("%06x", rand.Int31n(1<<24)))
+	b.WriteString("b0")
+
+	return b.String()
+}
