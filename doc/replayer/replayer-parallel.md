@@ -19,9 +19,11 @@ cd ./replayer-agent && go build && nohup ./replayer-agent -parallel=x 2>&1 &
 ###### A. 普通使用
 
 a. 在Agent首页，输入流量筛选条件。
+
 ![web_index_parallel](../images/web_index_parallel.png)
 
 b. 点击 "批量回放"，即可看到下面的弹出框。
+
 ![web_parallel_tab](../images/web_parallel_tab.png)
 
 回放次数 默认是2，即 根据 "回放条件" 筛选的所有流量里，选择2个流量进行批量回放。用户可以根据需求修改。
@@ -30,18 +32,22 @@ b. 点击 "批量回放"，即可看到下面的弹出框。
 > 如果输入的 "回放次数" 大于 "回放条件" 实际筛选的流量总数，则最终以实际筛选的流量总数为准。
 
 批量回放结果如下：
+
 ![parallel_detail](../images/parallel_detail.png)
 
 回放结束，右侧 会给出整体真实的回放次数，及失败次数。左侧 会给出具体回放的流量详情及结果，点击流量id还可以进行单流量回放。
+
 
 ###### B. 彩蛋
 
 对于 已经根据 [噪音/DSL 上报指南](./guide/report.md#1-dsl上报) 上报了一些DSL的用户，可以批量回放 **所有DSL** 对应的流量。
 
 a. 操作非常简单，只需保证Agent首页没有输入任何筛选条件，包括 **"时间段""** 参数。
+
 ![parallel_caidan](../images/parallel_caidan.png)
 
 b. 点击 "批量回放" 后，确认 "回放条件" 是空的。
+
 ![parallel_caidan_tab](../images/parallel_caidan_tab.png)
 
 这里的 "回放次数" 与普通使用不同，这里指的是 **每个DSL** 对应流量的回放次数。即， 如果总共上报了10个DSL, "回放次数" 使用默认值2，那么总回放流量为 10*2=20 个。

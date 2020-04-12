@@ -19,7 +19,7 @@
 
 ##### 1. 配置并启动SUT
 
-> 需要使用定制的golang，并通过指定tag来编译 引入回放包的SUT代码。快速体验脚本[example.sh](../../example/example.sh)
+> 需要使用定制的golang，并通过指定tag来编译 引入回放包的SUT代码。
 
 首先，配置定制版golang环境，目前支持go1.10、go1.11、go1.12、go1.13。亦可参考：[golang安装](https://github.com/didichuxing/sharingan-go)
 ```shell script
@@ -38,7 +38,7 @@ import _ "github.com/didichuxing/sharingan/replayer"
 go build -tags="replayer" -gcflags="all=-N -l"
 && nohup ./$project 2>&1 &
 ```
-> SUT一键接入&&启动脚本([./replayer-agent/install/sut.sh](../../replayer-agent/install/sut.sh))及[使用方法](./replayer-sut.md)
+> SUT一键接入&&启动脚本([./example/replayer/sut_replayer.sh](../../example/replayer/sut_replayer.sh))及[使用方法](./replayer-sut.md)
 
 ##### 2. 配置并启动Agent
 
@@ -97,4 +97,7 @@ cd ./replayer-agent && go build && nohup ./replayer-agent 2>&1 &
 Agent默认配置的本地回放，如需修改，请参考：[回放Agent配置](./replayer-conf.md#4-http_api)
 
 ### 四、常见问题
-[常见问题及问题排查](./guide/troubleshoot.md)
+[常见问题及排查](./guide/troubleshoot.md)
+
+### 五、回放原理
+[回放原理详解](./replayer-theory.md)
