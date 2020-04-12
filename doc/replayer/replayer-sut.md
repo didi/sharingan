@@ -1,51 +1,15 @@
-# 流量回放 - agent
+### SUT一键接入和启动脚本
 
-功能：接受录制的流量，进行流量筛选、比例控制等，最终存入本地日志文件
+即将更新~
 
-## 一、接入文档
+##### 1. 环境
 
-### 1、要求（require）
+* GO 「定制版本golang」
+* 包管理工具由SUT决定
 
-* GO >= 1.9 「任意官方golang，或者定制版本golang都可以」
-* Glide     「其它包管理方式参考」
+##### 2. 使用
 
-### 2、编译（build）
+> 普通回放
 
-```shell
-export GOROOT=/path/to/your/GOROOT
-export GOPATH=/path/to/your/GOPATH
-export PATH=$GOROOT/bin:$PATH
 
-cd /path/to/your/sharingan
-glide install
-
-cd /path/to/your/sharingan/replayer-agent
-sh control.sh build
-```
-
-### 3、启动（start）
-
-```shell
-cd /path/to/your/sharingan/replayer-agent
-sh control.sh start
-```
-
-### 3、停止（stop）
-
-```shell
-cd /path/to/your/sharingan/replayer-agent
-sh control.sh stop
-```
-
-### 4、重启（reload）
-
-```shell
-cd /path/to/your/sharingan/replayer-agent
-sh control.sh reload
-```
-
-## 二、其它
-
-[replayer-agent配置文件说明](./replayer-conf.md)
-
-[TODO]
+> 覆盖率统计
