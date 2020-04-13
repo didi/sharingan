@@ -23,7 +23,7 @@
 
 首先，配置定制版golang环境，目前支持go1.10、go1.11、go1.12、go1.13。亦可参考：[golang安装](https://github.com/didichuxing/sharingan-go)
 ```shell script
-curl https://github.com/didichuxing/sharingan-go/raw/recorder/install/go1.10 | sh
+curl https://raw.githubusercontent.com/didichuxing/sharingan-go/recorder/install/go1.10 | sh
 && export GOROOT=/tmp/recorder-go1.10
 && export PATH=$GOROOT/bin:$PATH
 ```

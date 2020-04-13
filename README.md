@@ -2,7 +2,9 @@
 
 ## 一、简介
 
-Sharingan(写轮眼)是一个基于golang的流量录制回放工具，录制线上真实请求流量，在线下进行回放测试，适合项目重构、回归测试等。
+Sharingan（写轮眼）是一个基于golang的流量录制回放工具，录制线上真实请求流量，在线下进行回放测试，适合项目重构、回归测试等。
+
+项目取名自漫画《火影忍者》中的一种瞳术，具有复制、幻术等能力，代表人物：卡卡西、鼬。
 
 ### 1.1、背景
 
@@ -15,14 +17,14 @@ Sharingan(写轮眼)是一个基于golang的流量录制回放工具，录制线
 
 ### 1.2、方案
 
-* 录制线上服务真实请求流量（包括下游调用流量），在线下进行回放，解决构造测试数据难的问题。
-* 回放的时候匹配Mock下游调用，不再依赖具体的下游服务，解决维护测试环境成本高的问题。
+* 录制线上服务真实请求流量（包括下游调用流量），在线下进行回放，解决构造测试数据难的问题。「复制能力」
+* 回放的时候匹配Mock下游调用，不再依赖具体的下游服务，解决维护测试环境成本高的问题。「幻术能力」
 
 ### 1.3、优势
 
-* 支持下游流量录制。相比[tcpcopy](https://github.com/session-replay-tools/tcpcopy)、[goreplay](https://github.com/buger/goreplay)等方案，支持服务下游流量录制，回放不依赖下游环境。
-* 支持并发流量录制和回放。录制对正常服务影响很小，回放速度更快。
-* 支持时间回退、噪音去除、批量回放、常见协议解析等等。
+* 支持下游流量录制。相比[tcpcopy](https://github.com/session-replay-tools/tcpcopy)、[goreplay](https://github.com/buger/goreplay)等方案，回放不依赖下游环境。
+* 支持并发流量录制和回放。录制对服务影响小，回放速度更快。
+* 支持重置时间、去除噪音、批量回放、覆盖率报告、常见协议解析等等。
 * 不依赖业务框架，低应用浸入。
 
 ## 二、快速开始
@@ -31,7 +33,7 @@ Sharingan(写轮眼)是一个基于golang的流量录制回放工具，录制线
 
 ```shell
 # Step1: 使用定制版golang，以go1.13为例
-$ curl https://github.com/didichuxing/sharingan-go/raw/recorder/install/go1.13 | sh
+$ curl https://raw.githubusercontent.com/didichuxing/sharingan-go/recorder/install/go1.13 | sh
 $ export GOROOT=/tmp/recorder-go1.13
 $ export PATH=$GOROOT/bin:$PATH
 
@@ -50,7 +52,7 @@ $ go build -tags="replayer" -gcflags="all=-N -l"
 $ ./example
 
 # Step5: 打开回放页面
-$ 浏览器打开，http://127.0.0.1:8998 # 非本机替换IP即可
+$ 浏览器打开，[http://127.0.0.1:8998](http://127.0.0.1:8998) # 非本机替换IP即可
 $ 页面选择要回放的流量点执行          # 内置提前录制好的3条示例流量
 ```
 
@@ -79,6 +81,7 @@ $ 页面选择要回放的流量点执行          # 内置提前录制好的3�
 * 修改golang源码，对外暴露Hook接口「所有改动通过官方测试用例」
 * 提供API串联不同goroutine之间的网络调用「常见的http、mysql、redis流量都不需要特别设置」
 * 提供单独的agent筛选流量、控制比例
+* 更多参考：[流量录制实现原理](https://github.com/didichuxing/sharingan/wiki/%E6%B5%81%E9%87%8F%E5%BD%95%E5%88%B6%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86)
 
 ### 3.4、回放方案
 
