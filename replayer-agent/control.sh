@@ -20,7 +20,7 @@ error_msg="\033[;31m[ERROR]\033[0m\t"
 function build() {
     if [ ! -d $GOROOT  ];then
         # install golang1.10
-        curl https://github.com/didichuxing/sharingan-go/raw/recorder/install/go1.10 | sh
+        curl https://raw.githubusercontent.com/didichuxing/sharingan-go/recorder/install/go1.10 | sh
         if [ $? -ne 0 ]; then
             printf "${error_msg}build fail at installing golang1.10, please check!!!\n"
             exit 1

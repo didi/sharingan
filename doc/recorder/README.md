@@ -11,7 +11,7 @@
 
 ```shell
 # go1.10使用示例
-$ curl https://github.com/didichuxing/sharingan-go/raw/recorder/install/go1.10 | sh
+$ curl https://raw.githubusercontent.com/didichuxing/sharingan-go/recorder/install/go1.10 | sh
 $ export GOROOT=/tmp/recorder-go1.10
 $ export PATH=$GOROOT/bin:$PATH
 ```
