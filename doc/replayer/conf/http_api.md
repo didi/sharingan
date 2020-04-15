@@ -189,6 +189,6 @@
 
 * listen-addr：必选，SUT的监听地址，一般为127.0.0.1:xxxx。
 
-* department：可选，模块所属部门，默认空(则为default部门)。若非空，在非本地回放时，会按部门字段读取es_url地址。es_url配置可详见：[回放Agent配置](../replayer-conf.md#5-es_url)
+* department：可选，模块所属部门，默认空(则为default部门)。非空时，同时流量配置的读取自ES，则 会按部门字段读取es_url地址。es_url配置可详见：[回放Agent配置](../replayer-conf.md#5-es_url)
 
 非本地回放时，Agent只用到上面三个key值，如果业务方想在该接口顺便存储模块其他信息，只需扩充[]KV即可。
