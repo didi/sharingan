@@ -9,7 +9,7 @@
 
 <br>
 
-下面主要针对 conf/moduleinfo.json 内的配置字段进行解释说明。
+下面主要针对本地回放时 conf/moduleinfo.json 内的配置字段进行解释说明。
 
 ##### 1. 配置示例
 ```json
@@ -48,3 +48,5 @@
 
 本地回放时，KV类型中key只需支持一个"listen-addr"即可：
 * listen-addr：必选，SUT的监听地址，一般为127.0.0.1:xxxx。
+
+* department：可选，模块所属部门，默认空(则为default部门)。非空时，同时流量配置的读取自ES，则 会按部门字段读取es_url地址。es_url配置可详见：[回放Agent配置](../replayer-conf.md#5-es_url)

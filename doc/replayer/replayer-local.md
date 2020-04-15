@@ -2,7 +2,7 @@
 
 <br>
 
-回放Agent默认的接入方式是[本地回放](./README.md#4本地回放)。如需 非本地回放，只需根据 [回放Agent配置](./replayer-conf.md#4-[http_api]) 设置[http_api]和[es_url]接口地址即可。
+回放Agent默认的接入方式是[本地回放](./README.md#4本地回放)。如需 非本地回放，只需根据 [回放Agent配置](./replayer-conf.md#4-http_api) 设置[http_api]和[es_url]接口地址即可。
 
 <br>
 

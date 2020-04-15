@@ -2,7 +2,7 @@
 
 <br>
 
-Agent的配置文件都在 **./replayer-agent/conf** 目录下。
+Agent的配置文件都在 **[./replayer-agent/conf](../../replayer-agent/conf)** 目录下。
 
 * **conf/dsl目录**: 存放回放首页里 上报到本机的dsl数据，每个模块一个文件，以模块名为文件名。
 * **conf/noise目录**: 存放回放结果页里 上报到本机的噪音数据，每个模块一个文件，以模块名为文件名。

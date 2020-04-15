@@ -94,7 +94,7 @@ go build -tags="replayer" -gcflags="all=-N -l"
 
 流量回放不仅支持上面[接入流程-配置并启动SUT](#2-配置并启动sut)展示的普通回放接入，还支持覆盖率统计方式的回放接入。
 
-[覆盖率统计接入](./replayer-codecov.md)
+[覆盖率统计回放接入](./replayer-codecov.md)
 
 ##### 3.批量并发回放
 
