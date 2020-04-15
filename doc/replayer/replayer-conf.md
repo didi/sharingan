@@ -1,5 +1,7 @@
 ### 回放Agent 配置
 
+<br>
+
 Agent的配置文件都在 **./replayer-agent/conf** 目录下。
 
 * **conf/dsl目录**: 存放回放首页里 上报到本机的dsl数据，每个模块一个文件，以模块名为文件名。
@@ -8,6 +10,7 @@ Agent的配置文件都在 **./replayer-agent/conf** 目录下。
 * **conf/app.toml**: Agent的核心配置文件，可以配置Web Server端口及超时时间，Mock Server端口、噪音及DSL上报到自有服务的http接口地址、流量查询的ES地址等。
 * **conf/moduleinfo.json**: 模块配置。本地回放时，用来存放模块基本信息。
 
+<br>
 
 下面针对核心配置文件 conf/app.toml 的每个字段做详细的说明。
 
@@ -22,6 +25,8 @@ Agent的配置文件都在 **./replayer-agent/conf** 目录下。
 * writeTimeout = 21000     # Recieve http body and response timeout(ms), default 21000
 * idleTimeout = 60000      # Keep-alive timeout(ms), default 60000
 
+<br>
+
 ##### 2. [log]
 
 定义 Web Server 的日志路径、文件名、保存时间
@@ -30,6 +35,8 @@ Agent的配置文件都在 **./replayer-agent/conf** 目录下。
 * linkname      = "log/replayer.log"          # 软连接
 * maxHourAge    = 168                         # 默认日志保留168小时（7天）
 * maxHourRotate = 1                           # 默认日志按小时切分
+
+<br>
 
 ##### 3. [outbound]
 
@@ -40,6 +47,8 @@ Agent的配置文件都在 **./replayer-agent/conf** 目录下。
 > 注意：
 >
 > 如需修改默认端口，则 需要在启动SUT时，同步定义REPLAYER_MOCK_PORT环境变量，否则回放会失败。
+
+<br>
 
 ##### 4. [http_api]
 
@@ -58,6 +67,7 @@ Agent的配置文件都在 **./replayer-agent/conf** 目录下。
 >
 > 如果module_\*配置为空，则默认读取conf/mouleinfo.json；
 
+<br>
 
 ##### 5. [es_url]
 

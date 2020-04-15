@@ -7,9 +7,9 @@ import (
 	"log"
 	"net/http"
 
-	// import package replayer
+	// Here to import package replayer
 	_ "github.com/didichuxing/sharingan/replayer"
-	// TODO：Attention! 最后import其他业务包！
+	// TODO：Attention please! 最后import其他业务包！
 )
 
 func main() {

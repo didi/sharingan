@@ -10,6 +10,14 @@ example/example
 example/example.test
 example/nohup.out
 example/replayer/replayer
+example/replayer/replayer.test
+example/replayer/example.test
+example/replayer/example
+example/replayer/sut.pid
+example/replayer/sut.log
+example/replayer/gocov
+example/replayer/gocov-html
+example/replayer/nohup.out
 
 # agent
 recorder-agent/agent

@@ -1,13 +1,18 @@
 ### 本地回放接入
 
+<br>
+
 回放Agent默认的接入方式是[本地回放](./README.md#4本地回放)。如需 非本地回放，只需根据 [回放Agent配置](./replayer-conf.md#4-[http_api]) 设置[http_api]和[es_url]接口地址即可。
 
-对于有 新增 本地回放模块的同学，可以根据如下接入流程操作即可。
-##### 1. 接入流程
+<br>
+
+对于有 新增 本地回放模块的需求同学，可以根据如下3步操作即可。
 
 >步骤a. 增加模块信息
 
 在 [conf/moduleinfo.json](../../replayer-agent/conf/moduleinfo.json) 内增加模块基本信息。字段参考 [回放模块配置](./conf/moduleinfo.md)
+
+<br>
 
 >步骤b. 修改app.toml
 
@@ -17,6 +22,8 @@
 2. 注释掉es_url下的所有字段
 
 各配置字段含义详见: [回放Agent配置](./replayer-conf.md)
+
+<br>
 
 >步骤c. 增加录制流量
 

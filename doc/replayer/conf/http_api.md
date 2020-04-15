@@ -1,14 +1,15 @@
 ### 噪音/DSL/模块_http接口说明
 
-回放时，噪音、DSL 根据 [本地回放](../README.md#4本地回放) 和 非本地回放 的不同，分别上报到不同的地方；而模块信息也会读取自不同的来源：[回放模块配置](./conf/moduleinfo.md)。
+<br>
+
+回放时，噪音、DSL 根据 [本地回放](../README.md#4本地回放) 和 非本地回放 的不同，分别上报到不同的地方；模块信息也会读取自不同的来源：[回放模块配置](./conf/moduleinfo.md)。
 
 * 本地回放：噪音 上报到本机 [conf/noise/](../../../replayer-agent/conf/noise) 目录下，DSL 上报到本机 [conf/dsl/](../../../replayer-agent/conf/dsl) 目录下，模块信息读取自本地配置。
 * 非本地回放：噪音、DSL 上报到 [conf/app.toml](../../../replayer-agent/conf/app.toml) 下 [http_api]小节 配置的http接口。模块信息也读取自该配置接口。
 
-回放Agent默认配置的是本地回放，因此，对于想将 噪音、DSL、模块信息 存入数据库，而非本地配置文件的同学，可以参考下面的接口说明，实现接口即可。
+<br>
 
-
-下面逐个接口说明:
+回放Agent默认配置的是本地回放；对于想将 噪音、DSL、模块信息存入数据库的同学，请仔细阅读下面接口说明。
 > 温馨提示：
 >
 > 接口实现 只要字段名和字段类型符合接口说明即可，**至于字段的具体值无需担心，因为所有的值都会通过前端js处理后传给后端，比如dsl字段、noise字段等**。
@@ -39,6 +40,8 @@
 | errno | int | 错误码，0 成功，非0 失败 |
 | errmsg | string | 错误信息 |
 
+<br>
+
 ##### 2. dsl_get
 
 接口: http://{{your_domain}}/dsl?project=%s
@@ -62,6 +65,8 @@
 | tag | string | 自定义名字 |
 | project | string | 被测模块名 |
 | addTime | string | 添加时间 |
+
+<br>
 
 ##### 3. noise_push
 
@@ -88,6 +93,8 @@
 | errno | int | 错误码，0 成功，非0 失败 |
 | errmsg | string | 错误信息 |
 
+<br>
+
 ##### 4. noise_del
 
 接口: http://{{your_domain}}/noise/del
@@ -108,6 +115,8 @@
 | :-----| :-----| :-----|
 | errno | int | 错误码，0 成功，非0 失败 |
 | errmsg | string | 错误信息 |
+
+<br>
 
 ##### 5. noise_get
 
@@ -136,6 +145,8 @@
 | addTime | string | 添加时间 |
 | user | string | 上报用户 |
 
+<br>
+
 ##### 6. module_info
 
 接口: http://{{your_domain}}/platform/module?per=1000
@@ -160,12 +171,18 @@
 | Module说明 |  |  |
 | :-----| :-----| :-----|
 | name | string | 接入模块名，即project |
-| data | string | []KV类型数组的json串 |
+| data | string | []KV类型数组的json串，存储模块详细信息 |
+
+> 温馨提示：
+>
+> name尽量与编译后的$binName保持一致。如果存在冲突，可以增加前缀'\*-'，即\*-$binName。
+>
+> 如果name形如'\*a-b-c'，则尽量保证c具有可识别性，因为，[覆盖率统计回放](../replayer-codecov.md#1-覆盖率报告)会通过 *c* 来获取SUT进程信息并重启SUT。
 
 | KV说明 |  |  |
 | :-----| :-----| :-----|
-| key | string | 某项配置信息名，如git |
-| value | string | 具体配置值，如git@xxx.git |
+| key | string | 与模块相关的一些信息，如监听地址listen-addr等 |
+| value | string | 与key对应的具体值 |
 
 目前KV类型中key支持的具体值有：
 * context：必选，录制机器的地址，与录制流量的Context字段对应，以区分不同模块。一般一个模块找一台机器录制流量即可。
@@ -173,3 +190,5 @@
 * listen-addr：必选，SUT的监听地址，一般为127.0.0.1:xxxx。
 
 * department：可选，模块所属部门，默认空(则为default部门)。若非空，在非本地回放时，会按部门字段读取es_url地址。es_url配置可详见：[回放Agent配置](../replayer-conf.md#5-es_url)
+
+非本地回放时，Agent只用到上面三个key值，如果业务方想在该接口顺便存储模块其他信息，只需扩充[]KV即可。
