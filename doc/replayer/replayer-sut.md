@@ -57,3 +57,21 @@ sh sut_replayer.sh stop cov //覆盖率回放
 sh sut_replayer.sh reload     //普通回放
 sh sut_replayer.sh reload cov //覆盖率回放
 ```
+
+<br>
+
+##### 3. 与Agent分开部署
+
+SUT与Agent服务可以在不同的机器分开部署，其中Agent的Mock Server监听端口3515也可以修改。
+> 分开部署
+
+  1. 启动Agent服务。参见: [Agent启动脚本](./replayer-agent.md)
+  2. 修改脚本 [./example/replayer/sut_replayer.sh](../../example/replayer/sut_replayer.sh) 里的 REPLAYER_MOCK_IP 环境变量，为Agent的ip地址。
+  3. 重启SUT服务即可。
+
+> 修改Mock Server 3515端口
+
+  1. 使用新端口 修改 [Agent配置-outbound](./replayer-conf.md#3-outbound) 字段
+  2. 重启Agent服务。参见: [Agent启动脚本](./replayer-agent.md)
+  3. 修改脚本 [./example/replayer/sut_replayer.sh](../../example/replayer/sut_replayer.sh) 里的 REPLAYER_MOCK_PORT 环境变量，为Mock Server新端口。
+  4. 重启SUT服务即可。

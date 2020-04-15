@@ -104,10 +104,6 @@ function start() {
         exit 0
     fi
 
-    # 默认值，如有需要可以修改
-    export REPLAYER_MOCK_IP="127.0.0.1"
-	  export REPLAYER_MOCK_PORT="3515"
-
     # default -parallel=10
     nohup $agent_file -cursor >> $agent_log_file 2>&1 &
     sleep 2
