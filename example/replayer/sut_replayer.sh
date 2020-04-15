@@ -84,7 +84,8 @@ function build() {
 
     cd $root
     rm -rf vendor
-    glide get 'github.com/didichuxing/sharingan/replayer'
+    # TODO: tmp for private
+    #glide get 'github.com/didichuxing/sharingan/replayer'
     if [ $? -ne 0 ]; then
         printf "${error_msg}build failed at executing glide get sharingan/replayer, please check!!!\n"
         exit 1
