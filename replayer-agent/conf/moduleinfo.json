@@ -2,7 +2,7 @@
   "data": [
     {
       "name":"example",
-      "data":"[{\"key\":\"context\",\"value\":\"localhost\"},{\"key\":\"listen-addr\",\"value\":\"127.0.0.1:9999\"}]"
+      "data":"[{\"key\":\"listen-addr\",\"value\":\"127.0.0.1:9999\"}]"
     }
   ]
 }

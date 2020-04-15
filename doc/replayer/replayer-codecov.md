@@ -1,15 +1,30 @@
 ### 覆盖率统计回放
 
+<br>
+
 覆盖率统计回放，即流量回放的同时，支持被测代码覆盖率统计，并生成覆盖率报告。
+
+<br>
 
 #### 一、接入方式
 
-##### 1. 配置并启动SUT
+回放前提：已经完成流量录制。[录制接入文档](../recorder/README.md)
+
+对于服务启动阶段有TCP请求的SUT，如初始化连接池等，推荐 服务启动顺序：
+* 先启动Agent 
+* 再启动SUT
+
+##### 1. 配置并启动Agent
+
+同 [回放接入-1. 配置并启动Agent](./README.md#1-配置并启动agent)
+
+##### 2. 配置并启动SUT
+
 > 同样需要使用定制的golang。
 
-首先，配置定制版golang环境。同 [回放接入-1. 配置并启动SUT](./README.md#1-配置并启动sut) 内定制版golang的配置操作。
+首先，配置定制版golang环境。同 [回放接入-2. 配置并启动SUT](./README.md#2-配置并启动sut) 内定制版golang的配置操作。
 ```shell script
-curl https://raw.githubusercontent.com/didichuxing/sharingan-go/recorder/install/go1.10 | sh
+curl https://github.com/didichuxing/sharingan-go/raw/recorder/install/go1.10 | sh
 && export GOROOT=/tmp/recorder-go1.10
 && export PATH=$GOROOT/bin:$PATH
 ```
@@ -24,17 +39,15 @@ go test -gcflags="all=-N -l" -tags="replayer" -v -c -covermode=count -coverpkg .
 > 相比普通回放，启动命令 多了两个参数 -systemTest -test.coverprofile。
 ```shell script
 #linux下启动：
-./$binName.test -systemTest -test.coverprofile=/tmp/ShaRinGan/coverage.$binName.cov
+nohup ./$binName.test -systemTest -test.coverprofile=/tmp/ShaRinGan/coverage.$binName.cov >> run.log 2>&1 &
 #mac下启动(务必 绝对路径 启动):
-/xx/$binName.test -systemTest -test.coverprofile=/tmp/ShaRinGan/coverage.$binName.cov
+nohup /xx/$binName.test -systemTest -test.coverprofile=/tmp/ShaRinGan/coverage.$binName.cov >> run.log 2>&1 &
 ```
-> SUT一键接入&&启动脚本([./replayer-agent/install/sut.sh](../../replayer-agent/install/sut.sh))及[使用方法](./replayer-sut.md)
+> SUT一键接入和启动[脚本](../../example/replayer/sut_replayer.sh) 及其 [使用方法](./replayer-sut.md)
 
-##### 2. 配置并启动Agent
+至此，浏览器打开 [http://127.0.0.1:8998](http://127.0.0.1:8998) 或 local_ip 即可开始回放啦~
 
-同 [回放接入-2. 配置并启动Agent](./README.md#2-配置并启动agent)
-
-至此，浏览器打开 [http://127.0.0.1:8998](http://127.0.0.1:8998) 即可开始回放啦~
+<br>
 
 #### 二、使用
 
@@ -54,7 +67,7 @@ B. [批量回放](./replayer-parallel.md)结果页
 
 > 注意：
 > 
-> a.点击 "覆盖率报告" 链接后，Agent会自动重启SUT服务。所以，覆盖率数据会重新统计。
+> a.点击 "覆盖率报告" 链接后，Agent会 **自动重启SUT服务**。所以，覆盖率数据会重新统计!!!
 >
 > b.上面两处 "覆盖率报告" 链接 点击效果一样。覆盖率统计不区分单流量回放和批量回放，会一起统计。
 
@@ -67,6 +80,7 @@ B. [批量回放](./replayer-parallel.md)结果页
 
 ![codeCover_report_detail](../images/codeCover_report_detail.png)
 
+<br>
 
 ##### 2. 支持SUT使用flag
 
@@ -76,7 +90,9 @@ a. 新增 [main_flag_test.go](../../replayer-agent/install/codeCov/main_with_fla
 
 b. 按 [main_flag.go](../../replayer-agent/install/codeCov/main_with_flag/main_flag.go) 文件注释里的TODO修改代码即可。
 
-其他接入操作不变，同 [配置并启动SUT](#1-配置并启动sut)。
+其他接入操作不变，同 [配置并启动SUT](#2-配置并启动sut)。
+
+<br>
 
 ##### 3. 历史覆盖率报告
 

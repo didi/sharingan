@@ -1,6 +1,10 @@
 # 流量回放
 
+<br>
+
 流量回放，即基于录制的流量在线下对改造后的代码进行回放，以验证线下代码逻辑的正确性。其中，流量录制可以根据需求，录制线上机器的真实流量，或者录制本地机器的测试流量。
+
+<br>
 
 ### 一、名词解释
 * **SUT**: System Under Test, 在这里特指被测业务服务。目前仅支持对外提供HTTP接口的SUT回放。
@@ -13,34 +17,17 @@
 * **噪音**: 即在Inbound Response对比和Outbound Request匹配过程里，出现的不影响回放结果和匹配度的diff字段，如时间戳。Agent回放结果页支持上报噪音，方便再次回放时精确回放结果。
 * **DSL**: 特指ElasticSearch的查询DSL。Agent首页支持上报流量查询DSL，方便后面直接复用。
 
+<br>
+
 ### 二、回放接入
 
 回放前提：已经完成流量录制。[录制接入文档](../recorder/README.md)
 
-##### 1. 配置并启动SUT
+对于服务启动阶段有TCP请求的SUT，如初始化连接池等，推荐 服务启动顺序：
+* 先启动Agent 
+* 再启动SUT
 
-> 需要使用定制的golang，并通过指定tag来编译 引入回放包的SUT代码。
-
-首先，配置定制版golang环境，目前支持go1.10、go1.11、go1.12、go1.13。亦可参考：[golang安装](https://github.com/didichuxing/sharingan-go)
-```shell script
-curl https://raw.githubusercontent.com/didichuxing/sharingan-go/recorder/install/go1.10 | sh
-&& export GOROOT=/tmp/recorder-go1.10
-&& export PATH=$GOROOT/bin:$PATH
-```
-
-然后，修改SUT的main.go代码，引入回放包。参考：[example](../../example/replayer/main.go)
-```go
-import _ "github.com/didichuxing/sharingan/replayer"
-```
-
-最后，编译并启动SUT服务。
-```shell script
-go build -tags="replayer" -gcflags="all=-N -l"
-&& nohup ./$project 2>&1 &
-```
-> SUT一键接入&&启动脚本([./example/replayer/sut_replayer.sh](../../example/replayer/sut_replayer.sh))及[使用方法](./replayer-sut.md)
-
-##### 2. 配置并启动Agent
+##### 1. 配置并启动Agent
 
 > 温馨提示：Agent默认配置的是 **[本地回放](#4本地回放)**，即 仅依赖本地配置文件的回放。
 * 如需 读取录制的线上流量，只需根据[回放Agent配置](./replayer-conf.md#5-es_url)修改es_url字段即可；
@@ -53,12 +40,38 @@ glide install || go mod download
 ```
 然后编译并启动Agent：
 ```shell script
-cd ./replayer-agent && go build && nohup ./replayer-agent 2>&1 &
+cd ./replayer-agent && go build && nohup ./replayer-agent >> run.log 2>&1 &
+```
+> Agent一键安装和启动 [脚本](../../replayer-agent/control.sh) 及其 [使用方法](./replayer-agent.md)
+
+<br>
+
+##### 2. 配置并启动SUT
+
+> 需要使用定制的golang，并通过指定tag来编译 引入回放包的SUT代码。
+
+首先，配置定制版golang环境，目前支持go1.10、go1.11、go1.12、go1.13。亦可参考：[golang安装](https://github.com/didichuxing/sharingan-go)
+```shell script
+curl https://github.com/didichuxing/sharingan-go/raw/recorder/install/go1.10 | sh
+&& export GOROOT=/tmp/recorder-go1.10
+&& export PATH=$GOROOT/bin:$PATH
 ```
 
-至此，浏览器打开 [http://127.0.0.1:8998](http://127.0.0.1:8998) 即可开始回放啦~
+然后，修改SUT的main.go代码，引入回放包。参考：[example](../../example/replayer/main.go)
+```go
+import _ "github.com/didichuxing/sharingan/replayer"
+```
 
-> Agent一键安装&&启动脚本([./replayer-agent/control.sh](../../replayer-agent/control.sh))及[使用方法](./replayer-agent.md)
+最后，编译并启动SUT服务。
+```shell script
+go build -tags="replayer" -gcflags="all=-N -l"
+&& nohup ./$project >> run.log 2>&1 &
+```
+> SUT一键接入和启动 [脚本](../../example/replayer/sut_replayer.sh) 及其 [使用方法](./replayer-sut.md)
+
+至此，浏览器打开 [http://127.0.0.1:8998](http://127.0.0.1:8998) 或 local_ip 即可开始回放啦~
+
+<br>
 
 ### 三、使用手册
 
@@ -79,7 +92,7 @@ cd ./replayer-agent && go build && nohup ./replayer-agent 2>&1 &
 
 ##### 2.覆盖率统计
 
-流量回放不仅支持上面[接入流程-配置并启动SUT](#1-配置并启动sut)展示的普通回放接入，还支持覆盖率统计方式的回放接入。
+流量回放不仅支持上面[接入流程-配置并启动SUT](#2-配置并启动sut)展示的普通回放接入，还支持覆盖率统计方式的回放接入。
 
 [覆盖率统计接入](./replayer-codecov.md)
 
@@ -98,6 +111,8 @@ Agent默认配置的本地回放，如需修改，请参考：[回放Agent配置
 
 ### 四、常见问题
 [常见问题及排查](./guide/troubleshoot.md)
+
+[交流群](./guide/troubleshoot.md#交流群)
 
 ### 五、回放原理
 [回放原理详解](./replayer-theory.md)

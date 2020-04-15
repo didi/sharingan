@@ -27,8 +27,8 @@ import (
 	"github.com/didichuxing/sharingan/replayer-agent/logic/replayed"
 	"github.com/didichuxing/sharingan/replayer-agent/logic/search"
 	"github.com/didichuxing/sharingan/replayer-agent/logic/worker"
+	"github.com/didichuxing/sharingan/replayer-agent/model/esmodel"
 	"github.com/didichuxing/sharingan/replayer-agent/model/nuwaplt"
-	"github.com/didichuxing/sharingan/replayer-agent/model/originmodel"
 	"github.com/didichuxing/sharingan/replayer-agent/utils/helper"
 
 	jsoniter "github.com/json-iterator/go"
@@ -227,13 +227,13 @@ func (srg ShaRinGan) Session(w http.ResponseWriter, r *http.Request, ps httprout
 
 		//原始流量格式
 		for _, flow := range contents {
-			traffic := &originmodel.IDSource{}
+			traffic := &esmodel.SessionId{}
 			err := json.Unmarshal([]byte(flow), traffic)
 			if err != nil {
 				tlog.Handler.Warnf(r.Context(), tlog.DLTagUndefined, "errmsg= Failed at UmMarshal origin traffic||err=%s", err.Error())
 				continue
 			}
-			if traffic.Data.Id == sid {
+			if traffic.Id == sid {
 				bodyByte = []byte(flow)
 				break
 			}
