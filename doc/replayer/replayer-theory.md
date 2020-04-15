@@ -35,7 +35,7 @@ func Connect(fd int, sa Sockaddr) (err error) {
 
 [sharingan/replayer](../../replayer) 包拦截了SUT的Outbound请求，将其转发给Agent的Mock Server。
 
-![replay-theory](../wiki/images/replay_theory.png)
+![replay-theory](https://github.com/didichuxing/sharingan/raw/master/doc/wiki/images/replay_theory.png)
 
 如上图，回放剧本的传递过程如下：
   1. 用户浏览Web Server首页(:8998)，筛选一个流量，点击回放
@@ -66,7 +66,7 @@ Mock Server有个非常重要的工作，就是匹配Outbound请求，这直接�
 
 下面简化下匹配算法核心步骤：
 
-![replay-match](../wiki/images/replay_match.png)
+![replay-match](https://github.com/didichuxing/sharingan/raw/master/doc/wiki/images/replay_match.png)
 
 a) 匹配当前请求时，若上一次匹配成功，则从上一次匹配成功的请求（lastMatchedIndex）的下一个请求开始匹配，否则就从第一个请求开始匹配；
 
@@ -91,7 +91,7 @@ c) 判断权重最高的Outbound请求是否达标（权重是否超过阈值）
 
 ### 1. 并发原理
 
-![replay_parallel](../wiki/images/replay_parallel.png)
+![replay_parallel](https://github.com/didichuxing/sharingan/raw/master/doc/wiki/images/replay_parallel.png)
 
 如上图，基本思路如下：
 
@@ -160,7 +160,7 @@ func GetCurrentGoRoutineId() int64 {
 
 流量回放是将过去发生的流量在当下进行回放，对于那些对时间敏感的流量，回放失败率很高。
 
-为了能实现将 回放时间 倒回到 录制时间，参考并发回放传递sessionID的原理，回放时Web Server将录制时间戳传递给SUT服务。
+为了能实现将 回放时间 倒回到 录制时间，参考[并发回放](#五并发回放实现)传递sessionID的原理，回放时Web Server将录制时间戳传递给SUT服务。
 
 ```shell script
 // Now returns the current local time.
