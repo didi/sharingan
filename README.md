@@ -1,10 +1,12 @@
 # Sharingan
 
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/didichuxing/sharingan/blob/master/LICENSE)
+
+Sharingan，中文名：写轮眼，是漫画《火影忍者》中的一种瞳术，具有复制、幻术等能力，在幻术世界里，一切因素包括时间，地点，质量等，都由施术者掌控。
+
 ## 一、简介
 
 Sharingan（写轮眼）是一个基于golang的流量录制回放工具，录制线上真实请求流量，在线下进行回放测试，适合项目重构、回归测试等。
-
-项目取名自漫画《火影忍者》中的一种瞳术，具有复制、幻术等能力，代表人物：卡卡西、鼬。
 
 ### 1.1、背景
 
