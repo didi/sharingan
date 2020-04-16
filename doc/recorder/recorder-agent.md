@@ -4,27 +4,19 @@
 
 ## 一、快速开始
 
-### 1、要求（require）
-
-* GO >= 1.9      「官方golang，或者定制版本golang都可以」
-* glide or gomod 「其它包管理方式参考」
-
-### 2、编译（build）
+### 1、编译（build）
 
 ```shell
+# 定制版或者官方golang都可以，需要1.9+版本
 export GOROOT=/path/to/your/GOROOT
 export PATH=$GOROOT/bin:$PATH
 
-# gomod方式忽略
-export GOPATH=/path/to/your/GOPATH
-cd /path/to/your/sharingan
-glide install
-
+# 默认使用gomod方式进行包管理，其它方式参考实现
 cd /path/to/your/sharingan/recorder-agent
 sh control.sh build
 ```
 
-### 3、启动（start）
+### 2、启动（start）
 
 ```shell
 cd /path/to/your/sharingan/recorder-agent

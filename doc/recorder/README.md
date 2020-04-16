@@ -1,6 +1,6 @@
 # 流量录制
 
-录制服务真实请求流量，为后续流量回放提供数据支持
+录制服务真实请求流量，为后续流量回放提供数据支持。
 
 ## 一、接入流程
 
@@ -10,8 +10,8 @@
 * 参考：[golang安装](https://github.com/didichuxing/sharingan-go)
 
 ```shell
-# go1.10使用示例
-$ curl https://raw.githubusercontent.com/didichuxing/sharingan-go/recorder/install/go1.10 | sh
+# go1.13使用示例
+$ curl https://raw.githubusercontent.com/didichuxing/sharingan-go/recorder/install/go1.13 | sh
 $ export GOROOT=/tmp/recorder-go1.10
 $ export PATH=$GOROOT/bin:$PATH
 ```
@@ -24,15 +24,16 @@ $ export PATH=$GOROOT/bin:$PATH
 import _ "github.com/didichuxing/sharingan/recorder"
 ```
 
-* 参考：[example](https://github.com/didichuxing/sharingan/blob/master/example/recorder/main.go)
+* 引入包要在业务包之前，保证流量到来之前录制包已经初始化
+* 参考：[example](https://github.com/didichuxing/sharingan/blob/master/example/main.go)
 
 #### 2.2、特殊设置【非必须】
 
 * 背景：使用goroutine对外网络调用时，需要显示的传递goroutineID，否则整个请求流程无法串联起来
 * tip1：定时任务的流量不会录制，涉及到的代码不需要修改。「我们只录制对外http接口整个流程的流量」
 * tip2：http请求主流程不关心结果的异步网络调用，不需要设置。「我们只录制http请求阶段确定的流量」
-* tip3：常见的第三方包「http、redis、mysql、thrift等」，经测试都可以正常进行录制，不需要修改
-* tip4：回放的时候如果出现线上outbound请求Miss，很有可能是没有特殊设置导致，下次上线补上就行
+* tip3：常见的第三方包「http、redis、mysql、thrift等」，经测试都可以正常进行录制，不需要修改。
+* tip4：回放的时候如果出现线上outbound请求Miss，很有可能是没有特殊设置导致，下次上线补上就行。
 
 ```go
 import "github.com/didichuxing/sharingan/recorder"
@@ -67,6 +68,9 @@ export RECORDER_TO_FILE=/tmp/recorder.log // 指定文件存储，确保目录�
 cd /path/to/your/project && ./$project    // 使用上一步编译生成二进制文件启动项目
 ```
 
+* 录制成功标志：指定文件/tmp/recorder.log存在流量，一条流量占一行。
+* 线下流量回放，参考：[本地回放](https://github.com/didichuxing/sharingan/blob/master/doc/replayer/replayer-local.md)。
+
 #### 4.2、线上流量录制「流量发送给recorder-agent」
 
 ```shell
@@ -76,8 +80,10 @@ cd /path/to/your/project && ./$project      // 使用上一步编译生成二进
 ```
 
 * 启动recorder-agent：[recorder-agent](https://github.com/didichuxing/sharingan/blob/master/doc/recorder/recorder-agent.md)
+* 录制成功标志：/path/to/your/sharingan/recorder-agent/log/recorder.log存在流量，一条流量占一行。
+* 线上流量回放，参考：[流量回放](https://github.com/didichuxing/sharingan/tree/master/doc/replayer)。
 
-## 二、最佳实践【**强烈推荐**】
+## 二、最佳实践【**线上流量录制，强烈推荐**】
 
 ### 1、编译「生成两个bin文件」
 
