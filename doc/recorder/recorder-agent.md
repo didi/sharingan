@@ -1,40 +1,21 @@
-# 流量录制 - agent
+# 流量录制 - recorder-agent
 
 功能：接受录制的流量，进行流量筛选、比例控制等，最终存入本地日志文件
 
-## 一、快速开始
+## 一、启动
 
-### 1、编译（build）
+### 1、依赖
 
-```shell
-# 定制版或者官方golang都可以，需要1.9+版本
-export GOROOT=/path/to/your/GOROOT
-export PATH=$GOROOT/bin:$PATH
+* go >= 1.9  「定制版或者官方golang都可以」
+* gomod      「默认使用gomod方式进行包管理，其它方式参考」
 
-# 默认使用gomod方式进行包管理，其它方式参考实现
-cd /path/to/your/sharingan/recorder-agent
-sh control.sh build
-```
-
-### 2、启动（start）
+### 2、编译 && 启动
 
 ```shell
-cd /path/to/your/sharingan/recorder-agent
-sh control.sh start
-```
-
-### 3、停止（stop）
-
-```shell
-cd /path/to/your/sharingan/recorder-agent
-sh control.sh stop
-```
-
-### 4、重启（reload）
-
-```shell
-cd /path/to/your/sharingan/recorder-agent
-sh control.sh reload
+git clone https://github.com/didichuxing/sharingan.git
+cd sharingan/recorder-agent
+go build
+nohup ./recorder-agent >> run.log 2>&1 &
 ```
 
 ## 二、日志收集
@@ -63,3 +44,7 @@ sh control.sh reload
 
 位置：/path/to/your/sharingan/recorder-agent/conf/app.toml
 默认：9003
+
+### 2、录制比例
+
+默认每个接口（根据URI区分）按照1qps录制，可以扩展或者重写recorder-agent根据需要控制比例。
