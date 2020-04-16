@@ -34,15 +34,14 @@ Sharingan（写轮眼）是一个基于golang的流量录制回放工具，录�
 ### 2.1、使用示例
 
 ```shell
-# Step1: 使用定制版golang，以mac go1.13为例，更多方式参考：https://github.com/didichuxing/sharingan-go/tree/recorder
-$ wget https://github.com/didichuxing/sharingan-go/releases/download/go1.13.recorder/go1.13.darwin-amd64.tar.gz
-$ tar -zxvf go1.13.darwin-amd64.tar.gz -C /tmp/recorder-go1.13 --strip-components=1
-$ export GOROOT=/tmp/recorder-go1.13
-$ export PATH=$GOROOT/bin:$PATH
-
-# Step2: 下载sharingan项目
+# Step1: 下载sharingan项目
 $ git clone https://github.com/didichuxing/sharingan.git
 $ cd sharingan
+
+# Step2: 使用定制版golang，以go1.13为例
+$ sh install.sh go1.13 # 支持go1.10 ~ go1.14，限mac、linux amd64系统
+$ export GOROOT=/tmp/recorder-go1.13
+$ export PATH=$GOROOT/bin:$PATH
 
 # Step3: 编译、后台启动replayer-agent
 $ cd replayer-agent
