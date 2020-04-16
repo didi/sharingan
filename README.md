@@ -34,8 +34,9 @@ Sharingan（写轮眼）是一个基于golang的流量录制回放工具，录�
 ### 2.1、使用示例
 
 ```shell
-# Step1: 使用定制版golang，以go1.13为例
-$ curl https://raw.githubusercontent.com/didichuxing/sharingan-go/recorder/install/go1.13 | sh
+# Step1: 使用定制版golang，以mac go1.13为例，更多方式参考：https://github.com/didichuxing/sharingan-go/tree/recorder
+$ wget https://github.com/didichuxing/sharingan-go/releases/download/go1.13.recorder/go1.13.darwin-amd64.tar.gz
+$ tar -zxvf go1.13.darwin-amd64.tar.gz -C /tmp/recorder-go1.13 --strip-components=1
 $ export GOROOT=/tmp/recorder-go1.13
 $ export PATH=$GOROOT/bin:$PATH
 
@@ -69,10 +70,10 @@ $ 页面选择要回放的流量点执行          # 内置提前录制好的3�
 
 ### 3.1、模块划分
 
-* recorder: 流量录制包，线上录制的时候项目需要引用
-* recorder-agent：流量录制agent，单独的进程启动，可以控制录制比例、流量存储等等
-* replayer: 流量回放包，线下回放的时候项目需要引用
-* replayer-agent：流量回放agent，单独的进程启动，可以查询录制流量、查询/上报噪音、流量diff、批量回放、生成覆盖率报告等等
+* recorder: 流量录制包，线上录制的时候项目需要引用。
+* recorder-agent：流量录制agent，单独的进程启动，可以控制录制比例、流量存储等等。
+* replayer: 流量回放包，线下回放的时候项目需要引用。
+* replayer-agent：流量回放agent，单独的进程启动，可以查询录制流量、查询/上报噪音、流量diff、批量回放、生成覆盖率报告等等。
 
 ### 3.2、整体架构图
 
@@ -80,19 +81,19 @@ $ 页面选择要回放的流量点执行          # 内置提前录制好的3�
 
 ### 3.3、录制方案
 
-* 修改golang源码，对外暴露Hook接口「所有改动通过官方测试用例」
-* 提供API串联不同goroutine之间的网络调用「常见的http、mysql、redis流量都不需要特别设置」
-* 提供单独的agent筛选流量、控制比例
-* 更多参考：[流量录制实现原理](https://github.com/didichuxing/sharingan/wiki/%E6%B5%81%E9%87%8F%E5%BD%95%E5%88%B6%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86)
+* 修改golang源码，对外暴露Hook接口。「所有改动通过官方测试用例」
+* 提供API串联不同goroutine之间的网络调用。「常见的http、mysql、redis流量都不需要特别设置」
+* 提供单独的agent筛选流量、控制比例。
+* 更多参考：[流量录制实现原理](https://github.com/didichuxing/sharingan/wiki/%E6%B5%81%E9%87%8F%E5%BD%95%E5%88%B6%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86)。
 
 ### 3.4、回放方案
 
-* 连接重定向：将服务所有Connect网络调用重定向到Mock Server「安装replayer-agent时候自带」
-* 流量匹配：Mock Server会根据服务真实的下游请求匹配一个返回「mock下游调用」
-* 重置时间：将程序执行时间回放到录制时刻，消除时间带来的干扰
-* 去除噪音：提供API可以将已知的噪音流量去掉，如：traceID，每次请求本来就不一样
-* 常见协议解析：会解析http、mysql、redis、thrift等协议，方便diff对比
-* 更多参考：[流量回放实现原理](https://github.com/didichuxing/sharingan/wiki/%E6%B5%81%E9%87%8F%E5%9B%9E%E6%94%BE%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86)
+* 连接重定向：将服务所有Connect网络调用重定向到Mock Server。「安装replayer-agent时候自带」
+* 流量匹配：Mock Server会根据服务真实的下游请求匹配一个返回。「mock下游调用」
+* 重置时间：将程序执行时间回放到录制时刻，消除时间带来的干扰。
+* 去除噪音：提供API可以将已知的噪音流量去掉，如：traceID，每次请求本来就不一样。
+* 常见协议解析：会解析http、mysql、redis、thrift等协议，方便diff对比。
+* 更多参考：[流量回放实现原理](https://github.com/didichuxing/sharingan/wiki/%E6%B5%81%E9%87%8F%E5%9B%9E%E6%94%BE%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86)。
 
 ## 四、效果展示
 
