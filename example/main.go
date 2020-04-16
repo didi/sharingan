@@ -6,11 +6,8 @@ import (
 	"log"
 	"net/http"
 
-	_ "net/http/pprof"
-
 	_ "github.com/didichuxing/sharingan/recorder"
 	_ "github.com/didichuxing/sharingan/replayer"
-
 	// TODO：最后import其他业务包！
 )
 
@@ -25,6 +22,7 @@ func indexHandle(w http.ResponseWriter, r *http.Request) {
 }
 
 func testHTTPRequest() {
+	// 如有需要本地启动一个8888端口提供服务
 	rsp, err := http.Get("http://127.0.0.1:8888")
 	if err != nil {
 		fmt.Printf("[testHTTPRequest][err:%v]\n", err)
