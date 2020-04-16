@@ -5,9 +5,28 @@
 #   `export GOROOT=/tmp/recorder-go1.13`
 #   `export PATH=${GOROOT}/bin:${PATH}`
 
+# set msg
+info_msg="\033[;32m[INFO]\033[0m\t"
+warn_msg="\033[;33m[WARN]\033[0m\t"
+error_msg="\033[;31m[ERROR]\033[0m\t"
+
 # only support amd64
 if [ `getconf LONG_BIT` != "64" ] ; then
-    echo "only support amd64"
+    printf "${warn_msg}-> only support amd64!!!\n"
+    exit
+fi
+
+# nead version param
+if [ ! -n "$1" ] ; then
+    printf "${warn_msg}-> please input version!!!\n"
+    printf "${info_msg}--> usage: sh install.sh go1.13\n"
+    exit
+fi
+
+# only support go1.10 ~ go1.14
+if [ "$1" != "go1.10" ] && [ "$1" != "go1.11" ] && [ "$1" != "go1.12" ] && [ "$1" != "go1.13" ] && [ "$1" != "go1.14" ]; then
+    printf "${warn_msg}-> only support go1.10 ~ go1.14!!!\n"
+    printf "${info_msg}--> usage: sh install.sh go1.13\n"
     exit
 fi
 
@@ -29,7 +48,6 @@ function install(){
 
     # download
     download_url=${GIT_URL}/releases/download/${VERSION}.recorder/${file_name}.tar.gz
-    echo "wget ${download_url} -O ${tmp_file}"
     wget ${download_url} -O ${tmp_file}
 
     # tar && set version
