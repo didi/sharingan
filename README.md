@@ -43,19 +43,19 @@ $ sh install.sh go1.13 # 支持go1.10 ~ go1.14，限mac、linux amd64系统
 $ export GOROOT=/tmp/recorder-go1.13
 $ export PATH=$GOROOT/bin:$PATH
 
-# Step3: 编译、后台启动replayer-agent
+# Step3: 编译、后台启动replayer-agent「会占用3515、8998端口」
 $ cd replayer-agent
 $ go build
-$ nohup ./replayer-agent > run.log 2>&1 &
+$ nohup ./replayer-agent >> run.log 2>&1 &
 
-# Step4: 编译、启动示例example
+# Step4: 编译、后台启动example示例「会占用9999端口」
 $ cd ../example
 $ go build -tags="replayer" -gcflags="all=-N -l"
-$ ./example
+$ nohup ./example >> run.log 2>&1 &
 
 # Step5: 打开回放页面
 $ 浏览器打开，http://127.0.0.1:8998 # 非本机替换IP即可
-$ 页面选择要回放的流量点执行          # 内置提前录制好的3条示例流量
+$ 页面选择要回放的流量点执行          # 内置提前录制好的3条example示例流量
 ```
 
 ### 2.2、接入文档
