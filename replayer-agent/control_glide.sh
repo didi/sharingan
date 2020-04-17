@@ -23,7 +23,7 @@ local_port="8998"
 # set github about go
 git_go='https://raw.githubusercontent.com/didichuxing/sharingan-go/recorder'
 install_go_md='https://github.com/golang/go#download-and-install'
-VERSION="go1.13"
+VERSION="go1.10"
 
 function install_go() {
         curl "$git_go/install/$VERSION" >> /dev/null
@@ -102,32 +102,45 @@ function install_go_tar() {
 # build
 function build() {
     if [ -z $GOROOT  ];then
+        printf "${info_msg}Installing go for you ~~~ \n"
         install_go
+    fi
+
+    which glide &> /dev/null
+    if [ $? -ne 0 ]; then
+        # install glide
+        curl https://glide.sh/get | sh
+        if [ $? -ne 0 ]; then
+            printf "${error_msg}build failed at installing glide, please check!!!\n"
+            exit 1
+        fi
     fi
 
     which go &> /dev/null
     if [ $? -ne 0 ]; then
-        printf "${error_msg}build failed at executing 'which go', please update \$PATH!!!\n"
+        printf "${error_msg}build failed at executing 'which go', please execute 'export PATH=\$GOROOT/bin:\$PATH' !!!\n"
         exit 1
-    fi
-    goVer=`go version`
-    if [[ $goVer < 'go version go1.11' ]];then
-        printf "${warn_msg}current is $goVer, go mod requires at least go1.11!!!\n"
-        install_go
     fi
 
     if [ -z $GOPATH  ];then
-        mkdir -p /tmp/replayer
-        export GOPATH=/tmp/replayer
-        printf "${warn_msg}No GOPATH, so setting GOPATH=/tmp/replayer \n"
+        prePath="/src/github.com/didichuxing/sharingan"
+        if [[ $workspace == *$prePath* ]];then
+            export GOPATH=`echo ${workspace%/src/*}`
+            if [ $? -ne 0 ]; then
+                printf "${error_msg}build failed at setting GOPATH, please check!!!\n"
+                exit 1
+            fi
+        else
+            printf "${error_msg}build failed at setting GOPATH, please check and clone sharingan to legal path!!!\n"
+            exit 1
+        fi
     fi
 
     cd $root
-    go clean -modcache
-    printf "${info_msg}go mod download, please wait~ \n"
-    go mod download
+    rm -rf vendor
+    glide install
     if [ $? -ne 0 ]; then
-        printf "${error_msg}build failed at executing go mod download, please check \$GOPROXY or try agian!!!\n"
+        printf "${error_msg}build failed at executing glide install, please check!!!\n"
         exit 1
     fi
 

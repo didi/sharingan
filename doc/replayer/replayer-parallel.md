@@ -2,18 +2,18 @@
 
 <br>
 
-为了提高测试效率，Agent还支持了 批量并发 回放。
+为了提高测试效率，Replayer-Agent还支持了 批量并发 回放。
  
 <br>
 针对 并发 及 使用 说明如下：
 
 ##### 1. 并发度
 
-Agent启动时，默认的并发度是 parallel=10。
+Replayer-Agent启动时，默认的并发度是 parallel=10。
 > 温馨提示：
 > 当批量回放的流量总数小于parallel时，并发度自动调整为流量总数大小。
 
-如需调整并发度，只需在启动Agent时增加 -parallel 参数即可。
+如需调整并发度，只需在启动Replayer-Agent时增加 -parallel 参数即可。
 ```shell script
 cd ./replayer-agent && go build && nohup ./replayer-agent -parallel=x 2>&1 &
 ```
@@ -24,7 +24,7 @@ cd ./replayer-agent && go build && nohup ./replayer-agent -parallel=x 2>&1 &
 
 ###### A. 普通使用
 
-a. 在Agent首页，输入流量筛选条件。
+a. 在Replayer-Agent首页，输入流量筛选条件。
 
 ![web_index_parallel](../images/web_index_parallel.png)
 
@@ -49,7 +49,7 @@ b. 点击 "批量回放"，即可看到下面的弹出框。
 
 对于 已经根据 [噪音/DSL 上报指南](./guide/report.md#1-dsl上报) 上报了一些DSL的用户，可以批量回放 **所有DSL** 对应的流量。
 
-a. 操作非常简单，只需保证Agent首页没有输入任何筛选条件，包括 **"时间段""** 参数。
+a. 操作非常简单，只需保证Replayer-Agent首页没有输入任何筛选条件，包括 **"时间段""** 参数。
 
 ![parallel_caidan](../images/parallel_caidan.png)
 

@@ -36,7 +36,7 @@ local_port="8998"
 git_replayer_agent='https://github.com/didichuxing/sharingan/raw/master/replayer-agent'
 git_go='https://raw.githubusercontent.com/didichuxing/sharingan-go/recorder'
 install_go_md='https://github.com/didichuxing/sharingan-go/tree/recorder'
-VERSION="go1.13"
+VERSION="go1.10"
 
 function install_go() {
         curl "$git_go/install/$VERSION" >> /dev/null
@@ -120,33 +120,49 @@ function build() {
         install_go
     fi
 
+    which glide &> /dev/null
+    if [ $? -ne 0 ]; then
+        # install glide
+        curl https://glide.sh/get | sh
+        if [ $? -ne 0 ]; then
+            printf "${error_msg}build failed at installing glide, please check!!!\n"
+            exit 1
+        fi
+    fi
+
     which go &> /dev/null
     if [ $? -ne 0 ]; then
         printf "${error_msg}build failed at executing 'which go', please execute 'export PATH=\$GOROOT/bin:\$PATH' !!!\n"
         exit 1
     fi
-    goVer=`go version`
-    if [[ $goVer < 'go version go1.11' ]];then
-        printf "${warn_msg}current is $goVer, go mod requires at least go1.11!!!\n"
-        install_go
-    fi
 
     if [ -z $GOPATH  ];then
-        mkdir -p /tmp/replayer
-        export GOPATH=/tmp/replayer
-        printf "${warn_msg}No GOPATH, so setting GOPATH=/tmp/replayer \n"
+        prePath="/src/github.com/didichuxing/sharingan"
+        if [[ $workspace == *$prePath* ]];then
+            export GOPATH=`echo ${workspace%/src/*}`
+            if [ $? -ne 0 ]; then
+                printf "${error_msg}build failed at setting GOPATH, please check!!!\n"
+                exit 1
+            fi
+        else
+            printf "${error_msg}build failed at setting GOPATH, please check and clone sharingan to legal path!!!\n"
+            exit 1
+        fi
     fi
 
     cd $root
+    rm -rf vendor
     # TODO: tmp for private
-    #go get 'github.com/didichuxing/sharingan/replayer'
-#    if [ $? -ne 0 ]; then
-#        printf "${error_msg}build failed at executing go get sharingan/replayer, please check!!!\n"
-#        exit 1
-#    fi
-    go clean -modcache
-    printf "${info_msg}go mod download, please wait~ \n"
-    go mod download
+    #glide get 'github.com/didichuxing/sharingan/replayer'
+    if [ $? -ne 0 ]; then
+        printf "${error_msg}build failed at executing glide get sharingan/replayer, please check!!!\n"
+        exit 1
+    fi
+    glide install
+    if [ $? -ne 0 ]; then
+        printf "${error_msg}build failed at executing glide install, please check!!!\n"
+        exit 1
+    fi
 
     cd $workspace
     binName=$app
