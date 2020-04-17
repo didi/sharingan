@@ -13,7 +13,7 @@ Golang的流量回放 主要基于 [sharingan/replayer](../../replayer) 包 及 
 但实际业务中，不仅会有Outbound请求，而且Outbound请求还很多，协议也各种各样。
 
 因此，流量回放首要解决的问题有：
- 1. 如何拦截SUT的Outbound请求，将其转发给Agent的Mock Server。
+ 1. 如何拦截SUT的Outbound请求，将其转发给Replayer-Agent的Mock Server。
  2. 如何在录制的流量里，选择最合适的Outbound返回给SUT。
 
 ## 二、Outbound请求拦截点
@@ -33,7 +33,7 @@ func Connect(fd int, sa Sockaddr) (err error) {
 
 ## 三、回放剧本传递
 
-[sharingan/replayer](../../replayer) 包拦截了SUT的Outbound请求，将其转发给Agent的Mock Server。
+[sharingan/replayer](../../replayer) 包拦截了SUT的Outbound请求，将其转发给Replayer-Agent的Mock Server。
 
 ![replay-theory](https://github.com/didichuxing/sharingan/raw/master/doc/wiki/images/replay_theory.png)
 

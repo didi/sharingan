@@ -2,7 +2,13 @@
 
 <br>
 
-[./example/replayer/sut_replayer.sh](../../example/replayer/sut_replayer.sh) 脚本是 [流量回放-2. 配置并启动SUT](./README.md#2-配置并启动sut) 示例 example 的一键安装和启动脚本。 
+[./example/replayer/sut_replayer.sh](../../example/replayer/sut_replayer.sh) 脚本是 [流量回放-2. 配置并启动SUT](./README.md#2-配置并启动sut) 示例 example 的一键安装和启动脚本。
+
+* go mod方式脚本：[./example/replayer/sut_replayer_gomod.sh](../../example/replayer/sut_replayer_gomod.sh) 。对于没有GO环境的机器，会自动安装golang1.13，并设置GOROOT、GOPATH。
+
+* glide方式脚本： [./example/replayer/sut_replayer_glide.sh](../../example/replayer/sut_replayer_glide.sh) 。对于没有GO环境的机器，会自动安装golang1.10、glide，并设置GOROOT、GOPATH。
+
+sut_replayer.sh 默认使用 go mod方式，即sut_replayer_gomod.sh 脚本。
 
 <br>
 
@@ -17,20 +23,23 @@
 
 ##### 2. 使用
 
-下面的命令都是基于 **sharingan/example/replayer** 操作的，相当于SUT的根目录。
+下面的命令都是基于 **sharingan/example/replayer** 名录操作的，相当于SUT的根目录。
 
 > 构建（build）
 
 检测GO环境并编译SUT服务。
 
-此脚本默认使用glide包管理工具，对于没有GO环境的机器，会自动安装golang1.10、glide，并设置GOROOT、GOPATH。 [golang安装](https://github.com/didichuxing/sharingan-go)。
-
-使用gomod包管理的脚本即将提供~
-
 ```shell
 sh sut_replayer.sh build     //普通回放
 sh sut_replayer.sh build cov //覆盖率回放
 ```
+如果提示如下错误：
+```text
+curl: (7) Failed to connect to raw.githubusercontent.com port 443: Connection refused
+```
+可能是raw.githubusercontent.com域名不通，建议配置个代理；或者 配置hosts (151.101.108.133 raw.githubusercontent.com)；再或者 自己安装go后，重新执行脚本构建。可参考: [sharingan-go安装](https://github.com/didichuxing/sharingan-go/tree/recorder)
+
+<br>
 
 > 启动（start）
 
@@ -39,6 +48,7 @@ sh sut_replayer.sh build cov //覆盖率回放
 sh sut_replayer.sh start     //普通回放
 sh sut_replayer.sh start cov //覆盖率回放
 ```
+<br>
 
 > 停止（stop）
 
@@ -50,6 +60,8 @@ sh sut_replayer.sh stop cov //覆盖率回放
 停止SUT时，覆盖率回放方式 会给出覆盖率报告 及 可以直接查看的html链接。覆盖率报告详细说明：[覆盖率报告](./replayer-codecov.md#1-覆盖率报告)
 ![shell_sut_cov_stop](../images/shell_sut_cov_stop.png)
 
+<br>
+
 > 重启（reload）
 
 重启SUT服务。
@@ -60,18 +72,18 @@ sh sut_replayer.sh reload cov //覆盖率回放
 
 <br>
 
-##### 3. 与Agent分开部署
+##### 3. 与Replayer-Agent分开部署
 
-SUT与Agent服务可以在不同的机器分开部署，其中Agent的Mock Server监听端口3515也可以修改。
+SUT与Replayer-Agent服务可以在不同的机器分开部署，其中Replayer-Agent的Mock Server监听端口3515也可以修改。
 > 分开部署
 
-  1. 启动Agent服务。参见: [Agent启动脚本](./replayer-agent.md)
-  2. 修改脚本 [./example/replayer/sut_replayer.sh](../../example/replayer/sut_replayer.sh) 里的 REPLAYER_MOCK_IP 环境变量，为Agent的ip地址。
+  1. 启动Replayer-Agent服务。参见: [Replayer-Agent启动脚本](./replayer-agent.md)
+  2. 修改脚本 [./example/replayer/sut_replayer.sh](../../example/replayer/sut_replayer.sh) 里的 REPLAYER_MOCK_IP 环境变量，为Replayer-Agent的ip地址。
   3. 重启SUT服务即可。
 
 > 修改Mock Server 3515端口
 
-  1. 使用新端口 修改 [Agent配置-outbound](./replayer-conf.md#3-outbound) 字段
-  2. 重启Agent服务。参见: [Agent启动脚本](./replayer-agent.md)
+  1. 使用新端口 修改 [Replayer-Agent配置-outbound](./replayer-conf.md#3-outbound) 字段
+  2. 重启Replayer-Agent服务。参见: [Replayer-Agent启动脚本](./replayer-agent.md)
   3. 修改脚本 [./example/replayer/sut_replayer.sh](../../example/replayer/sut_replayer.sh) 里的 REPLAYER_MOCK_PORT 环境变量，为Mock Server新端口。
   4. 重启SUT服务即可。

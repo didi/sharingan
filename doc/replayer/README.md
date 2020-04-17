@@ -11,11 +11,11 @@
 * **Inbound**: 指SUT对外提供的HTTP接口的请求和响应，即Inbound Request/Response。
 * **Outbound**: 指SUT提供的http接口内调用的下游请求和响应，即Outboud Request/Response。目前支持的Outbound协议有 MYSQL、REDIS、HTTP、Binary Thrift、Compact Thrift。
 * **流量**: 指在TCP层对SUT录制的Inbound请求/响应 和 对应的Outbound请求/响应。
-* **回放**: 基于录制的一条流量，Agent根据Inbound Request构造HTTP Request并对SUT发起请求；其中SUT的Outbound请求会发送到Mock Server进行流量匹配并返回Outbound响应；最后，Agent将收到的SUT HTTP Response与Inbound Response做对比，给出回放结果。
-* **Agent**: 包括回放过程的Web Server和Mock Server。其中Web Server默认监听8998端口，主要负责流量搜索，回放请求的构造和发起，以及回放结果的对比和展示。
+* **回放**: 基于录制的一条流量，Replayer-Agent根据Inbound Request构造HTTP Request并对SUT发起请求；其中SUT的Outbound请求会发送到Mock Server进行流量匹配并返回Outbound响应；最后，Replayer-Agent将收到的SUT HTTP Response与Inbound Response做对比，给出回放结果。
+* **Replayer-Agent**: 包括回放过程的Web Server和Mock Server。其中Web Server默认监听8998端口，主要负责流量搜索，回放请求的构造和发起，以及回放结果的对比和展示。
 * **Mock Server**: 默认监听**3515**端口，主要负责接收SUT的下游请求，然后与回放流量的Outbound请求匹配，将最匹配的Outbound响应返回SUT。
-* **噪音**: 即在Inbound Response对比和Outbound Request匹配过程里，出现的不影响回放结果和匹配度的diff字段，如时间戳。Agent回放结果页支持上报噪音，方便再次回放时精确回放结果。
-* **DSL**: 特指ElasticSearch的查询DSL。Agent首页支持上报流量查询DSL，方便后面直接复用。
+* **噪音**: 即在Inbound Response对比和Outbound Request匹配过程里，出现的不影响回放结果和匹配度的diff字段，如时间戳。Replayer-Agent回放结果页支持上报噪音，方便再次回放时精确回放结果。
+* **DSL**: 特指ElasticSearch的查询DSL。Replayer-Agent首页支持上报流量查询DSL，方便后面直接复用。
 
 <br>
 
@@ -24,25 +24,26 @@
 回放前提：已经完成流量录制。[录制接入文档](../recorder/README.md)
 
 对于服务启动阶段有TCP请求的SUT，如初始化连接池等，推荐 服务启动顺序：
-* 先启动Agent 
+* 先启动Replayer-Agent 
 * 再启动SUT
 
-#### 1. 配置并启动Agent
+#### 1. 配置并启动Replayer-Agent
 
-> 温馨提示：Agent默认配置的是 **[本地回放](#4本地回放)**，即 仅依赖本地配置文件的回放。
-* 如需 读取录制的线上流量，只需根据[回放Agent配置](./replayer-conf.md#5-es_url)修改es_url字段即可；
-* 如需 读取上报到自有服务的噪音或DSL，只需根据[回放Agent配置](./replayer-conf.md#4-http_api)修改http_api字段即可；
+> 温馨提示：Replayer-Agent默认配置的是 **[本地回放](#4本地回放)**，即 仅依赖本地配置文件的回放。
+* 如需 读取录制的线上流量，只需根据[Replayer-Agent配置](./replayer-conf.md#5-es_url)修改es_url字段即可；
+* 如需 读取上报到自有服务的噪音或DSL，只需根据[Replayer-Agent配置](./replayer-conf.md#4-http_api)修改http_api字段即可；
 * 如需 新增本地回放模块，请参考[本地回放接入](./replayer-local.md)。
 
 首先，确保本地存在go环境(官方或定制版均可，且版本无要求), 并根据本地go版本选择go mod或glide来安装sharingan的依赖。
 ```shell script
-glide install || go mod download
+git clone https://github.com/didichuxing/sharingan.git
+&& cd sharingan && go mod download // 低版本go执行 glide install 
 ```
-然后编译并启动Agent：
+然后编译并启动Replayer-Agent：
 ```shell script
 cd ./replayer-agent && go build && nohup ./replayer-agent >> run.log 2>&1 &
 ```
-> Agent一键安装和启动 [脚本](../../replayer-agent/control.sh) 及其 [使用方法](./replayer-agent.md)
+> Replayer-Agent一键安装和启动 [脚本](../../replayer-agent/control.sh) 及其 [使用方法](./replayer-agent.md)
 
 <br>
 
@@ -50,10 +51,10 @@ cd ./replayer-agent && go build && nohup ./replayer-agent >> run.log 2>&1 &
 
 > 需要使用定制的golang，并通过指定tag来编译 引入回放包的SUT代码。
 
-首先，配置定制版golang环境，目前支持go1.10、go1.11、go1.12、go1.13。亦可参考：[golang安装](https://github.com/didichuxing/sharingan-go)
+首先，配置定制版golang环境，目前支持go1.10、go1.11、go1.12、go1.13。亦可参考：[golang安装](https://github.com/didichuxing/sharingan-go/tree/recorder)
 ```shell script
-curl https://github.com/didichuxing/sharingan-go/raw/recorder/install/go1.10 | sh
-&& export GOROOT=/tmp/recorder-go1.10
+curl https://github.com/didichuxing/sharingan-go/raw/recorder/install/go1.13 | sh
+&& export GOROOT=/tmp/recorder-go1.13
 && export PATH=$GOROOT/bin:$PATH
 ```
 
@@ -75,7 +76,7 @@ go build -tags="replayer" -gcflags="all=-N -l"
 
 ## 三、使用手册
 
-按照上面的接入流程逐步操作 并 成功启动SUT和Agent后，即可开始回放之旅~
+按照上面的接入流程逐步操作 并 成功启动SUT和Replayer-Agent后，即可开始回放之旅~
 
 首页点击"流量查询"搜索流量后，即可点击"运行"开始回放。
 ![web_index](../images/web_index.png)
@@ -108,14 +109,14 @@ go build -tags="replayer" -gcflags="all=-N -l"
 
 [本地回放接入](./replayer-local.md)
 
-Agent默认配置的本地回放，如需修改，请参考：[回放Agent配置](./replayer-conf.md#4-http_api)
+Replayer-Agent默认配置的本地回放，如需修改，请参考：[Replayer-Agent配置](./replayer-conf.md#4-http_api)
 
-#### 5.Agent和SUT分开部署
+#### 5.Replayer-Agent和SUT分开部署
 
-如上 二-回放接入，默认将Agent和SUT部署在一台机器，其实，Agent和SUT是可以分开部署的。
+如上 二-回放接入，默认将Replayer-Agent和SUT部署在一台机器，其实，Replayer-Agent和SUT是可以分开部署的。
 
-* Agent的启动如上所示，无需改动
-* 启动SUT时，需设置环境变量 REPLAYER_MOCK_IP 为Agent的ip地址即可。详见: [SUT启动脚本-3. 与Agent分开部署](./replayer-sut.md#3-与agent分开部署)
+* Replayer-Agent的启动如上所示，无需改动
+* 启动SUT时，需设置环境变量 REPLAYER_MOCK_IP 为Replayer-Agent的ip地址即可。详见: [SUT启动脚本-3. 与Replayer-Agent分开部署](./replayer-sut.md#3-与replayer-agent分开部署)
 
 <br>
 
