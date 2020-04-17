@@ -11,12 +11,12 @@
 回放前提：已经完成流量录制。[录制接入文档](../recorder/README.md)
 
 对于服务启动阶段有TCP请求的SUT，如初始化连接池等，推荐 服务启动顺序：
-* 先启动Agent 
+* 先启动Replayer-Agent 
 * 再启动SUT
 
-##### 1. 配置并启动Agent
+##### 1. 配置并启动Replayer-Agent
 
-同 [回放接入-1. 配置并启动Agent](./README.md#1-配置并启动agent)
+同 [回放接入-1. 配置并启动Replayer-Agent](./README.md#1-配置并启动replayer-agent)
 
 ##### 2. 配置并启动SUT
 
@@ -67,7 +67,7 @@ B. [批量回放](./replayer-parallel.md)结果页
 
 > 注意：
 > 
-> a.点击 "覆盖率报告" 链接后，Agent会 **自动重启SUT服务**。所以，覆盖率数据会重新统计!!!
+> a.点击 "覆盖率报告" 链接后，Replayer-Agent会 **自动重启SUT服务**。所以，覆盖率数据会重新统计!!!
 >
 > b.上面两处 "覆盖率报告" 链接 点击效果一样。覆盖率统计不区分单流量回放和批量回放，会一起统计。
 
@@ -99,7 +99,7 @@ b. 按 [main_flag.go](../../replayer-agent/install/codeCov/main_with_flag/main_f
 历史覆盖率报告存放在本机 /tmp/ShaRinGan/ 目录下。
 
 a. 覆盖率原始报告, 命名格式 coverage.$binName.$timestamp
-> $timestamp 一般包括起始和终止两个时间戳。对于初始手动启动SUT的情况，只有终止时间戳。对于Agent自动启动SUT的情况，都有起始和终止两个时间戳。
+> $timestamp 一般包括起始和终止两个时间戳。对于初始手动启动SUT的情况，只有终止时间戳。对于Replayer-Agent自动启动SUT的情况，都有起始和终止两个时间戳。
 
 b. 格式化后的 *.html 报告，命名格式 coverage.$binName.$timestamp.html
 > 意外惊喜：历史 *.html 报告，可通过接口 http://127.0.0.1:8998/coverage/report/coverage.$binName.$timestamp.html 查看。

@@ -1,13 +1,13 @@
-### 回放Agent 配置
+### Replayer-Agent 配置
 
 <br>
 
-Agent的配置文件都在 **[./replayer-agent/conf](../../replayer-agent/conf)** 目录下。
+Replayer-Agent的配置文件都在 **[./replayer-agent/conf](../../replayer-agent/conf)** 目录下。
 
 * **conf/dsl目录**: 存放回放首页里 上报到本机的dsl数据，每个模块一个文件，以模块名为文件名。
 * **conf/noise目录**: 存放回放结果页里 上报到本机的噪音数据，每个模块一个文件，以模块名为文件名。
 * **conf/traffic目录**: 存放本机录制的测试流量，每个模块一个文件，以模块名为文件名。
-* **conf/app.toml**: Agent的核心配置文件，可以配置Web Server端口及超时时间，Mock Server端口、噪音及DSL上报到自有服务的http接口地址、流量查询的ES地址等。
+* **conf/app.toml**: Replayer-Agent的核心配置文件，可以配置Web Server端口及超时时间，Mock Server端口、噪音及DSL上报到自有服务的http接口地址、流量查询的ES地址等。
 * **conf/moduleinfo.json**: 模块配置。本地回放时，用来存放模块基本信息。
 
 <br>
@@ -18,7 +18,7 @@ Agent的配置文件都在 **[./replayer-agent/conf](../../replayer-agent/conf)*
 
 定义 Web Server 的http相关配置信息。只需要注意端口字段，其他字段使用默认值即可。
 
-* addr = ":8998"           # Agent Web Server默认监听端口，可以修改
+* addr = ":8998"           # Replayer-Agent Web Server默认监听端口，可以修改
 * handlerTimeout = 60000   # Handler timeout(ms), default 60000
 * readHeaderTimeout = 2000 # Request header timeout(ms), default 2000
 * readTimeout = 5000       # Recieve http request timeout(ms), including the body, default 5000
@@ -82,9 +82,9 @@ Agent的配置文件都在 **[./replayer-agent/conf](../../replayer-agent/conf)*
 
 default字段非空时，支持不同业务部门的模块读取自不同的es地址。
 
-> 如果 模块信息未配置department字段，即 未定义所属部门信息，则统一使用default配置的es地址。[回放模块配置](./conf/moduleinfo.md)
+> 如果 模块信息未配置department字段，即 未定义所属部门信息，则统一使用default配置的es地址。
 > 
->如果定义了所属部门信息，如department=Biz，则新增下面配置即可。
+> 如果定义了所属部门信息，如department=Biz (参见 [回放模块配置](./conf/moduleinfo.md) example2。)，则新增下面配置即可。
 
 * Biz = "http://{{es_domain}}/xxx"
 

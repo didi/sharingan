@@ -18,6 +18,10 @@
     {
       "name":"example",
       "data":"[{\"key\":\"listen-addr\",\"value\":\"127.0.0.1:9999\"}]"
+    },
+    {
+      "name": "example2",
+      "data": "[{\"key\":\"listen-addr\",\"value\":\"10.179.84.1:8888\"},{\"key\":\"department\",\"value\":\"Biz\"}]"
     }
   ]
 }
@@ -35,11 +39,15 @@
 | name | string | 模块名 |
 | data | string | []KV类型的json串，存储模块详细信息 |
 
+<br>
+
 > 温馨提示：
 >
 > name尽量与编译后的$binName保持一致。如果存在冲突，可以增加前缀'\*-'，即\*-$binName。
 >
 > 如果name形如'\*a-b-c'，则尽量保证c具有可识别性，因为，[覆盖率统计回放](../replayer-codecov.md#1-覆盖率报告)会通过 *c* 来获取SUT进程信息并重启SUT。
+
+<br>
 
 | KV类型说明 | 类型 | 说明 |
 | :-----| :----- | :----- |
@@ -49,4 +57,4 @@
 本地回放时，KV类型中key只需支持一个"listen-addr"即可：
 * listen-addr：必选，SUT的监听地址，一般为127.0.0.1:xxxx。
 
-* department：可选，模块所属部门，默认空(则为default部门)。非空时，同时流量配置的读取自ES，则 会按部门字段读取es_url地址。es_url配置可详见：[回放Agent配置](../replayer-conf.md#5-es_url)
+* department：可选，模块所属部门，默认空(则为default部门)。非空时，同时流量配置的读取自ES，则 会按部门字段读取es_url地址。es_url配置可详见：[Replayer-Agent配置](../replayer-conf.md#5-es_url)
