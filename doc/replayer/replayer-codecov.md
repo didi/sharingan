@@ -24,8 +24,8 @@
 
 首先，配置定制版golang环境。同 [回放接入-2. 配置并启动SUT](./README.md#2-配置并启动sut) 内定制版golang的配置操作。
 ```shell script
-curl https://github.com/didichuxing/sharingan-go/raw/recorder/install/go1.10 | sh
-&& export GOROOT=/tmp/recorder-go1.10
+curl https://github.com/didichuxing/sharingan-go/raw/recorder/install/go1.13 | sh
+&& export GOROOT=/tmp/recorder-go1.13
 && export PATH=$GOROOT/bin:$PATH
 ```
 然后，新增 [main_test.go](../../replayer-agent/install/codeCov/main_test.go) 文件到SUT的根目录。(对于[支持flag的SUT](#2-支持sut使用flag)，仅此步不同)

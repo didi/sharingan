@@ -107,7 +107,7 @@ $ 页面选择要回放的流量点执行          # 内置提前录制好的3�
 
 #### 4.1.2、批量回放
 
-批量回放的并发度默认是10，可通过增加[-parallel](https://github.com/didichuxing/sharingan/blob/master/replayer-agent/control.sh#L48)参数修改。
+批量回放的并发度默认是10，可通过增加[-parallel](https://github.com/didichuxing/sharingan/blob/master/replayer-agent/control.sh#L160)参数修改。
 ![main](./doc/images/replayer_p.png)
 
 ### 4.2、覆盖率报告
@@ -134,3 +134,7 @@ $ 页面选择要回放的流量点执行          # 内置提前录制好的3�
 ### 5.3、感谢
 
 特别感谢 [TaoWen](https://github.com/taowen) ，流量录制和回放初版设计者
+
+### 5.4、联系我们
+
+不管有任何问题，欢迎加入 [Sharingan QQ交流群](./doc/replayer/guide/troubleshoot.md#交流群) 一起交流探讨~
