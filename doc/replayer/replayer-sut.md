@@ -2,13 +2,13 @@
 
 <br>
 
-[./example/replayer/sut_replayer.sh](../../example/replayer/sut_replayer.sh) 脚本是 [流量回放-2. 配置并启动SUT](./README.md#2-配置并启动sut) 示例 example 的一键安装和启动脚本。
+sut_replayer.sh 脚本是 [流量回放-2. 配置并启动SUT](./README.md#2-配置并启动sut) 示例 example 的一键安装和启动脚本，目前支持如下两种方式： 
 
-* go mod方式脚本：[./example/replayer/sut_replayer_gomod.sh](../../example/replayer/sut_replayer_gomod.sh) 。对于没有GO环境的机器，会自动安装golang1.13，并设置GOROOT、GOPATH。
+* go mod方式：[./example/replayer/sut_replayer_gomod.sh](../../example/replayer/sut_replayer_gomod.sh) 。对于没有GO环境的机器，会自动安装golang1.13，并设置GOROOT、GOPATH。
 
-* glide方式脚本： [./example/replayer/sut_replayer_glide.sh](../../example/replayer/sut_replayer_glide.sh) 。对于没有GO环境的机器，会自动安装golang1.10、glide，并设置GOROOT、GOPATH。
+* glide方式： [./example/replayer/sut_replayer_glide.sh](../../example/replayer/sut_replayer_glide.sh) 。对于没有GO环境的机器，会自动安装golang1.10、glide，并设置GOROOT、GOPATH。
 
-sut_replayer.sh 默认使用 go mod方式，即sut_replayer_gomod.sh 脚本。
+sut_replayer.sh 默认使用 **go mod方式**，即 sut_replayer_gomod.sh 脚本。
 
 <br>
 

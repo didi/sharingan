@@ -2,12 +2,12 @@
 
 <br>
 
-[./replayer-agent/control.sh](../../replayer-agent/control.sh) 脚本是 [流量回放-1. 配置并启动Replayer-Agent](./README.md#1-配置并启动replayer-agent) 的一键安装和启动脚本。 
+control.sh 脚本是 [流量回放-1. 配置并启动Replayer-Agent](./README.md#1-配置并启动replayer-agent) 的一键安装和启动脚本，目前支持如下两种方式： 
 
-* go mod方式脚本：[./replayer-agent/control_gomod.sh](../../replayer-agent/control_gomod.sh) 。对于没有GO环境的机器，会自动安装golang1.13，并设置GOROOT、GOPATH。
-* glide方式脚本：[./replayer-agent/control_glide.sh](../../replayer-agent/control_glide.sh) 。对于没有GO环境的机器，会自动安装golang1.10、glide，并设置GOROOT、GOPATH。
+* go mod方式：[./replayer-agent/control_gomod.sh](../../replayer-agent/control_gomod.sh) 。对于没有GO环境的机器，会自动安装golang1.13，并设置GOROOT、GOPATH。
+* glide方式：[./replayer-agent/control_glide.sh](../../replayer-agent/control_glide.sh) 。对于没有GO环境的机器，会自动安装golang1.10、glide，并设置GOROOT、GOPATH。
 
-control.sh 默认使用 go mod方式，即control_gomod.sh 脚本。
+control.sh 默认使用 **go mod方式**，即 control_gomod.sh 脚本。
 
 <br>
 
