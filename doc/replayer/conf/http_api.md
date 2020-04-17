@@ -9,7 +9,7 @@
 
 <br>
 
-回放Agent默认配置的是本地回放；对于想将 噪音、DSL、模块信息存入数据库的同学，请仔细阅读下面接口说明。
+Replayer-Agent默认配置的是本地回放；对于想将 噪音、DSL、模块信息存入数据库的同学，请仔细阅读下面接口说明。
 > 温馨提示：
 >
 > 接口实现 只要字段名和字段类型符合接口说明即可，**至于字段的具体值无需担心，因为所有的值都会通过前端js处理后传给后端，比如dsl字段、noise字段等**。
@@ -72,7 +72,7 @@
 
 接口: http://{{your_domain}}/noise
 
-定义 噪音上报接口。在回放结果页，可以上报回放结果里的diff噪音。对于上报过的噪音，回放Agent会在对比回放结果时过滤对应噪音字段，提升回放成功率。若noise_push为空，则 存入本地 [conf/noise](../../../replayer-agent/conf/noise) 下的配置文件。
+定义 噪音上报接口。在回放结果页，可以上报回放结果里的diff噪音。对于上报过的噪音，Replayer-Agent会在对比回放结果时过滤对应噪音字段，提升回放成功率。若noise_push为空，则 存入本地 [conf/noise](../../../replayer-agent/conf/noise) 下的配置文件。
 
 ![push_noise](../../images/push_noise.png)
 
@@ -189,6 +189,6 @@
 
 * listen-addr：必选，SUT的监听地址，一般为127.0.0.1:xxxx。
 
-* department：可选，模块所属部门，默认空(则为default部门)。非空时，同时流量配置的读取自ES，则 会按部门字段读取es_url地址。es_url配置可详见：[回放Agent配置](../replayer-conf.md#5-es_url)
+* department：可选，模块所属部门，默认空(则为default部门)。非空时，同时流量配置的读取自ES，则 会按部门字段读取es_url地址。es_url配置可详见：[Replayer-Agent配置](../replayer-conf.md#5-es_url)
 
-非本地回放时，Agent只用到上面三个key值，如果业务方想在该接口顺便存储模块其他信息，只需扩充[]KV即可。
+非本地回放时，Replayer-Agent只用到上面三个key值，如果业务方想在该接口顺便存储模块其他信息，只需扩充[]KV即可。

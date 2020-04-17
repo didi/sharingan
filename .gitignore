@@ -15,7 +15,7 @@ example/replayer/example.test
 example/replayer/example
 example/replayer/sut.pid
 example/replayer/sut.log
-example/replayer/gocov
+example/replayer/gocov*
 example/replayer/gocov-html
 example/replayer/nohup.out
 
