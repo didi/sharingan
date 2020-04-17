@@ -71,8 +71,8 @@ func (r *Replayer) ReplaySession(ctx context.Context, session *replaying.Session
 
 	{
 		// add header
-		traceHeader := fmt.Sprintf("\r\nSharingan-Replayer-TraceID : %s", traceID)
-		timeHeader := fmt.Sprintf("\r\nSharingan-Replayer-Time : %d", session.CallFromInbound.OccurredAt)
+		traceHeader := fmt.Sprintf("\r\nSharingan-Replayer-Traceid: %s", traceID)
+		timeHeader := fmt.Sprintf("\r\nSharingan-Replayer-Time: %d", session.CallFromInbound.OccurredAt)
 		s := bytes.Split(request, []byte("\r\n"))
 		s[0] = append(s[0], []byte(traceHeader+timeHeader)...)
 		request = bytes.Join(s, []byte("\r\n"))
