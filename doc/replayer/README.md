@@ -37,7 +37,7 @@
 首先，确保本地存在go环境(官方或定制版均可，且版本无要求), 并根据本地go版本选择go mod或glide来安装sharingan的依赖。
 ```shell script
 git clone https://github.com/didichuxing/sharingan.git
-&& cd sharingan && go mod download // 低版本go执行 glide install 
+&& cd sharingan && go mod download # 低版本go执行 glide install 
 ```
 然后编译并启动Replayer-Agent：
 ```shell script

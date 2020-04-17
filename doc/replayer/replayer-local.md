@@ -16,12 +16,10 @@ Replayer-Agent默认的接入方式是[本地回放](./README.md#4本地回放)�
 
 >步骤b. 修改app.toml
 
-修改 [conf/app.toml](../../replayer-agent/conf/app.toml) 配置，让流量、DSL、噪音等优先读写本地配置文件，而不是http接口。
+修改 [conf/app.toml](../../replayer-agent/conf/app.toml) 配置，让流量、DSL、噪音等优先读写本地配置文件。字段详见: [Replayer-Agent配置](./replayer-conf.md)
 
-1. 注释掉http_api下的所有字段
-2. 注释掉es_url下的所有字段
-
-各配置字段含义详见: [Replayer-Agent配置](./replayer-conf.md)
+  * 注释掉http_api下的所有字段 (噪音/DSL读取本地)
+  * 注释掉es_url下的所有字段 (流量读取本地)
 
 <br>
 
@@ -29,4 +27,12 @@ Replayer-Agent默认的接入方式是[本地回放](./README.md#4本地回放)�
 
 将录制流量存入 [conf/traffic](../../replayer-agent/conf/traffic) 下，文件名为模块project值
 
+<br>
+
 **至此，就可以开始 仅依赖本地配置文件的 本地回放啦~**
+
+<br>
+
+> 温馨提示：
+>
+>模块、噪音、DSL、流量可以独立配置。比如 只配置流量读取es，其他都读取本地文件。
