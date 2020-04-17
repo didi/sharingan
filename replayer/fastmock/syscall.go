@@ -19,8 +19,8 @@ import (
 
 var (
 	// inbound 流量标识
-	traceRegex = regexp.MustCompile(`Sharingan-Replayer-TraceID : (\w{32})\r\n`)
-	timeRegex  = regexp.MustCompile(`Sharingan-Replayer-Time : (\d{19})\r\n`)
+	traceRegex = regexp.MustCompile(`Sharingan-Replayer-Traceid: (\w{32})\r\n`)
+	timeRegex  = regexp.MustCompile(`Sharingan-Replayer-Time: (\d{19})\r\n`)
 
 	// traffic 前缀
 	trafficPrefix = `/*{"rid":"%s","addr":"%s"}*/`

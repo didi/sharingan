@@ -140,13 +140,8 @@ func (cs *ConnState) rmTrafixPrefix(ctx context.Context, request []byte) []byte 
 		cs.traceID = string(ss[0][1])
 		cs.proxyAddr = string(ss[0][2])
 
-		// 1、分段传输的场景，要把所有的前缀相关内容去掉
+		// 分段传输的场景，要把所有的前缀相关内容去掉
 		request = bytes.Replace(request, ss[0][0], []byte(""), -1)
-
-		// 2、部分Outbound请求会携带Inbound的所有header信息，需要剔除
-		// 示例：\"haringan-Replayer-Traceid\":\"64469c315e78d24e87b25cc10750e302\",
-		request = bytes.Replace(request, []byte("%22Sharingan-Replayer-Traceid%22%3A%22"+cs.traceID+"%22%2C"), []byte(""), -1)
-
 		// fmt.Printf("cs.traceID:%s, cs.proxyAddr:%s\n", cs.traceID, cs.proxyAddr)
 		// fmt.Printf("buf:%s\n", string(request))
 	}
