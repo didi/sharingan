@@ -137,4 +137,8 @@ $ 页面选择要回放的流量点执行          # 内置提前录制好的3�
 
 ### 5.4、联系我们
 
-不管有任何问题，欢迎加入 [Sharingan QQ交流群](./doc/replayer/guide/troubleshoot.md#交流群) 一起交流探讨~
+欢迎加入QQ交流群「群号:417146801」一起交流~
+
+![QQ](./doc/images/QQ.JPG)
+
+Tips：联系QQ群主可拉入微信交流群
