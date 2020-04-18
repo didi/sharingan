@@ -133,5 +133,5 @@ fi
 
 ### 2、支持情况
 
-* 常见协议流量录制都支持，如：http、mysql、redis、thrift等等。
-* 不支持https流量录制。
+* 不支持https、http2.0(包括grpc)流量录制。
+* 支持其它常见协议，如：http1.1、thrift、mysql、redis、mongo等。
