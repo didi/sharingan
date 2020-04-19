@@ -4,36 +4,35 @@
 
 ## 一、接入流程
 
-### 1、设置$GOROOT【必须】
+### 1、使用定制版golang【必须】
 
-* 使用定制版的golang，目前支持go1.10、go1.11、go1.12、go1.13、go1.14
-* 参考：[golang安装](https://github.com/didichuxing/sharingan-go)
+* 目前支持go1.10 ~ go1.14，参考：[golang安装](https://github.com/didichuxing/sharingan-go/tree/recorder)
 
 ```shell
-# go1.13使用示例
-$ curl https://raw.githubusercontent.com/didichuxing/sharingan-go/recorder/install/go1.13 | sh
-$ export GOROOT=/tmp/recorder-go1.10
-$ export PATH=$GOROOT/bin:$PATH
+# go1.13使用示例，github域名不太稳定，失败可以换成其它方式，参考golang安装
+curl https://raw.githubusercontent.com/didichuxing/sharingan-go/recorder/install/go1.13 | sh
+export GOROOT=/tmp/recorder-go1.13
+export PATH=$GOROOT/bin:$PATH
 ```
 
 ### 2、修改项目
 
 #### 2.1、引入录制包【必须】
 
+* 引入包要在业务包之前，保证流量到来之前录制包已经初始化
+
 ```go
 import _ "github.com/didichuxing/sharingan/recorder"
 ```
 
-* 引入包要在业务包之前，保证流量到来之前录制包已经初始化
 * 参考：[example](https://github.com/didichuxing/sharingan/blob/master/example/main.go)
 
 #### 2.2、特殊设置【非必须】
 
-* 背景：使用goroutine对外网络调用时，需要显示的传递goroutineID，否则整个请求流程无法串联起来
+* 背景：使用goroutine对外网络调用时，需要显示的传递goroutineID，否则链路无法串联起来，详见：[链路追踪](https://github.com/didichuxing/sharingan/wiki/%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA)
 * tip1：定时任务的流量不会录制，涉及到的代码不需要修改。「我们只录制对外http接口整个流程的流量」
-* tip2：http请求主流程不关心结果的异步网络调用，不需要设置。「我们只录制http请求阶段确定的流量」
+* tip2：http请求主流程不等待结果的异步网络调用，不需要设置。「我们只录制http请求阶段确定的流量」
 * tip3：常见的第三方包「http、redis、mysql、thrift等」，经测试都可以正常进行录制，不需要修改。
-* tip4：回放的时候如果出现线上outbound请求Miss，很有可能是没有特殊设置导致，下次上线补上就行。
 
 ```go
 import "github.com/didichuxing/sharingan/recorder"

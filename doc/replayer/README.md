@@ -51,9 +51,9 @@ cd ./replayer-agent && go build && nohup ./replayer-agent >> run.log 2>&1 &
 
 > 需要使用定制的golang，并通过指定tag来编译 引入回放包的SUT代码。
 
-首先，配置定制版golang环境，目前支持go1.10、go1.11、go1.12、go1.13。亦可参考：[golang安装](https://github.com/didichuxing/sharingan-go/tree/recorder)
+首先，配置定制版golang环境，目前支持go1.10 ~ go1.14，参考：[golang安装](https://github.com/didichuxing/sharingan-go/tree/recorder)
 ```shell script
-curl https://github.com/didichuxing/sharingan-go/raw/recorder/install/go1.13 | sh
+curl https://raw.githubusercontent.com/didichuxing/sharingan-go/recorder/install/go1.13 | sh
 && export GOROOT=/tmp/recorder-go1.13
 && export PATH=$GOROOT/bin:$PATH
 ```
