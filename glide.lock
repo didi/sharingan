@@ -1,12 +1,12 @@
-hash: 4b4e43481c6670934ae16d7b1a7e167539d560008469ddd537ed528d6b1fe4a7
-updated: 2020-04-10T16:44:19.854929+08:00
+hash: 64b349d8db52b5c65d732fbe4f1aadc8a61ed109f600875e93fccda77ea07992
+updated: 2020-04-19T09:07:36.164202803+08:00
 imports:
 - name: github.com/agiledragon/gomonkey
   version: 0efac5c532e56ba54d129124fc3e76e8b863b214
 - name: github.com/fsnotify/fsnotify
   version: c2828203cd70a50dcccfb2761f8b1f8ceef9a8e9
 - name: github.com/golang/protobuf
-  version: 84668698ea25b64748563aa20726db66a6b8d299
+  version: 1b794fe86dd6a0c7c52ae69b5c9cb0aeedc52afa
   subpackages:
   - proto
   - ptypes
@@ -105,7 +105,7 @@ imports:
   - internal/timeseries
   - trace
 - name: golang.org/x/sys
-  version: 59c9f1ba88faf592b225274f69c5ef1e4ebacf82
+  version: 669c56c373c468cbe0f0c12b7939832b26088d33
   subpackages:
   - unix
 - name: golang.org/x/text
@@ -116,7 +116,7 @@ imports:
   - unicode/bidi
   - unicode/norm
 - name: google.golang.org/genproto
-  version: baae70f3302d3efdff74db41e48a5d476d036906
+  version: b5235f65be3618aac92278c41932e3f9007a653a
   subpackages:
   - googleapis/rpc/status
 - name: google.golang.org/grpc
@@ -159,6 +159,39 @@ imports:
   - stats
   - status
   - tap
+- name: google.golang.org/protobuf
+  version: 3b9eee12916ce611400f93d6c2fed2fc2911b0ad
+  subpackages:
+  - encoding/prototext
+  - encoding/protowire
+  - internal/descfmt
+  - internal/descopts
+  - internal/detrand
+  - internal/encoding/defval
+  - internal/encoding/messageset
+  - internal/encoding/tag
+  - internal/encoding/text
+  - internal/errors
+  - internal/fieldnum
+  - internal/fieldsort
+  - internal/filedesc
+  - internal/filetype
+  - internal/flags
+  - internal/genname
+  - internal/impl
+  - internal/mapsort
+  - internal/pragma
+  - internal/set
+  - internal/strs
+  - internal/version
+  - proto
+  - reflect/protoreflect
+  - reflect/protoregistry
+  - runtime/protoiface
+  - runtime/protoimpl
+  - types/known/anypb
+  - types/known/durationpb
+  - types/known/timestamppb
 - name: gopkg.in/go-playground/validator.v8
   version: 5f57d2222ad794d0dffb07e664ea05e2ee07d60c
 - name: gopkg.in/ini.v1
