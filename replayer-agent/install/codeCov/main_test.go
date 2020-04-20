@@ -8,7 +8,7 @@ import (
 	"syscall"
 	"testing"
 
-	_ "github.com/didichuxing/sharingan/replayer"
+	_ "github.com/didichuxing/sharingan"
 )
 
 var systemTest *bool

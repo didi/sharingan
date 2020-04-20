@@ -17,12 +17,12 @@ export PATH=$GOROOT/bin:$PATH
 
 ### 2、修改项目
 
-#### 2.1、引入录制包【必须】
+#### 2.1、引入sharingan包【必须】
 
-* 引入包要在业务包之前，保证流量到来之前录制包已经初始化
+* 引入包要在业务包之前，保证流量到来之前已经初始化
 
 ```go
-import _ "github.com/didichuxing/sharingan/recorder"
+import _ "github.com/didichuxing/sharingan"
 ```
 
 * 参考：[example](https://github.com/didichuxing/sharingan/blob/master/example/main.go)
@@ -35,17 +35,17 @@ import _ "github.com/didichuxing/sharingan/recorder"
 * tip3：常见的第三方包「http、redis、mysql、thrift等」，经测试都可以正常进行录制，不需要修改。
 
 ```go
-import "github.com/didichuxing/sharingan/recorder"
+import "github.com/didichuxing/sharingan"
   
 // 修改之前的代码
 -   go remoteRead()
   
 // 修改之后的代码
 +   go func(delegatedID int64) {
-+       recorder.SetDelegatedFromGoRoutineID(delegatedID)
-+       defer recorder.SetDelegatedFromGoRoutineID(0)
++       sharingan.SetDelegatedFromGoRoutineID(delegatedID)
++       defer sharingan.SetDelegatedFromGoRoutineID(0)
 +       remoteRead()
-+   }(recorder.GetCurrentGoRoutineID())
++   }(sharingan.GetCurrentGoRoutineID())
 ```
 
 * 参考：[example](https://github.com/didichuxing/sharingan/blob/master/example/recorder/main.go)

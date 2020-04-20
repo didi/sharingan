@@ -7,8 +7,8 @@ import (
 	"log"
 	"net/http"
 
-	// Here to import package replayer
-	_ "github.com/didichuxing/sharingan/replayer"
+	// Here to import package
+	_ "github.com/didichuxing/sharingan"
 	// TODO：Attention please! 最后import其他业务包！
 )
 

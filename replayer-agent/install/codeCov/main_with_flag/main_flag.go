@@ -8,8 +8,7 @@ import (
 	"sync"
 	"syscall"
 
-	_ "github.com/didichuxing/sharingan/replayer"
-
+	_ "github.com/didichuxing/sharingan"
 	// TODO：最后import其他业务包！
 )
 
