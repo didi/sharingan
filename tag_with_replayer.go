@@ -3,9 +3,10 @@
 package sharingan
 
 import (
+	"log"
 	"runtime"
 
-	_ "github.com/didichuxing/sharingan/replayer"
+	"github.com/didichuxing/sharingan/replayer/fastmock"
 )
 
 // GetCurrentGoRoutineID GetCurrentGoRoutineID
@@ -16,4 +17,11 @@ func GetCurrentGoRoutineID() int64 {
 // SetDelegatedFromGoRoutineID SetDelegatedFromGoRoutineID
 func SetDelegatedFromGoRoutineID(gID int64) {
 	runtime.SetDelegatedFromGoRoutineId(gID)
+}
+
+func init() {
+	fastmock.MockSyscall()
+	fastmock.MockTime()
+
+	log.Println("mode", "=====replayer=====")
 }

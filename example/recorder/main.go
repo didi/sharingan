@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/didichuxing/sharingan/recorder"
+	"github.com/didichuxing/sharingan"
 )
 
 func main() {
@@ -22,10 +22,10 @@ func indexHandle(w http.ResponseWriter, r *http.Request) {
 // Tips：正常http请求不需要设置，只有使用go异步执行时需要
 func goHandle(w http.ResponseWriter, r *http.Request) {
 	go func(delegatedID int64) {
-		recorder.SetDelegatedFromGoRoutineID(delegatedID)
-		defer recorder.SetDelegatedFromGoRoutineID(0)
+		sharingan.SetDelegatedFromGoRoutineID(delegatedID)
+		defer sharingan.SetDelegatedFromGoRoutineID(0)
 		http.Get("http://127.0.0.1:8888")
-	}(recorder.GetCurrentGoRoutineID())
+	}(sharingan.GetCurrentGoRoutineID())
 
 	time.Sleep(time.Second)
 }

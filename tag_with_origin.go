@@ -11,3 +11,6 @@ func GetCurrentGoRoutineID() int64 {
 // SetDelegatedFromGoRoutineID SetDelegatedFromGoRoutineID
 func SetDelegatedFromGoRoutineID(gID int64) {
 }
+
+func init() {
+}
