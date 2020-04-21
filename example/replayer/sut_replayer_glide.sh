@@ -137,7 +137,7 @@ function build() {
     fi
 
     if [ -z $GOPATH  ];then
-        prePath="/src/github.com/didichuxing/sharingan"
+        prePath="/src/"
         if [[ $workspace == *$prePath* ]];then
             export GOPATH=`echo ${workspace%/src/*}`
             if [ $? -ne 0 ]; then
@@ -152,10 +152,9 @@ function build() {
 
     cd $root
     rm -rf vendor
-    # TODO: tmp for private
-    #glide get 'github.com/didichuxing/sharingan/replayer'
+    glide get 'github.com/didichuxing/sharingan'
     if [ $? -ne 0 ]; then
-        printf "${error_msg}build failed at executing glide get sharingan/replayer, please check!!!\n"
+        printf "${error_msg}build failed at executing glide get github.com/didichuxing/sharingan, please check!!!\n"
         exit 1
     fi
     glide install

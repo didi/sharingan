@@ -138,12 +138,11 @@ function build() {
     fi
 
     cd $root
-    # TODO: tmp for private
-    #go get 'github.com/didichuxing/sharingan/replayer'
-#    if [ $? -ne 0 ]; then
-#        printf "${error_msg}build failed at executing go get sharingan/replayer, please check!!!\n"
-#        exit 1
-#    fi
+    go get 'github.com/didichuxing/sharingan'
+    if [ $? -ne 0 ]; then
+        printf "${error_msg}build failed at executing go get github.com/didichuxing/sharingan, please check!!!\n"
+        exit 1
+    fi
     go clean -modcache
     printf "${info_msg}go mod download, please wait~ \n"
     go mod download
