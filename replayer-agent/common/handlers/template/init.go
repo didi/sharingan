@@ -4,7 +4,7 @@ import (
 	"html/template"
 	"net/http"
 
-	"github.com/didichuxing/sharingan/replayer-agent/common/handlers/conf"
+	"github.com/didi/sharingan/replayer-agent/common/handlers/conf"
 )
 
 var Handler *template.Template

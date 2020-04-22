@@ -6,10 +6,10 @@ import (
 	"net"
 	"runtime/debug"
 
-	"github.com/didichuxing/sharingan/proto"
-	"github.com/didichuxing/sharingan/recorder-agent/common/conf"
-	"github.com/didichuxing/sharingan/recorder-agent/common/zap"
-	"github.com/didichuxing/sharingan/recorder-agent/record"
+	"github.com/didi/sharingan/proto"
+	"github.com/didi/sharingan/recorder-agent/common/conf"
+	"github.com/didi/sharingan/recorder-agent/common/zap"
+	"github.com/didi/sharingan/recorder-agent/record"
 
 	"google.golang.org/grpc"
 )

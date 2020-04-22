@@ -9,11 +9,11 @@ import (
 	"sync"
 	"unicode"
 
-	"github.com/didichuxing/sharingan/replayer-agent/common/handlers/conf"
-	"github.com/didichuxing/sharingan/replayer-agent/common/handlers/ignore"
-	"github.com/didichuxing/sharingan/replayer-agent/model/nuwaplt"
-	"github.com/didichuxing/sharingan/replayer-agent/model/protocol"
-	"github.com/didichuxing/sharingan/replayer-agent/utils/helper"
+	"github.com/didi/sharingan/replayer-agent/common/handlers/conf"
+	"github.com/didi/sharingan/replayer-agent/common/handlers/ignore"
+	"github.com/didi/sharingan/replayer-agent/model/nuwaplt"
+	"github.com/didi/sharingan/replayer-agent/model/protocol"
+	"github.com/didi/sharingan/replayer-agent/utils/helper"
 )
 
 var (

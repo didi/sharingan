@@ -9,11 +9,11 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/didichuxing/sharingan/replayer-agent/common/handlers/tlog"
-	"github.com/didichuxing/sharingan/replayer-agent/model/pool"
-	"github.com/didichuxing/sharingan/replayer-agent/model/recording"
-	"github.com/didichuxing/sharingan/replayer-agent/model/replaying"
-	"github.com/didichuxing/sharingan/replayer-agent/utils/helper"
+	"github.com/didi/sharingan/replayer-agent/common/handlers/tlog"
+	"github.com/didi/sharingan/replayer-agent/model/pool"
+	"github.com/didi/sharingan/replayer-agent/model/recording"
+	"github.com/didi/sharingan/replayer-agent/model/replaying"
+	"github.com/didi/sharingan/replayer-agent/utils/helper"
 )
 
 // 回放流量标识，示例：/*{"rid":"7f0000015e7885919ead09b93a768bb0","addr":"127.0.0.1:8888"}*/

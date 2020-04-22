@@ -6,10 +6,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/didichuxing/sharingan/replayer-agent/model/esmodel"
-	"github.com/didichuxing/sharingan/replayer-agent/model/recording"
-	"github.com/didichuxing/sharingan/replayer-agent/model/replaying"
-	"github.com/didichuxing/sharingan/replayer-agent/utils/helper"
+	"github.com/didi/sharingan/replayer-agent/model/esmodel"
+	"github.com/didi/sharingan/replayer-agent/model/recording"
+	"github.com/didi/sharingan/replayer-agent/model/replaying"
+	"github.com/didi/sharingan/replayer-agent/utils/helper"
 )
 
 //TODO: 处理redis数据存map

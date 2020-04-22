@@ -5,10 +5,10 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/didichuxing/sharingan/replayer-agent/utils/helper"
-	phelper "github.com/didichuxing/sharingan/replayer-agent/utils/protocol/helper"
-	"github.com/didichuxing/sharingan/replayer-agent/utils/protocol/pmysql"
-	"github.com/didichuxing/sharingan/replayer-agent/utils/protocol/pthrift"
+	"github.com/didi/sharingan/replayer-agent/utils/helper"
+	phelper "github.com/didi/sharingan/replayer-agent/utils/protocol/helper"
+	"github.com/didi/sharingan/replayer-agent/utils/protocol/pmysql"
+	"github.com/didi/sharingan/replayer-agent/utils/protocol/pthrift"
 
 	jsoniter "github.com/json-iterator/go"
 	"github.com/modern-go/parse/model"

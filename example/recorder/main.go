@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/didichuxing/sharingan"
+	"github.com/didi/sharingan"
 )
 
 func main() {

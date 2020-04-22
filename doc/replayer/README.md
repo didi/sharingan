@@ -60,7 +60,7 @@ curl https://raw.githubusercontent.com/didichuxing/sharingan-go/recorder/install
 
 然后，修改SUT的main.go代码，引入sharingan包。参考：[example](../../example/replayer/main.go)
 ```go
-import _ "github.com/didichuxing/sharingan"
+import _ "github.com/didi/sharingan"
 ```
 
 最后，编译并启动SUT服务。

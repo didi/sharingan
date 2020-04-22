@@ -3,11 +3,11 @@ package worker
 import (
 	"context"
 
-	"github.com/didichuxing/sharingan/replayer-agent/common/handlers/tlog"
-	"github.com/didichuxing/sharingan/replayer-agent/idl"
-	"github.com/didichuxing/sharingan/replayer-agent/logic/search"
-	"github.com/didichuxing/sharingan/replayer-agent/model/esmodel"
-	"github.com/didichuxing/sharingan/replayer-agent/model/replaying"
+	"github.com/didi/sharingan/replayer-agent/common/handlers/tlog"
+	"github.com/didi/sharingan/replayer-agent/idl"
+	"github.com/didi/sharingan/replayer-agent/logic/search"
+	"github.com/didi/sharingan/replayer-agent/model/esmodel"
+	"github.com/didi/sharingan/replayer-agent/model/replaying"
 )
 
 func FetchSessions(ctx context.Context, sessionId string, project string) []*replaying.Session {

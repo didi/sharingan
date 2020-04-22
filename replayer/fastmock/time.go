@@ -6,7 +6,7 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/didichuxing/sharingan/replayer/monkey"
+	"github.com/didi/sharingan/replayer/monkey"
 )
 
 func MockTime() {

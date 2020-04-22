@@ -4,7 +4,7 @@ import (
 	"net"
 	"strconv"
 
-	"github.com/didichuxing/sharingan/replayer-agent/utils/helper"
+	"github.com/didi/sharingan/replayer-agent/utils/helper"
 
 	"github.com/json-iterator/go"
 )

@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	_ "github.com/didichuxing/sharingan"
+	_ "github.com/didi/sharingan"
 	// TODO：最后import其他业务包！
 )
 

@@ -4,8 +4,8 @@ import (
 	"context"
 	"net"
 
-	"github.com/didichuxing/sharingan/replayer-agent/common/handlers/tlog"
-	"github.com/didichuxing/sharingan/replayer-agent/utils/helper"
+	"github.com/didi/sharingan/replayer-agent/common/handlers/tlog"
+	"github.com/didi/sharingan/replayer-agent/utils/helper"
 )
 
 // Proxyer Proxyer

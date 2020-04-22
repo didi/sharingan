@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/didichuxing/sharingan/recorder-agent/common/conf"
-	"github.com/didichuxing/sharingan/recorder-agent/common/path"
+	"github.com/didi/sharingan/recorder-agent/common/conf"
+	"github.com/didi/sharingan/recorder-agent/common/path"
 
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 	"go.uber.org/zap"

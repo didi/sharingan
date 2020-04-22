@@ -12,11 +12,11 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/didichuxing/sharingan/replayer-agent/common/handlers/tlog"
-	"github.com/didichuxing/sharingan/replayer-agent/logic/outbound"
-	"github.com/didichuxing/sharingan/replayer-agent/logic/replayed"
-	"github.com/didichuxing/sharingan/replayer-agent/model/replaying"
-	"github.com/didichuxing/sharingan/replayer-agent/model/station"
+	"github.com/didi/sharingan/replayer-agent/common/handlers/tlog"
+	"github.com/didi/sharingan/replayer-agent/logic/outbound"
+	"github.com/didi/sharingan/replayer-agent/logic/replayed"
+	"github.com/didi/sharingan/replayer-agent/model/replaying"
+	"github.com/didi/sharingan/replayer-agent/model/station"
 )
 
 var hooks []func()

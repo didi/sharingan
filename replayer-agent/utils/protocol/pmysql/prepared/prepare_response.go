@@ -3,8 +3,8 @@ package prepared
 import (
 	"errors"
 
-	"github.com/didichuxing/sharingan/replayer-agent/utils/protocol/pmysql/command"
-	"github.com/didichuxing/sharingan/replayer-agent/utils/protocol/pmysql/common"
+	"github.com/didi/sharingan/replayer-agent/utils/protocol/pmysql/command"
+	"github.com/didi/sharingan/replayer-agent/utils/protocol/pmysql/common"
 
 	"github.com/modern-go/parse"
 	"github.com/modern-go/parse/model"

@@ -1,4 +1,4 @@
-module github.com/didichuxing/sharingan
+module github.com/didi/sharingan
 
 go 1.13
 
