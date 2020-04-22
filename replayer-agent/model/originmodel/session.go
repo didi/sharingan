@@ -1,7 +1,7 @@
 package originmodel
 
 import (
-	"github.com/didichuxing/sharingan/replayer-agent/model/esmodel"
+	"github.com/didi/sharingan/replayer-agent/model/esmodel"
 	"github.com/json-iterator/go"
 )
 

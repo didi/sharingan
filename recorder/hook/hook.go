@@ -4,7 +4,7 @@ import (
 	"net"
 	"syscall"
 
-	"github.com/didichuxing/sharingan/recorder/sut"
+	"github.com/didi/sharingan/recorder/sut"
 
 	"github.com/v2pro/plz/countlog"
 )

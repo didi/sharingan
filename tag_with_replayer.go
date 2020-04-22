@@ -6,7 +6,7 @@ import (
 	"log"
 	"runtime"
 
-	"github.com/didichuxing/sharingan/replayer/fastmock"
+	"github.com/didi/sharingan/replayer/fastmock"
 )
 
 // GetCurrentGoRoutineID GetCurrentGoRoutineID

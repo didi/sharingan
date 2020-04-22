@@ -7,13 +7,13 @@ import (
 	"regexp"
 	"sync"
 
-	"github.com/didichuxing/sharingan/replayer-agent/common/global"
-	"github.com/didichuxing/sharingan/replayer-agent/common/handlers/tlog"
-	"github.com/didichuxing/sharingan/replayer-agent/logic/replayed"
-	"github.com/didichuxing/sharingan/replayer-agent/model/protocol"
-	"github.com/didichuxing/sharingan/replayer-agent/model/recording"
-	"github.com/didichuxing/sharingan/replayer-agent/model/replaying"
-	"github.com/didichuxing/sharingan/replayer-agent/utils/helper"
+	"github.com/didi/sharingan/replayer-agent/common/global"
+	"github.com/didi/sharingan/replayer-agent/common/handlers/tlog"
+	"github.com/didi/sharingan/replayer-agent/logic/replayed"
+	"github.com/didi/sharingan/replayer-agent/model/protocol"
+	"github.com/didi/sharingan/replayer-agent/model/recording"
+	"github.com/didi/sharingan/replayer-agent/model/replaying"
+	"github.com/didi/sharingan/replayer-agent/utils/helper"
 )
 
 var expect100 = []byte("Expect: 100-continue")

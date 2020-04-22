@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/didichuxing/sharingan/replayer-agent/model/recording"
+	"github.com/didi/sharingan/replayer-agent/model/recording"
 )
 
 type replayedAction struct {

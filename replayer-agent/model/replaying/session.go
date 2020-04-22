@@ -1,7 +1,7 @@
 package replaying
 
 import (
-	"github.com/didichuxing/sharingan/replayer-agent/model/recording"
+	"github.com/didi/sharingan/replayer-agent/model/recording"
 )
 
 type Session struct {

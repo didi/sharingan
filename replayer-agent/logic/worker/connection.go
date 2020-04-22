@@ -5,7 +5,7 @@ import (
 	"net"
 	"time"
 
-	"github.com/didichuxing/sharingan/replayer-agent/common/handlers/tlog"
+	"github.com/didi/sharingan/replayer-agent/common/handlers/tlog"
 )
 
 func newConn(ctx context.Context, remoteAddr string) (net.Conn, error) {

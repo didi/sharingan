@@ -123,7 +123,7 @@ function build() {
     fi
 
     if [ -z $GOPATH  ];then
-        prePath="/src/github.com/didichuxing/sharingan"
+        prePath="/src/github.com/didi/sharingan"
         if [[ $workspace == *$prePath* ]];then
             export GOPATH=`echo ${workspace%/src/*}`
             if [ $? -ne 0 ]; then

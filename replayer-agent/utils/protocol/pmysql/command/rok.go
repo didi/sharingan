@@ -3,7 +3,7 @@ package command
 import (
 	"errors"
 
-	"github.com/didichuxing/sharingan/replayer-agent/utils/protocol/pmysql/common"
+	"github.com/didi/sharingan/replayer-agent/utils/protocol/pmysql/common"
 
 	"github.com/json-iterator/go"
 	"github.com/modern-go/parse"

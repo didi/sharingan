@@ -152,9 +152,9 @@ function build() {
 
     cd $root
     rm -rf vendor
-    glide get 'github.com/didichuxing/sharingan'
+    glide get 'github.com/didi/sharingan'
     if [ $? -ne 0 ]; then
-        printf "${error_msg}build failed at executing glide get github.com/didichuxing/sharingan, please check!!!\n"
+        printf "${error_msg}build failed at executing glide get github.com/didi/sharingan, please check!!!\n"
         exit 1
     fi
     glide install
@@ -210,7 +210,7 @@ function build() {
         binName=$appcov
     fi
 
-    pkgReplay='_ "github.com/didichuxing/sharingan"'
+    pkgReplay='_ "github.com/didi/sharingan"'
     find ./ -name "*\.go" -maxdepth 1 | xargs -n 1 grep  $pkgReplay &> /dev/null
     if [ $? -eq 0 ];then
         printf "${error_msg} build failed for not importing package sharingan/replayer, please import it!!!\n"

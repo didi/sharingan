@@ -13,11 +13,11 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/didichuxing/sharingan/proto"
-	"github.com/didichuxing/sharingan/recorder/hook"
-	"github.com/didichuxing/sharingan/recorder/logger"
-	"github.com/didichuxing/sharingan/recorder/recording"
-	"github.com/didichuxing/sharingan/recorder/utils"
+	"github.com/didi/sharingan/proto"
+	"github.com/didi/sharingan/recorder/hook"
+	"github.com/didi/sharingan/recorder/logger"
+	"github.com/didi/sharingan/recorder/recording"
+	"github.com/didi/sharingan/recorder/utils"
 
 	"github.com/v2pro/plz/countlog"
 	"google.golang.org/grpc"

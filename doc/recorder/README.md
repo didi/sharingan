@@ -22,7 +22,7 @@ export PATH=$GOROOT/bin:$PATH
 * 引入包要在业务包之前，保证流量到来之前已经初始化
 
 ```go
-import _ "github.com/didichuxing/sharingan"
+import _ "github.com/didi/sharingan"
 ```
 
 * 参考：[example](https://github.com/didi/sharingan/blob/master/example/main.go)
@@ -35,7 +35,7 @@ import _ "github.com/didichuxing/sharingan"
 * tip3：常见的第三方包「http、redis、mysql、thrift等」，经测试都可以正常进行录制，不需要修改。
 
 ```go
-import "github.com/didichuxing/sharingan"
+import "github.com/didi/sharingan"
   
 // 修改之前的代码
 -   go remoteRead()

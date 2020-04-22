@@ -4,8 +4,8 @@ import (
 	"log"
 	"net"
 
-	"github.com/didichuxing/sharingan/replayer-agent/common/handlers/conf"
-	"github.com/didichuxing/sharingan/replayer-agent/logic/outbound"
+	"github.com/didi/sharingan/replayer-agent/common/handlers/conf"
+	"github.com/didi/sharingan/replayer-agent/logic/outbound"
 )
 
 var BasePort int

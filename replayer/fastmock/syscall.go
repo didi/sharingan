@@ -14,7 +14,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/didichuxing/sharingan/replayer/monkey"
+	"github.com/didi/sharingan/replayer/monkey"
 )
 
 var (
