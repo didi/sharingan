@@ -1,6 +1,6 @@
 # Sharingan
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/didichuxing/sharingan/blob/master/LICENSE)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/didi/sharingan/blob/master/LICENSE)
 
 Sharingan，中文名：写轮眼，是漫画《火影忍者》中的一种瞳术，具有复制、幻术等能力，在幻术世界里，一切因素包括时间，地点，质量等，都由施术者掌控。
 
@@ -35,7 +35,7 @@ Sharingan（写轮眼）是一个基于golang的流量录制回放工具，录�
 
 ```shell
 # Step1: 下载sharingan项目
-$ git clone https://github.com/didichuxing/sharingan.git
+$ git clone https://github.com/didi/sharingan.git
 $ cd sharingan
 
 # Step2: 使用定制版golang，以go1.13为例
@@ -83,7 +83,7 @@ $ 页面选择要回放的流量点执行          # 内置提前录制好的3�
 * 修改golang源码，对外暴露Hook接口。「所有改动通过官方测试用例」
 * 提供API串联不同goroutine之间的网络调用。「常见的http、mysql、redis流量都不需要特别设置」
 * 提供单独的agent筛选流量、控制比例。
-* 更多参考：[流量录制实现原理](https://github.com/didichuxing/sharingan/wiki/%E6%B5%81%E9%87%8F%E5%BD%95%E5%88%B6%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86)。
+* 更多参考：[流量录制实现原理](https://github.com/didi/sharingan/wiki/%E6%B5%81%E9%87%8F%E5%BD%95%E5%88%B6%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86)。
 
 ### 3.4、回放方案
 
@@ -92,7 +92,7 @@ $ 页面选择要回放的流量点执行          # 内置提前录制好的3�
 * 重置时间：将程序执行时间回放到录制时刻，消除时间带来的干扰。
 * 去除噪音：提供API可以将已知的噪音流量去掉，如：traceID，每次请求本来就不一样。
 * 常见协议解析：会解析http、mysql、redis、thrift等协议，方便diff对比。
-* 更多参考：[流量回放实现原理](https://github.com/didichuxing/sharingan/wiki/%E6%B5%81%E9%87%8F%E5%9B%9E%E6%94%BE%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86)。
+* 更多参考：[流量回放实现原理](https://github.com/didi/sharingan/wiki/%E6%B5%81%E9%87%8F%E5%9B%9E%E6%94%BE%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86)。
 
 ## 四、效果展示
 
@@ -107,7 +107,7 @@ $ 页面选择要回放的流量点执行          # 内置提前录制好的3�
 
 #### 4.1.2、批量回放
 
-批量回放的并发度默认是10，可通过增加[-parallel](https://github.com/didichuxing/sharingan/blob/master/replayer-agent/control.sh#L160)参数修改。
+批量回放的并发度默认是10，可通过增加[-parallel](https://github.com/didi/sharingan/blob/master/replayer-agent/control.sh#L160)参数修改。
 ![main](./doc/images/replayer_p.png)
 
 ### 4.2、覆盖率报告

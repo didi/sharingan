@@ -253,7 +253,7 @@ const TimeSleep = 0
                 }
                 this.$notify({
                     title: '提示',
-                    message: msg+'</br><a href="/coverage?project='+ Global.Project +'" target="_blank"><button type="button" class="el-button el-button--text"><span>覆盖率报告</span></button></a>&nbsp;&nbsp;<a href="https://github.com/didichuxing/sharingan/blob/master/doc/replayer/replayer-codecov.md" target="_blank"><button type="button" class="el-button el-button--text"><span>覆盖率使用手册</span></button></a>',
+                    message: msg+'</br><a href="/coverage?project='+ Global.Project +'" target="_blank"><button type="button" class="el-button el-button--text"><span>覆盖率报告</span></button></a>&nbsp;&nbsp;<a href="https://github.com/didi/sharingan/blob/master/doc/replayer/replayer-codecov.md" target="_blank"><button type="button" class="el-button el-button--text"><span>覆盖率使用手册</span></button></a>',
                     type: 'success',
                     dangerouslyUseHTMLString: true,
                     offset: 100,

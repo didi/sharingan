@@ -33,9 +33,9 @@ local_ip="127.0.0.1"
 local_port="8998"
 
 # set github about go
-git_replayer_agent='https://github.com/didichuxing/sharingan/raw/master/replayer-agent'
+git_replayer_agent='https://github.com/didi/sharingan/raw/master/replayer-agent'
 git_go='https://raw.githubusercontent.com/didichuxing/sharingan-go/recorder'
-install_go_md='https://github.com/didichuxing/sharingan-go/tree/recorder'
+install_go_md='https://github.com/didi/sharingan-go/tree/recorder'
 VERSION="go1.13"
 
 function install_go() {
@@ -70,7 +70,7 @@ function install_go() {
 # install go
 function install_go_tar() {
         # get go url
-        releases_go='https://github.com/didichuxing/sharingan-go/releases/download/'
+        releases_go='https://github.com/didi/sharingan-go/releases/download/'
         if [[ "$OSTYPE" =~ ^darwin.* ]]; then
             goSuffix="$VERSION.recorder/$VERSION.darwin-amd64.tar.gz"
         elif [[ "$OSTYPE" =~ ^linux.* ]]; then

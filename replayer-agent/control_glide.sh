@@ -57,7 +57,7 @@ function install_go() {
 # install go
 function install_go_tar() {
         # get go url
-        releases_go='https://github.com/didichuxing/sharingan-go/releases/download/'
+        releases_go='https://github.com/didi/sharingan-go/releases/download/'
         if [[ "$OSTYPE" =~ ^darwin.* ]]; then
             goSuffix="$VERSION.recorder/$VERSION.darwin-amd64.tar.gz"
         elif [[ "$OSTYPE" =~ ^linux.* ]]; then
