@@ -10,7 +10,7 @@
 
 ```shell
 # go1.13使用示例，github域名不太稳定，失败可以换成其它方式，参考golang安装
-curl https://raw.githubusercontent.com/didichuxing/sharingan-go/recorder/install/go1.13 | sh
+curl https://raw.githubusercontent.com/didi/sharingan-go/recorder/install/go1.13 | sh
 export GOROOT=/tmp/recorder-go1.13
 export PATH=$GOROOT/bin:$PATH
 ```
