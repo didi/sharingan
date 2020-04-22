@@ -24,7 +24,7 @@
 
 首先，配置定制版golang环境。同 [回放接入-2. 配置并启动SUT](./README.md#2-配置并启动sut) 内定制版golang的配置操作。
 ```shell script
-curl https://raw.githubusercontent.com/didichuxing/sharingan-go/recorder/install/go1.13 | sh
+curl https://raw.githubusercontent.com/didi/sharingan-go/recorder/install/go1.13 | sh
 && export GOROOT=/tmp/recorder-go1.13
 && export PATH=$GOROOT/bin:$PATH
 ```

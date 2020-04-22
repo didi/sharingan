@@ -34,7 +34,7 @@ local_port="8998"
 
 # set github about go
 git_replayer_agent='https://github.com/didi/sharingan/raw/master/replayer-agent'
-git_go='https://raw.githubusercontent.com/didichuxing/sharingan-go/recorder'
+git_go='https://raw.githubusercontent.com/didi/sharingan-go/recorder'
 install_go_md='https://github.com/didi/sharingan-go/tree/recorder'
 VERSION="go1.13"
 

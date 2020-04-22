@@ -21,7 +21,7 @@ local_ip="127.0.0.1"
 local_port="8998"
 
 # set github about go
-git_go='https://raw.githubusercontent.com/didichuxing/sharingan-go/recorder'
+git_go='https://raw.githubusercontent.com/didi/sharingan-go/recorder'
 install_go_md='https://github.com/golang/go#download-and-install'
 VERSION="go1.13"
 
