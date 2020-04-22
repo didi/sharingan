@@ -34,7 +34,7 @@ function install(){
     VERSION=$1
 
     # base set
-    GIT_URL="https://github.com/didichuxing/sharingan-go"
+    GIT_URL="https://github.com/didi/sharingan-go"
 
     # param
     uname=`uname`

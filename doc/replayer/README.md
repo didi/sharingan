@@ -36,7 +36,7 @@
 
 首先，确保本地存在go环境(官方或定制版均可，且版本无要求), 并根据本地go版本选择go mod或glide来安装sharingan的依赖。
 ```shell script
-git clone https://github.com/didichuxing/sharingan.git
+git clone https://github.com/didi/sharingan.git
 && cd sharingan && go mod download # 低版本go执行 glide install 
 ```
 然后编译并启动Replayer-Agent：
@@ -51,7 +51,7 @@ cd ./replayer-agent && go build && nohup ./replayer-agent >> run.log 2>&1 &
 
 > 需要使用定制的golang，并通过指定tag来编译 引入回放包的SUT代码。
 
-首先，配置定制版golang环境，目前支持go1.10 ~ go1.14，参考：[golang安装](https://github.com/didichuxing/sharingan-go/tree/recorder)
+首先，配置定制版golang环境，目前支持go1.10 ~ go1.14，参考：[golang安装](https://github.com/didi/sharingan-go/tree/recorder)
 ```shell script
 curl https://raw.githubusercontent.com/didichuxing/sharingan-go/recorder/install/go1.13 | sh
 && export GOROOT=/tmp/recorder-go1.13

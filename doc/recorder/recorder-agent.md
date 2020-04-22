@@ -12,7 +12,7 @@
 ### 2、编译 && 启动
 
 ```shell
-git clone https://github.com/didichuxing/sharingan.git
+git clone https://github.com/didi/sharingan.git
 cd sharingan/recorder-agent
 go build
 nohup ./recorder-agent >> run.log 2>&1 &

@@ -37,7 +37,7 @@ sh sut_replayer.sh build cov //覆盖率回放
 ```text
 curl: (7) Failed to connect to raw.githubusercontent.com port 443: Connection refused
 ```
-可能是raw.githubusercontent.com域名不通，建议配置个代理；或者 配置hosts (151.101.108.133 raw.githubusercontent.com)；再或者 自己安装go后，重新执行脚本构建。可参考: [sharingan-go安装](https://github.com/didichuxing/sharingan-go/tree/recorder)
+可能是raw.githubusercontent.com域名不通，建议配置个代理；或者 配置hosts (151.101.108.133 raw.githubusercontent.com)；再或者 自己安装go后，重新执行脚本构建。可参考: [sharingan-go安装](https://github.com/didi/sharingan-go/tree/recorder)
 
 <br>
 

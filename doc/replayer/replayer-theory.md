@@ -17,7 +17,7 @@ Golang的流量回放 主要基于 [sharingan/replayer](../../replayer) 包 及 
  2. 如何在录制的流量里，选择最合适的Outbound返回给SUT。
 
 ## 二、Outbound请求拦截点
-看过 [流量录制拦截点选择](https://github.com/didichuxing/sharingan/wiki/%E6%8B%A6%E6%88%AA%E7%82%B9%E9%80%89%E6%8B%A9) 可知，golang的录制是在语言标准库层面做的拦截。
+看过 [流量录制拦截点选择](https://github.com/didi/sharingan/wiki/%E6%8B%A6%E6%88%AA%E7%82%B9%E9%80%89%E6%8B%A9) 可知，golang的录制是在语言标准库层面做的拦截。
 
 同理，流量回放也是在语言标准库层面做的拦截。修改系统调用 [syscall.Connect](https://github.com/golang/go/blob/release-branch.go1.10/src/syscall/syscall_unix.go#L225) 方法，将原本的socket地址sa替换为Mock Server地址。
 ```shell script
@@ -35,7 +35,7 @@ func Connect(fd int, sa Sockaddr) (err error) {
 
 [sharingan/replayer](../../replayer) 包拦截了SUT的Outbound请求，将其转发给Replayer-Agent的Mock Server。
 
-![replay-theory](https://github.com/didichuxing/sharingan/raw/master/doc/wiki/images/replay_theory.png)
+![replay-theory](https://github.com/didi/sharingan/raw/master/doc/wiki/images/replay_theory.png)
 
 如上图，回放剧本的传递过程如下：
   1. 用户浏览Web Server首页(:8998)，筛选一个流量，点击回放
@@ -66,7 +66,7 @@ Mock Server有个非常重要的工作，就是匹配Outbound请求，这直接�
 
 下面简化下匹配算法核心步骤：
 
-![replay-match](https://github.com/didichuxing/sharingan/raw/master/doc/wiki/images/replay_match.png)
+![replay-match](https://github.com/didi/sharingan/raw/master/doc/wiki/images/replay_match.png)
 
 a) 匹配当前请求时，若上一次匹配成功，则从上一次匹配成功的请求（lastMatchedIndex）的下一个请求开始匹配，否则就从第一个请求开始匹配；
 
@@ -91,7 +91,7 @@ c) 判断权重最高的Outbound请求是否达标（权重是否超过阈值）
 
 ### 1. 并发原理
 
-![replay_parallel](https://github.com/didichuxing/sharingan/raw/master/doc/wiki/images/replay_parallel.png)
+![replay_parallel](https://github.com/didi/sharingan/raw/master/doc/wiki/images/replay_parallel.png)
 
 如上图，基本思路如下：
 
@@ -134,7 +134,7 @@ func (c *conn) Write(b []byte) (int, error) {
 
 SUT每接收Web Server的一个http请求，都会开启一个goroutine，同时，一般都会在这同一个goroutine内完成下游请求的调用，最终将http响应返回给Web Server。所以，针对这种情况，在同一个goroutine内维护sessionID是很简单的事。
 
-但 对于通过新起一个goroutine来调用下游请求的SUT，维护sessionID需要基于录制里讲到的 [链路追踪](https://github.com/didichuxing/sharingan/wiki/%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA) 原理，基于定制版的golang实现。
+但 对于通过新起一个goroutine来调用下游请求的SUT，维护sessionID需要基于录制里讲到的 [链路追踪](https://github.com/didi/sharingan/wiki/%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA) 原理，基于定制版的golang实现。
 
 ```shell script
 // GetCurrentGoRoutineId get RoutineId in case delegate
