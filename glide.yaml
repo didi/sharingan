@@ -1,7 +1,7 @@
 package: github.com/didi/sharingan
 import:
 - package: github.com/golang/protobuf
-  version: ^1.3.2
+  version: 1.3.2
   subpackages:
   - proto
 - package: github.com/google/gopacket
