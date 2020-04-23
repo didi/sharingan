@@ -115,8 +115,10 @@ Replayer-Agent默认配置的本地回放，如需修改，请参考：[Replayer
 
 如上 二-回放接入，默认将Replayer-Agent和SUT部署在一台机器，其实，Replayer-Agent和SUT是可以分开部署的。
 
-* Replayer-Agent的启动如上所示，无需改动
-* 启动SUT时，需设置环境变量 REPLAYER_MOCK_IP 为Replayer-Agent的ip地址即可。详见: [SUT启动脚本-3. 与Replayer-Agent分开部署](./replayer-sut.md#3-与replayer-agent分开部署)
+* Replayer-Agent启动前，需要修改 [conf/moduleinfo.json](../../replayer-agent/conf/moduleinfo.json) 内SUT监听地址。
+* 启动SUT时，需设置环境变量 REPLAYER_MOCK_IP 为Replayer-Agent的ip地址即可。
+
+详见: [SUT启动脚本-3. 与Replayer-Agent分开部署](./replayer-sut.md#3-与replayer-agent分开部署)
 
 <br>
 
