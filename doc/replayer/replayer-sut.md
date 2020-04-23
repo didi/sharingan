@@ -77,9 +77,10 @@ sh sut_replayer.sh reload cov //覆盖率回放
 SUT与Replayer-Agent服务可以在不同的机器分开部署，其中Replayer-Agent的Mock Server监听端口3515也可以修改。
 > 分开部署
 
-  1. 启动Replayer-Agent服务。参见: [Replayer-Agent启动脚本](./replayer-agent.md)
-  2. 修改脚本 [./example/replayer/sut_replayer.sh](../../example/replayer/sut_replayer.sh) 里的 REPLAYER_MOCK_IP 环境变量，为Replayer-Agent的ip地址。
-  3. 重启SUT服务即可。
+  1. 修改Replayer-Agent [conf/moduleinfo.json](../../replayer-agent/conf/moduleinfo.json) 配置文件内listen-addr字段值为SUT真实地址。字段详解: [回放模块配置](./conf/moduleinfo.md)
+  2. 启动Replayer-Agent服务。参见: [Replayer-Agent启动脚本](./replayer-agent.md)
+  3. 修改脚本 [./example/replayer/sut_replayer.sh](../../example/replayer/sut_replayer.sh) 里的 REPLAYER_MOCK_IP 环境变量，为Replayer-Agent的ip地址。
+  4. 重启SUT服务即可。
 
 > 修改Mock Server 3515端口
 
