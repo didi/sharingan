@@ -84,11 +84,9 @@ B. [批量回放](./replayer-parallel.md)结果页
 
 ##### 2. 支持SUT使用flag
 
-对于使用flag的SUT，不仅需要新增test文件，还需要改造main.go代码。
+对于使用flag的SUT,需要保证SUT在启动后10s内完成flag.Parse()
 
-a. 新增 [main_flag_test.go](../../replayer-agent/install/codeCov/main_with_flag/main_flag_test.go) 文件到SUT根目录。
-
-b. 按 [main_flag.go](../../replayer-agent/install/codeCov/main_with_flag/main_flag.go) 文件注释里的TODO修改代码即可。
+若10s仍然不能完成，请首先考虑SUT的代码是否合理。确认必须后，可修改replayer-agent/install/codeCov/main_test.go中waitFlagParseTime常量的值
 
 其他接入操作不变，同 [配置并启动SUT](#2-配置并启动sut)。
 
