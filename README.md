@@ -13,7 +13,7 @@ Sharingan（写轮眼）是一个基于golang的流量录制回放工具，录�
 随着微服务架构的兴起，服务之间的依赖关系变的越来越复杂，软件测试也面临新的挑战：系统升级频繁、服务依赖众多等等。
 
 * 常见的测试方案（如：单元测试、系统测试等）构造和维护测试用例成本高，特别是业务复杂的场景。「构造测试数据**难**」
-* 依赖第三方服务众多，线下测试环境不太稳定，经常出现下游服务挂掉导致测试失败的情况发生。「维护测试环境成本**高**」
+* 依赖第三方服务众多，线下测试环境不太稳定，经常出现下游服务不可用导致测试失败的情况发生。「维护测试环境成本**高**」
 
 为此，我们需要开发一套工具解决上述问题。
 
@@ -26,7 +26,7 @@ Sharingan（写轮眼）是一个基于golang的流量录制回放工具，录�
 
 * 支持下游流量录制。相比[tcpcopy](https://github.com/session-replay-tools/tcpcopy)、[goreplay](https://github.com/buger/goreplay)等方案，回放不依赖下游环境。
 * 支持并发流量录制和回放。录制对服务影响小，回放速度更快。
-* 支持重置时间、去除噪音、批量回放、覆盖率报告、常见协议解析等等。
+* 支持时间重置、噪音去除、批量回放、覆盖率报告、常见协议解析等等。
 * 不依赖业务框架，低应用浸入。
 
 ## 二、快速开始
@@ -60,19 +60,17 @@ $ 页面选择要回放的流量点执行          # 内置提前录制好的3�
 
 ### 2.2、接入文档
 
-> **先录制再回放**
-
-* [录制接入文档](./doc/recorder/README.md)
-* [回放接入文档](./doc/replayer/README.md)
+* [录制接入文档](./doc/recorder/README.md) 「先录制」
+* [回放接入文档](./doc/replayer/README.md) 「后回放」
 
 ## 三、技术方案
 
 ### 3.1、模块划分
 
-* recorder: 流量录制包，录制流量本地文件存储、发送流量到录制agent等等。
-* recorder-agent：流量录制agent，单独进程启动，可以控制录制比例、流量存储等等。
-* replayer: 流量回放包，重定向连接到Mock Server、Mock时间、添加流量标识等等。
-* replayer-agent：流量回放agent，单独进程启动，可以查询录制流量、查询/上报噪音、流量diff、批量回放、生成覆盖率报告等等。
+* recorder: 流量录制包，录制流量本地文件存储、发送流量到录制agent等。
+* recorder-agent：流量录制agent，单独进程启动，控制录制比例、流量存储等。
+* replayer: 流量回放包，重定向连接到Mock Server、Mock时间、添加流量标识等。
+* replayer-agent：流量回放agent，单独进程启动，查询流量、查询/上报噪音、流量diff、批量回放、生成覆盖率报告等。
 
 ### 3.2、整体架构图
 
@@ -89,8 +87,8 @@ $ 页面选择要回放的流量点执行          # 内置提前录制好的3�
 
 * 连接重定向：将服务所有Connect网络调用重定向到Mock Server。「安装replayer-agent时候自带」
 * 流量匹配：Mock Server会根据服务真实的下游请求匹配一个返回。「mock下游调用」
-* 重置时间：将程序执行时间回放到录制时刻，消除时间带来的干扰。
-* 去除噪音：提供API可以将已知的噪音流量去掉，如：traceID，每次请求本来就不一样。
+* 时间重置：将程序执行时间回退到录制执行时刻，尽量避免时间因素带来的干扰。
+* 噪音去除：提供API可以将已知的噪音流量去掉，如：traceID，每次请求本来就不一样。
 * 常见协议解析：会解析http、mysql、redis、thrift等协议，方便diff对比。
 * 更多参考：[流量回放实现原理](https://github.com/didi/sharingan/wiki/%E6%B5%81%E9%87%8F%E5%9B%9E%E6%94%BE%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86)。
 
@@ -125,20 +123,24 @@ $ 页面选择要回放的流量点执行          # 内置提前录制好的3�
 
 ### 5.1、如何贡献
 
-欢迎大家参与进来，更多参考[Contribute](./CONTRIBUTING.md)
+欢迎大家参与进来，更多参考[Contribute](./CONTRIBUTING.md)。
 
 ### 5.2、许可
 
-基于Apache-2.0协议进行分发和使用，更多参考[LICENSE](./LICENSE)
+基于Apache-2.0协议进行分发和使用，更多参考[LICENSE](./LICENSE)。
 
-### 5.3、感谢
+### 5.3、成员
 
-特别感谢 [TaoWen](https://github.com/taowen) ，流量录制和回放初版设计者
+[hueng](https://github.com/hueng)、[yj20060714](https://github.com/yj20060714)、[qiaodandedidi](https://github.com/qiaodandedidi)、[bikong0411](https://github.com/bikong0411)、[plpan](https://github.com/plpan)、[fzl-yty](https://github.com/fzl-yty)。
 
-### 5.4、联系我们
+### 5.4、感谢
+
+特别感谢[TaoWen](https://github.com/taowen) ，流量录制和回放初版设计者，为后续开源奠定了很好的基础。
+
+### 5.5、联系我们
 
 欢迎加入QQ交流群「群号:417146801」一起交流~
 
 ![QQ](./doc/images/QQ.JPG)
 
-Tips：联系QQ群主可拉入微信交流群
+Tips：联系QQ群主可拉入微信交流群。
