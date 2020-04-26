@@ -141,6 +141,6 @@ $ 页面选择要回放的流量点执行          # 内置提前录制好的3�
 
 欢迎加入QQ交流群「群号:417146801」一起交流~
 
-![QQ](./doc/images/QQ.JPG)
+![QQ](http://img-hxy021.didistatic.com/static/sharingan/QQ.jpeg)
 
 Tips：联系QQ群主可拉入微信交流群。
