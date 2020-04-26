@@ -58,7 +58,7 @@ sh sut_replayer.sh stop     //普通回放
 sh sut_replayer.sh stop cov //覆盖率回放
 ```
 停止SUT时，覆盖率回放方式 会给出覆盖率报告 及 可以直接查看的html链接。覆盖率报告详细说明：[覆盖率报告](./replayer-codecov.md#1-覆盖率报告)
-![shell_sut_cov_stop](../images/shell_sut_cov_stop.png)
+![shell_sut_cov_stop](http://img-hxy021.didistatic.com/static/sharingan/shell_sut_cov_stop.png)
 
 <br>
 

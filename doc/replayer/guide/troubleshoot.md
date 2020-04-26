@@ -9,7 +9,7 @@ sharingan已经在滴滴内部服务了一批go业务模块，现将各业务模
 具体问题如下：
 
 ##### 1. 回放页面Fail且无流量
-![prob_sut_notstart](../../images/prob_sut_notstart.png)
+![prob_sut_notstart](http://img-hxy021.didistatic.com/static/sharingan/prob_sut_notstart.png)
 
 * **现象**：如上图，回放页面整体飘红，且顶端提示 "dial tcp xxx connect: connection refused"。
 
@@ -138,4 +138,4 @@ sharingan已经在滴滴内部服务了一批go业务模块，现将各业务模
 除了上面的问题，欢迎大家加入 **Sharingan QQ交流群**，一起交流~
 <br>
 
-![QQ](../../images/QQ.JPG)
+![QQ](http://img-hxy021.didistatic.com/static/sharingan/QQ.JPG)

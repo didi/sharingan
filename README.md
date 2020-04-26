@@ -74,7 +74,7 @@ $ 页面选择要回放的流量点执行          # 内置提前录制好的3�
 
 ### 3.2、整体架构图
 
-![main](./doc/images/architecture.png)
+![main](http://img-hxy021.didistatic.com/static/sharingan/architecture.png)
 
 ### 3.3、录制方案
 
@@ -98,26 +98,26 @@ $ 页面选择要回放的流量点执行          # 内置提前录制好的3�
 
 #### 4.1.1、单个回放
 
-![main](./doc/images/replayer.png)
+![main](http://img-hxy021.didistatic.com/static/sharingan/replayer.png)
 
 对于下游请求很多且复杂的情况，支持对下游协议进行筛选
-![main](./doc/images/protocol.png)
+![main](http://img-hxy021.didistatic.com/static/sharingan/protocol.png)
 
 #### 4.1.2、批量回放
 
 批量回放的并发度默认是10，可通过增加[-parallel](https://github.com/didi/sharingan/blob/master/replayer-agent/control.sh#L160)参数修改。
-![main](./doc/images/replayer_p.png)
+![main](http://img-hxy021.didistatic.com/static/sharingan/replayer_p.png)
 
 ### 4.2、覆盖率报告
 
 #### 4.2.1、整体报告
 
 覆盖率报告支持覆盖率结果累计，即支持 多次 单个回放和批量回放后，统一生成覆盖率结果。
-![main](./doc/images/codeCover.png)
+![main](http://img-hxy021.didistatic.com/static/sharingan/codeCover.png)
 
 #### 4.2.1、覆盖详情
 
-![main](./doc/images/codeCover_detail.png)
+![main](http://img-hxy021.didistatic.com/static/sharingan/codeCover_detail.png)
 
 ## 五、更多
 
