@@ -59,11 +59,11 @@ nohup /xx/$binName.test -systemTest -test.coverprofile=/tmp/ShaRinGan/coverage.$
 
 A. 单流量回放结果页
 
-![codeCover_report_singal](http://img-hxy021.didistatic.com/static/sharingan/codeCover_report_singal.png)
+![codeCover_report_singal](http://img-hxy021.didistatic.com/static/sharingan/codeCover_report_singal_v2.png)
 
 B. [批量回放](./replayer-parallel.md)结果页
 
-![codeCover_report_parallel](http://img-hxy021.didistatic.com/static/sharingan/codeCover_report_parallel.png)
+![codeCover_report_parallel](http://img-hxy021.didistatic.com/static/sharingan/codeCover_report_parallel_v2.png)
 
 > 注意：
 > 
@@ -74,11 +74,11 @@ B. [批量回放](./replayer-parallel.md)结果页
 
 覆盖率报告 不仅会给出 整体覆盖结果，还会给出 每个函数的覆盖率结果和覆盖详情。
 
-![codeCover_report_sum](http://img-hxy021.didistatic.com/static/sharingan/codeCover_report_sum.png)
+![codeCover_report_sum](http://img-hxy021.didistatic.com/static/sharingan/codeCover_report_sum_v2.png)
 
 下面是每个函数具体覆盖详情，其中 红色为未覆盖代码。
 
-![codeCover_report_detail](http://img-hxy021.didistatic.com/static/sharingan/codeCover_report_detail.png)
+![codeCover_report_detail](http://img-hxy021.didistatic.com/static/sharingan/codeCover_report_detail_v2.png)
 
 <br>
 

@@ -9,7 +9,7 @@
 #### 一、 简单搜索
 
 ##### 1. 搜索界面介绍
-![guide_search_webindex](http://img-hxy021.didistatic.com/static/sharingan/guide_search_webindex.png)
+![guide_search_webindex](http://img-hxy021.didistatic.com/static/sharingan/guide_search_webindex_v2.png)
 
 **项目名称**：就是已经支持回放的业务模块
 
@@ -30,14 +30,14 @@
 <br>
 
 ##### 2. 快速搜索
-![guide_search_dsltag](http://img-hxy021.didistatic.com/static/sharingan/guide_search_dsltag.png)
+![guide_search_dsltag](http://img-hxy021.didistatic.com/static/sharingan/guide_search_dsltag_v2.png)
 
 快速搜索栏中 自动加载了所有上报的DSL的tag值，选中一个tag后，页面会自动填充该tag的详细搜索条件，其目的是为了简化搜索的使用。
 
 在使用搜索前，优先在快速搜索中查找，所以，tag的取名尽量有意义。详见：[DSL 上报指南](report.md#1-dsl上报)
 
 如下图，首页搜索的流量，点击左侧按钮，可以展开查看该流量包含的所有请求，第一个为Inbound请求，后面的为Outbound请求。
-![guide_search_result](http://img-hxy021.didistatic.com/static/sharingan/guide_search_result.png)
+![guide_search_result](http://img-hxy021.didistatic.com/static/sharingan/guide_search_result_v2.png)
 
 <br>
 
@@ -62,10 +62,10 @@
 
 ##### 5. 流量详情
 在首页点击流量右侧"运行"的时候，会跳转到回放页面，如下：
-![guide_search_flowlink](http://img-hxy021.didistatic.com/static/sharingan/guide_search_flowlink.png)
+![guide_search_flowlink](http://img-hxy021.didistatic.com/static/sharingan/guide_search_flowlink_v2.png)
 
 点击红框的 sessionid超链接，会展示该流量的详情，即原始流量。
-![guide_search_flowdetail](http://img-hxy021.didistatic.com/static/sharingan/guide_search_flowdetail.png)
+![guide_search_flowdetail](http://img-hxy021.didistatic.com/static/sharingan/guide_search_flowdetail_v2.png)
 
 可以从上图复制 搜索thrift/http请求 需要的原始数据，如 'x14GetShaRinGanFlowTime'。
 

@@ -79,7 +79,7 @@ go build -tags="replayer" -gcflags="all=-N -l"
 按照上面的接入流程逐步操作 并 成功启动SUT和Replayer-Agent后，即可开始回放之旅~
 
 首页点击"流量查询"搜索流量后，即可点击"运行"开始回放。
-![web_index](http://img-hxy021.didistatic.com/static/sharingan/web_index.png)
+![web_index](http://img-hxy021.didistatic.com/static/sharingan/web_index_v2.png)
 
 #### 1.指南
 

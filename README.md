@@ -74,7 +74,7 @@ $ 页面选择要回放的流量点执行          # 内置提前录制好的3�
 
 ### 3.2、整体架构图
 
-![main](http://img-hxy021.didistatic.com/static/sharingan/architecture.png)
+![main](http://img-hxy021.didistatic.com/static/sharingan/architecture_v2.png)
 
 ### 3.3、录制方案
 
@@ -98,26 +98,26 @@ $ 页面选择要回放的流量点执行          # 内置提前录制好的3�
 
 #### 4.1.1、单个回放
 
-![main](http://img-hxy021.didistatic.com/static/sharingan/replayer.png)
+![main](http://img-hxy021.didistatic.com/static/sharingan/replayer_s_v2.png)
 
 对于下游请求很多且复杂的情况，支持对下游协议进行筛选
-![main](http://img-hxy021.didistatic.com/static/sharingan/protocol.png)
+![main](http://img-hxy021.didistatic.com/static/sharingan/protocol_v2.png)
 
 #### 4.1.2、批量回放
 
 批量回放的并发度默认是10，可通过增加[-parallel](https://github.com/didi/sharingan/blob/master/replayer-agent/control.sh#L160)参数修改。
-![main](http://img-hxy021.didistatic.com/static/sharingan/replayer_p.png)
+![main](http://img-hxy021.didistatic.com/static/sharingan/replayer_p_v2.png)
 
 ### 4.2、覆盖率报告
 
 #### 4.2.1、整体报告
 
 覆盖率报告支持覆盖率结果累计，即支持 多次 单个回放和批量回放后，统一生成覆盖率结果。
-![main](http://img-hxy021.didistatic.com/static/sharingan/codeCover.png)
+![main](http://img-hxy021.didistatic.com/static/sharingan/codeCover_v2.png)
 
 #### 4.2.1、覆盖详情
 
-![main](http://img-hxy021.didistatic.com/static/sharingan/codeCover_detail.png)
+![main](http://img-hxy021.didistatic.com/static/sharingan/codeCover_detail_v2.png)
 
 ## 五、更多
 
@@ -141,6 +141,6 @@ $ 页面选择要回放的流量点执行          # 内置提前录制好的3�
 
 欢迎加入QQ交流群「群号:417146801」一起交流~
 
-![QQ](http://img-hxy021.didistatic.com/static/sharingan/QQ.jpeg)
+![QQ](http://img-hxy021.didistatic.com/static/sharingan/QQ_v2.jpeg)
 
 Tips：联系QQ群主可拉入微信交流群。
