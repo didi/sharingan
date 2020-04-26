@@ -11,9 +11,9 @@
 
 根据 [流量搜索指南-1. 搜索界面介绍](./search.md#1-搜索界面介绍) 可知，Replayer-Agent提供的流量搜索条件分的很细。为了节省流量搜索时间，Replayer-Agent提供了DSL上报功能。
 
-![save_dsl](../../images/save_dsl.png)
+![save_dsl](http://img-hxy021.didistatic.com/static/sharingan/save_dsl.png)
 
-![guide_report_tab](../../images/guide_report_tab.png)
+![guide_report_tab](http://img-hxy021.didistatic.com/static/sharingan/guide_report_tab.png)
 
 > 上报DSL：
 
@@ -38,13 +38,13 @@ tag命名尽量具有可读性，且具有实际意义。比如按 '接口名_�
 
 对于上报的噪音字段，下次回放时，Replayer-Agent会过滤由噪音字段导致的diff，给出流量回放成功结果。
 
-![push_noise](../../images/push_noise.png)
+![push_noise](http://img-hxy021.didistatic.com/static/sharingan/push_noise.png)
 > 上报噪音：
 
   1. 流量回放结果页，点击回放失败的请求，查看"O==T Diff" tab
   2. 找到上图飘红的字段，确认为噪音后，点击其后"上报噪音"即可
 
-![del_noise](../../images/del_noise.png)
+![del_noise](http://img-hxy021.didistatic.com/static/sharingan/del_noise.png)
 > 取消噪音：
 
   1. 流量回放结果页，点击具体请求，查看"O==T Diff" tab
