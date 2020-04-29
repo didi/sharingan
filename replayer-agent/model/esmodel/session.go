@@ -2,11 +2,9 @@ package esmodel
 
 import (
 	"net"
-	"strconv"
 
 	"github.com/didi/sharingan/replayer-agent/utils/helper"
-
-	"github.com/json-iterator/go"
+	jsoniter "github.com/json-iterator/go"
 )
 
 func RetrieveSessions(data []byte) ([]Session, error) {
@@ -77,7 +75,8 @@ type CallFromInbound struct {
 
 func (r *Raw) UnmarshalJSON(data []byte) error {
 	// step1: unquote string
-	tmp, err := strconv.Unquote(helper.BytesToString(data))
+	// tmp, err := strconv.Unquote(helper.BytesToString(data))
+	tmp, err := Unquote(data)
 	if err != nil {
 		return err
 	}
