@@ -75,7 +75,7 @@ $ 页面选择要回放的流量点执行          # 内置提前录制好的3�
 
 ### 3.2、整体架构图
 
-![architecture](http://img-hxy021.didistatic.com/static/sharingan/architecture_v2.png)
+<img width="725" height="521" alt="架构图" src="http://img-hxy021.didistatic.com/static/sharingan/arch_v2.png"/>
 
 ### 3.3、录制方案
 
@@ -93,55 +93,81 @@ $ 页面选择要回放的流量点执行          # 内置提前录制好的3�
 * 常见协议解析：会解析http、mysql、redis、thrift等协议，方便diff对比。
 * 更多参考：[流量回放实现原理](https://github.com/didi/sharingan/wiki/%E6%B5%81%E9%87%8F%E5%9B%9E%E6%94%BE%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86)。
 
-## 四、效果展示
+## 四、演进之路
 
-### 4.1、流量回放
+关于流量录制和回放，在内部进行过多次探索，主要经历下面三个阶段：
 
-#### 4.1.1、单个回放
+### 4.1、月光宝盒（串行录制、串行回放）
 
-![replayer_s](http://img-hxy021.didistatic.com/static/sharingan/replayer_s_v2.png)
+录制：利用tcpdump录制流量，改造router层将请求串行化，利用时间来分割请求。
+
+回放：利用iptables转发流量到mock服务，匹配请求并mock返回。支持时间重置、流量对比等。
+
+不足：录制流量覆盖率低，一次只能录制一个请求。iptables转发，噪音干扰严重。
+
+### 4.2、fastdev（并行录制、串行回放）
+
+录制：改造golang源码，利用goroutine+工作委托技术串联区分请求。![链路追踪原理](https://github.com/didi/sharingan/wiki/%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA)
+
+回放：利用monkey mock库对connect系统调用的重定向，转发流量到mock服务。支持Dashboard、噪音去除等。![monkey mock原理](https://bou.ke/blog/monkey-patching-in-go/)
+
+不足：录制接口和实现混合，golang多版本支持困难。不支持并发回放，启动阶段流量无法代理会失败，定时任务流量干扰严重。
+
+### 4.3、sharingan（并行录制、并行回放）
+
+录制：接口和实现分离，golang源码改造部分只暴露接口，具体录制实现单独提供包支持。确保golang源码改动通过官方测试，支持1.10~1.14所有版本；优化录制服务性能。
+
+回放：添加流量标识，支持并发回放；支持启动阶段流量代理；利用定制版golang，消除定时任务流量干扰；时间重置不再依赖本地文件，支持replayer-agent单独部署；支持常见协议解析。
+
+## 五、效果展示
+
+### 5.1、流量回放
+
+#### 5.1.1、单个回放
+
+<img width="870" height="370" alt="单个回放" src="http://img-hxy021.didistatic.com/static/sharingan/replayer_s_v2.png"/>
 
 对于下游请求很多且复杂的情况，支持对下游协议进行筛选
-![protocol](http://img-hxy021.didistatic.com/static/sharingan/protocol_v2.png)
+<img width="870" height="285" alt="单个回放-协议刷选" src="http://img-hxy021.didistatic.com/static/sharingan/protocol_v2.png"/>
 
-#### 4.1.2、批量回放
+#### 5.1.2、批量回放
 
 批量回放的并发度默认是10，可通过增加[-parallel](https://github.com/didi/sharingan/blob/master/replayer-agent/control.sh#L160)参数修改。
-![replayer_p](http://img-hxy021.didistatic.com/static/sharingan/replayer_p_v2.png)
+<img width="870" height="303" alt="批量回放" src="http://img-hxy021.didistatic.com/static/sharingan/replayer_p_v2.png"/>
 
-### 4.2、覆盖率报告
+### 5.2、覆盖率报告
 
-#### 4.2.1、整体报告
+#### 5.2.1、整体报告
 
 覆盖率报告支持覆盖率结果累计，即支持 多次 单个回放和批量回放后，统一生成覆盖率结果。
-![codeCover](http://img-hxy021.didistatic.com/static/sharingan/codeCover_v2.png)
+<img width="870" height="365" alt="整体报告" src="http://img-hxy021.didistatic.com/static/sharingan/codeCover_v2.png"/>
 
-#### 4.2.1、覆盖详情
+#### 5.2.1、覆盖详情
 
-![codeCover_detail](http://img-hxy021.didistatic.com/static/sharingan/codeCover_detail_v2.png)
+<img width="870" height="415" alt="覆盖详情" src="http://img-hxy021.didistatic.com/static/sharingan/codeCover_detail_v2.png"/>
 
-## 五、更多
+## 六、更多
 
-### 5.1、如何贡献
+### 6.1、如何贡献
 
 欢迎大家参与进来，更多参考[Contribute](./CONTRIBUTING.md)。
 
-### 5.2、许可
+### 6.2、许可
 
 基于Apache-2.0协议进行分发和使用，更多参考[LICENSE](./LICENSE)。
 
-### 5.3、成员
+### 6.3、成员
 
 [hueng](https://github.com/hueng)、[yj20060714](https://github.com/yj20060714)、[qiaodandedidi](https://github.com/qiaodandedidi)、[bikong0411](https://github.com/bikong0411)、[plpan](https://github.com/plpan)、[fzl-yty](https://github.com/fzl-yty)。
 
-### 5.4、感谢
+### 6.4、感谢
 
 特别感谢[TaoWen](https://github.com/taowen) ，流量录制和回放初版设计者，为后续开源奠定了很好的基础。
 
-### 5.5、联系我们
+### 6.5、联系我们
 
 欢迎加入QQ交流群「群号:417146801」一起交流~
 
 ![QQ](http://img-hxy021.didistatic.com/static/sharingan/QQ_v2.JPG)
 
-Tips：联系QQ群主可拉入微信交流群。
+Tips：联系QQ群主可拉入微信交流群，日常交流**以微信群为主**。
