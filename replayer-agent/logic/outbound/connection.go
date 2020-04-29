@@ -3,7 +3,6 @@ package outbound
 import (
 	"bytes"
 	"context"
-	"fmt"
 	"net"
 	"regexp"
 	"strconv"
@@ -142,8 +141,6 @@ func (cs *ConnState) rmTrafixPrefix(ctx context.Context, request []byte) []byte 
 
 		// 分段传输的场景，要把所有的前缀相关内容去掉
 		request = bytes.Replace(request, ss[0][0], []byte(""), -1)
-		// fmt.Printf("cs.traceID:%s, cs.proxyAddr:%s\n", cs.traceID, cs.proxyAddr)
-		// fmt.Printf("buf:%s\n", string(request))
 	}
 
 	return request
@@ -201,14 +198,12 @@ func (cs *ConnState) match(ctx context.Context, request []byte) error {
 		}
 		response := callOutbound.MatchedResponse
 		response = bytes.Replace(response, []byte("Connection: keep-alive\r\n"), []byte("Connection: close\r\n"), -1)
-		response = resetContentLength(ctx, response)
 		_, err := cs.conn.Write(response)
 		if err != nil {
 			tlog.Handler.Errorf(ctx, tlog.DebugTag, "errmsg=write back response failed||err=%s", err)
 			return err
 		}
 	}
-	//TODO: 为啥不直接放到上面if的elseif里
 	// set matched id as ActionIndex for simulateHttp|simulateMysql
 	if callOutbound.MatchedActionIndex < 0 && matchedTalk != nil {
 		callOutbound.MatchedActionIndex = matchedTalk.ActionIndex
@@ -232,27 +227,6 @@ func (cs *ConnState) match(ctx context.Context, request []byte) error {
 		strconv.Quote(helper.BytesToString(callOutbound.MatchedResponse)))
 
 	return nil
-}
-
-// resetContentLength, 重新计算
-func resetContentLength(ctx context.Context, data []byte) []byte {
-	var contents [][]byte
-
-	if !bytes.Contains(data, []byte("Content-Encoding: gzip\r\n")) {
-		return data
-	}
-
-	bodySplit := []byte("\r\n\r\n")
-	if contents = bytes.Split(data, bodySplit); len(contents) != 2 {
-		return data
-	}
-
-	// 因为线上gzip的原因，Content-Length可能会减少
-	newLength := fmt.Sprintf("Content-Length: %d\r\n", len(contents[1])) // 计算body长度
-	data = contentLengthRegex.ReplaceAll(data, []byte(newLength))
-	data = bytes.Replace(data, []byte("Content-Encoding: gzip\r\n"), []byte(""), -1)
-
-	return data
 }
 
 // applySimulation

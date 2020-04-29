@@ -22,7 +22,7 @@ Sharingan（写轮眼）是一个基于golang的流量录制回放工具，录�
 * 录制线上服务真实请求流量（包括下游调用流量），在线下进行回放，解决构造测试数据难的问题。「复制能力」
 * 回放的时候匹配Mock下游调用，不再依赖具体的下游服务，解决维护测试环境成本高的问题。「幻术能力」
 
-### 1.3、优势
+### 1.3、特性
 
 * 支持下游流量录制。相比[tcpcopy](https://github.com/session-replay-tools/tcpcopy)、[goreplay](https://github.com/buger/goreplay)等方案，回放不依赖下游环境。
 * 支持并发流量录制和回放。录制对服务影响小，回放速度更快。

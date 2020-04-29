@@ -35,7 +35,7 @@ func Connect(fd int, sa Sockaddr) (err error) {
 
 [sharingan/replayer](../../replayer) 包拦截了SUT的Outbound请求，将其转发给Replayer-Agent的Mock Server。
 
-![replay-theory](http://img-hxy021.didistatic.com/static/sharingan/replay_theory_v2.png)
+![replay-theory](http://img-hxy021.didistatic.com/static/sharingan/replay_theory.png)
 
 如上图，回放剧本的传递过程如下：
   1. 用户浏览Web Server首页(:8998)，筛选一个流量，点击回放
@@ -66,7 +66,7 @@ Mock Server有个非常重要的工作，就是匹配Outbound请求，这直接�
 
 下面简化下匹配算法核心步骤：
 
-![replay-match](http://img-hxy021.didistatic.com/static/sharingan/replay_match_v2.png)
+![replay-match](http://img-hxy021.didistatic.com/static/sharingan/replay_match.png)
 
 a) 匹配当前请求时，若上一次匹配成功，则从上一次匹配成功的请求（lastMatchedIndex）的下一个请求开始匹配，否则就从第一个请求开始匹配；
 

@@ -1,11 +1,7 @@
 package recording
 
 import (
-	"bytes"
-	"compress/gzip"
-	"encoding/binary"
 	"encoding/json"
-	"io/ioutil"
 	"net"
 	"unicode/utf8"
 )
@@ -67,7 +63,7 @@ func (returnInbound *ReturnInbound) MarshalJSON() ([]byte, error) {
 		Response json.RawMessage
 	}{
 		ReturnInbound: *returnInbound,
-		Response:      EncodeAnyByteArray(UnzipHttpRepsonse(returnInbound.Response)),
+		Response:      EncodeAnyByteArray(returnInbound.Response),
 	})
 }
 
@@ -94,7 +90,7 @@ func (callOutbound *CallOutbound) MarshalJSON() ([]byte, error) {
 	}{
 		CallOutbound: *callOutbound,
 		Request:      EncodeAnyByteArray(callOutbound.Request),
-		Response:     EncodeAnyByteArray(UnzipHttpRepsonse(callOutbound.Response)),
+		Response:     EncodeAnyByteArray(callOutbound.Response),
 		CSpanId:      EncodeAnyByteArray(callOutbound.CSpanId),
 	})
 }
@@ -312,46 +308,4 @@ func EncodeAnyByteArray(s []byte) json.RawMessage {
 	}
 	encoded = append(encoded, '"')
 	return json.RawMessage(encoded)
-}
-
-// UnzipHttpRepsonse 解析http gzip返回
-func UnzipHttpRepsonse(data []byte) []byte {
-	var err error
-
-	// only gzip response
-	if !bytes.Contains(data, []byte("Content-Encoding: gzip")) {
-		return data
-	}
-
-	// 获取body，以$bodySplit分割
-	bodySplit := []byte("\r\n\r\n")
-	contents := bytes.Split(data, bodySplit)
-	if len(contents) != 2 {
-		return data
-	}
-	body := contents[1]
-
-	// 替换body
-	if contents[1], err = parseGzip(body); err == nil {
-		return bytes.Join(contents, bodySplit)
-	}
-
-	return data
-}
-
-func parseGzip(data []byte) ([]byte, error) {
-	b := new(bytes.Buffer)
-	binary.Write(b, binary.LittleEndian, data)
-
-	r, err := gzip.NewReader(b)
-	if err != nil {
-		return data, err
-	}
-
-	zipData, err := ioutil.ReadAll(r)
-	if err != nil {
-		return data, err
-	}
-
-	return zipData, nil
 }
