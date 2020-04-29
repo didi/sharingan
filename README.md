@@ -39,7 +39,7 @@ Sharingan是一个基于golang的流量录制回放工具，录制线上真实�
 $ git clone https://github.com/didi/sharingan.git
 $ cd sharingan
 
-# Step2: 使用定制版golang，以go1.13为例
+# Step2: 使用定制版golang，以go1.13为例（慢？科学上网试试）
 $ sh install.sh go1.13 # 支持go1.10 ~ go1.14，限mac、linux amd64系统
 $ export GOROOT=/tmp/recorder-go1.13
 $ export PATH=$GOROOT/bin:$PATH
@@ -68,9 +68,9 @@ $ 页面选择要回放的流量点执行          # 内置提前录制好的3�
 
 ### 3.1、模块划分
 
-* recorder: 流量录制包，录制流量本地文件存储、发送流量到录制agent等。
+* recorder: 流量录制模块，录制流量本地文件存储、发送流量到录制agent等。
 * recorder-agent：流量录制agent，单独进程启动，控制录制比例、流量存储等。
-* replayer: 流量回放包，重定向连接到Mock Server、Mock时间、添加流量标识等。
+* replayer: 流量回放模块，重定向连接到Mock Server、Mock时间、添加流量标识等。
 * replayer-agent：流量回放agent，单独进程启动，查询流量、查询/上报噪音、流量diff、批量回放、生成覆盖率报告等。
 
 ### 3.2、整体架构图
