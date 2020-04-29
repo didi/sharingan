@@ -75,7 +75,7 @@ $ 页面选择要回放的流量点执行          # 内置提前录制好的3�
 
 ### 3.2、整体架构图
 
-<img width="725" height="521" alt="架构图" src="http://img-hxy021.didistatic.com/static/sharingan/arch_v2.png"/>
+![架构图](http://img-hxy021.didistatic.com/static/sharingan/arch_v2.png)
 
 ### 3.3、录制方案
 
@@ -105,15 +105,15 @@ $ 页面选择要回放的流量点执行          # 内置提前录制好的3�
 
 不足：录制流量覆盖率低，一次只能录制一个请求。iptables转发，噪音干扰严重。
 
-### 4.2、fastdev（并行录制、串行回放）
+### 4.2、Fastdev（并行录制、串行回放）
 
 录制：改造golang源码，利用goroutine+工作委托技术串联区分请求。[链路追踪原理](https://github.com/didi/sharingan/wiki/%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA)
 
-回放：利用monkey mock库对connect系统调用的重定向，转发流量到mock服务。支持Dashboard、噪音去除等。[monkey mock原理](https://bou.ke/blog/monkey-patching-in-go/)
+回放：利用mock库重定向connect系统调用，转发流量到mock服务。支持Dashboard、噪音去除等。[monkey mock原理](https://bou.ke/blog/monkey-patching-in-go/)
 
 不足：录制接口和实现混合，golang多版本支持困难。不支持并发回放，启动阶段流量无法代理会失败，定时任务流量干扰严重。
 
-### 4.3、sharingan（并行录制、并行回放）
+### 4.3、Sharingan（并行录制、并行回放）
 
 录制：接口和实现分离，golang源码改造部分只暴露接口，具体录制实现单独提供包支持。确保golang源码改动通过官方测试，支持1.10~1.14所有版本；优化录制服务性能。
 
@@ -125,26 +125,26 @@ $ 页面选择要回放的流量点执行          # 内置提前录制好的3�
 
 #### 5.1.1、单个回放
 
-<img width="870" height="370" alt="单个回放" src="http://img-hxy021.didistatic.com/static/sharingan/replayer_s_v2.png"/>
+![单个回放](http://img-hxy021.didistatic.com/static/sharingan/replayer_s_v2.png)
 
 对于下游请求很多且复杂的情况，支持对下游协议进行筛选
-<img width="870" height="285" alt="单个回放-协议刷选" src="http://img-hxy021.didistatic.com/static/sharingan/protocol_v2.png"/>
+![单个回放-协议刷选](http://img-hxy021.didistatic.com/static/sharingan/protocol_v2.png)
 
 #### 5.1.2、批量回放
 
 批量回放的并发度默认是10，可通过增加[-parallel](https://github.com/didi/sharingan/blob/master/replayer-agent/control.sh#L160)参数修改。
-<img width="870" height="303" alt="批量回放" src="http://img-hxy021.didistatic.com/static/sharingan/replayer_p_v2.png"/>
+![批量回放](http://img-hxy021.didistatic.com/static/sharingan/replayer_p_v2.png)
 
 ### 5.2、覆盖率报告
 
 #### 5.2.1、整体报告
 
 覆盖率报告支持覆盖率结果累计，即支持 多次 单个回放和批量回放后，统一生成覆盖率结果。
-<img width="870" height="365" alt="整体报告" src="http://img-hxy021.didistatic.com/static/sharingan/codeCover_v2.png"/>
+![整体报告](http://img-hxy021.didistatic.com/static/sharingan/codeCover_v2.png)
 
 #### 5.2.1、覆盖详情
 
-<img width="870" height="415" alt="覆盖详情" src="http://img-hxy021.didistatic.com/static/sharingan/codeCover_detail_v2.png"/>
+![覆盖详情](http://img-hxy021.didistatic.com/static/sharingan/codeCover_detail_v2.png)
 
 ## 六、更多
 
