@@ -6,7 +6,7 @@ Sharingan，中文名：写轮眼，是漫画《火影忍者》中的一种瞳�
 
 ## 一、简介
 
-Sharingan（写轮眼）是一个基于golang的流量录制回放工具，录制线上真实请求流量，在线下进行回放测试，适合项目重构、回归测试等。
+Sharingan是一个基于golang的流量录制回放工具，录制线上真实请求流量进行回放测试，适合项目重构、回归测试等。
 
 ### 1.1、背景
 
@@ -107,9 +107,9 @@ $ 页面选择要回放的流量点执行          # 内置提前录制好的3�
 
 ### 4.2、fastdev（并行录制、串行回放）
 
-录制：改造golang源码，利用goroutine+工作委托技术串联区分请求。![链路追踪原理](https://github.com/didi/sharingan/wiki/%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA)
+录制：改造golang源码，利用goroutine+工作委托技术串联区分请求。[链路追踪原理](https://github.com/didi/sharingan/wiki/%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA)
 
-回放：利用monkey mock库对connect系统调用的重定向，转发流量到mock服务。支持Dashboard、噪音去除等。![monkey mock原理](https://bou.ke/blog/monkey-patching-in-go/)
+回放：利用monkey mock库对connect系统调用的重定向，转发流量到mock服务。支持Dashboard、噪音去除等。[monkey mock原理](https://bou.ke/blog/monkey-patching-in-go/)
 
 不足：录制接口和实现混合，golang多版本支持困难。不支持并发回放，启动阶段流量无法代理会失败，定时任务流量干扰严重。
 
