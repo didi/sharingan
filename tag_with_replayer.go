@@ -9,12 +9,12 @@ import (
 	"github.com/didi/sharingan/replayer/fastmock"
 )
 
-// GetCurrentGoRoutineID GetCurrentGoRoutineID
+// GetCurrentGoRoutineID get current goRoutineID incase with delegatedID
 func GetCurrentGoRoutineID() int64 {
 	return runtime.GetCurrentGoRoutineId()
 }
 
-// SetDelegatedFromGoRoutineID SetDelegatedFromGoRoutineID
+// SetDelegatedFromGoRoutineID set goRoutine delegatedID
 func SetDelegatedFromGoRoutineID(gID int64) {
 	runtime.SetDelegatedFromGoRoutineId(gID)
 }

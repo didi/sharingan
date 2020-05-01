@@ -23,12 +23,12 @@ import (
 	"google.golang.org/grpc"
 )
 
-// GetCurrentGoRoutineID GetCurrentGoRoutineID
+// GetCurrentGoRoutineID get current goRoutineID incase with delegatedID
 func GetCurrentGoRoutineID() int64 {
 	return runtime.GetCurrentGoRoutineId()
 }
 
-// SetDelegatedFromGoRoutineID SetDelegatedFromGoRoutineID
+// SetDelegatedFromGoRoutineID set goRoutine delegatedID
 func SetDelegatedFromGoRoutineID(gID int64) {
 	runtime.SetDelegatedFromGoRoutineId(gID)
 }
