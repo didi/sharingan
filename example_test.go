@@ -1,6 +1,3 @@
-// +build !recorder
-// +build !replayer
-
 package sharingan_test
 
 import (
@@ -10,6 +7,8 @@ import (
 )
 
 func Example() {
+	// goroutineID = 0 「without any tag，ignore」
+	// goroutineID = 1 「with recorder or replayer」
 	sharingan.SetDelegatedFromGoRoutineID(1)
 	goroutineID := sharingan.GetCurrentGoRoutineID()
 
