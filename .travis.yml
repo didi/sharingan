@@ -1,0 +1,13 @@
+language: go
+
+go:
+  - 1.13.x
+
+env:
+  - GO111MODULE=on
+
+script:
+  - go get ./...
+  - go test ./recorder/...
+  - go test ./replayer/...
+  - sh build.sh
