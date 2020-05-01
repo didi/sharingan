@@ -7,9 +7,10 @@ import (
 )
 
 func Example() {
-	// goroutineID = 0 「without any tag，ignore」
-	// goroutineID = 1 「with recorder or replayer」
 	sharingan.SetDelegatedFromGoRoutineID(1)
+
+	// goroutineID = 0 「without any tag，default」
+	// goroutineID = 1 「with recorder or replayer」
 	goroutineID := sharingan.GetCurrentGoRoutineID()
 
 	//Output:
