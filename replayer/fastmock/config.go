@@ -7,25 +7,22 @@ import (
 	"strings"
 )
 
-/* mock server信息*/
+/* mock server info */
 
-// 默认mock配置
-const defaultMockIP = "127.0.0.1"
-const defaultMockPort = "3515"
+// default config
+const defaultMockIP = "127.0.0.1" // can change by env `REPLAYER_MOCK_IP`
+const defaultMockPort = "3515"    // can change by env `REPLAYER_MOCK_PORT`
 
 var (
 	mockSaAddr [4]byte
 	mockSaPort int
 	mockIP     string
 	mockPort   string
-	mockAddr   string
 )
 
 func init() {
 	setMockIP()
 	setMockPort()
-
-	mockAddr = mockIP + ":" + mockPort
 }
 
 // setMockIP set mockPort

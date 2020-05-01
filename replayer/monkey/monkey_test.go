@@ -49,7 +49,6 @@ func TestMockMemberFunc(t *testing.T) {
 		args args
 		want *PatchGuard
 	}{
-		// TODO: Add test cases.
 		{
 			name: "test1",
 			args: args{

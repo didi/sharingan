@@ -1,31 +1,29 @@
-// +build replayer
-
 package fastmock
 
 import (
-	"runtime"
 	"time"
 
+	"github.com/didi/sharingan/replayer/internal"
 	"github.com/didi/sharingan/replayer/monkey"
 )
 
+// MockTime mock Time
 func MockTime() {
-	MockTimeNow()
+	mockTimeNow()
 }
 
-func MockTimeNow() {
+// mock Time.Now()
+func mockTimeNow() {
 	monkey.MockGlobalFunc(time.Now, func() time.Time {
-		threadID := runtime.GetCurrentGoRoutineId()
-
+		threadID := internal.GetCurrentGoRoutineID()
 		replayTime := int64(0)
-		globalThreadsMutex.RLock()
-		if thread, ok := globalThreads[threadID]; ok {
+
+		if thread := globalThreads.Get(threadID); thread != nil {
 			replayTime = thread.replayTime
 		}
-		globalThreadsMutex.RUnlock()
 
 		if replayTime == 0 {
-			return time.Now2()
+			return internal.TimeNow()
 		}
 
 		sec := replayTime / 1000000000
