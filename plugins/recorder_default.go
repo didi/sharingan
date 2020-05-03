@@ -1,41 +1,49 @@
 package plugins
 
 import (
-	"context"
+	"bytes"
 	"encoding/json"
 	"io/ioutil"
 	"log"
+	"net"
+	"net/http"
 	"os"
 	"path"
 	"time"
 
-	"github.com/didi/sharingan/plugins/proto"
 	"github.com/didi/sharingan/recorder"
 	"github.com/didi/sharingan/recorder/recording"
 	"github.com/didi/sharingan/recorder/utils"
 
 	"github.com/v2pro/plz/countlog"
-	"google.golang.org/grpc"
 )
 
 // NewDefaultRecorder New DefaultRecorder
 func NewDefaultRecorder() recording.Recorder {
 	hostname, _ := os.Hostname()
 
-	recorder := &DefaultRecorder{
-		hostname:  hostname,
-		localDir:  os.Getenv("RECORDER_TO_DIR"),
-		localFile: os.Getenv("RECORDER_TO_FILE"),
-		grpcAddr:  os.Getenv("RECORDER_TO_AGENT"),
+	agentClient := &http.Client{
+		Transport: &http.Transport{
+			Proxy: http.ProxyFromEnvironment,
+			DialContext: (&net.Dialer{
+				Timeout:   30 * time.Second,
+				KeepAlive: 30 * time.Second,
+				DualStack: true,
+			}).DialContext,
+			MaxIdleConns:          100,
+			IdleConnTimeout:       5 * time.Second, // default: 90s
+			TLSHandshakeTimeout:   10 * time.Second,
+			ExpectContinueTimeout: 1 * time.Second,
+		},
+		Timeout: time.Second * 1,
 	}
 
-	// set grpcClient
-	if recorder.grpcAddr != "" {
-		grpcConn, err := grpc.Dial(recorder.grpcAddr, grpc.WithInsecure(), grpc.WithTimeout(1*time.Second))
-		if err != nil {
-			log.Fatal(err)
-		}
-		recorder.grpcClient = proto.NewAgentClient(grpcConn)
+	recorder := &DefaultRecorder{
+		hostname:    hostname,
+		localDir:    os.Getenv("RECORDER_TO_DIR"),
+		localFile:   os.Getenv("RECORDER_TO_FILE"),
+		agentAddr:   os.Getenv("RECORDER_TO_AGENT"),
+		agentClient: agentClient,
 	}
 
 	return recorder
@@ -43,11 +51,11 @@ func NewDefaultRecorder() recording.Recorder {
 
 // DefaultRecorder DefaultRecorder recorder plugin
 type DefaultRecorder struct {
-	hostname   string
-	localDir   string
-	localFile  string
-	grpcAddr   string
-	grpcClient proto.AgentClient
+	hostname    string
+	localDir    string
+	localFile   string
+	agentAddr   string
+	agentClient *http.Client
 }
 
 // Record implement Record
@@ -59,16 +67,11 @@ func (r *DefaultRecorder) Record(session *recording.Session) {
 		}
 	}()
 
-	var (
-		b   []byte // record session byte
-		err error
-	)
-
 	// set trace Info
 	{
 		http := utils.NewHTTP()
 		http.ParseRequest(session.CallFromInbound.Request)
-		session.TraceID = http.Header["xxx-header-traceid"] // cam custom
+		session.TraceID = http.Header["xxx-header-traceid"] // can custom
 		session.SpanID = http.Header["xxx-header-spanid"]   // can custom
 	}
 
@@ -77,12 +80,15 @@ func (r *DefaultRecorder) Record(session *recording.Session) {
 		session.Context += r.hostname + " "
 	}
 
-	// Marshal session
-	{
-		if b, err = json.Marshal(session); err != nil {
-			countlog.Error("event!recorder.failed to marshal session", "err", err, "session", session)
-			return
-		}
+	var (
+		b   []byte // session bytes which tobe recorder
+		err error
+	)
+
+	// Marshal session to b
+	if b, err = json.Marshal(session); err != nil {
+		countlog.Error("event!recorder.failed to marshal session", "err", err, "session", session)
+		return
 	}
 
 	// case 1: recorder to local dir [offline use]
@@ -106,21 +112,21 @@ func (r *DefaultRecorder) Record(session *recording.Session) {
 		f.WriteString("\n")
 	}
 
-	// case 3: recorder to remote agent [online use, recommend]
-	if r.grpcAddr != "" {
+	// case 3: recorder to remote agent [to recorder-agent or ES]
+	if r.agentAddr != "" {
 		recorder.SetDelegatedFromGoRoutineID(-1)
 		defer recorder.SetDelegatedFromGoRoutineID(0)
 
-		req := &proto.RecordReq{EsData: string(b)}
-		_, err := r.grpcClient.Record(context.Background(), req)
+		resp, err := r.agentClient.Post(r.agentAddr, "application/json", bytes.NewBuffer(b))
 		if err != nil {
-			countlog.Warn("event!recorder.failed to record to agent", "err", err, "grpcAddr", r.grpcAddr)
+			countlog.Warn("event!recorder.failed to record to agent", "err", err, "agentAddr", r.agentAddr)
 			return
 		}
+		resp.Body.Close()
 	}
 
 	// default console output
-	if r.localDir == "" && r.localFile == "" && r.grpcAddr == "" {
+	if r.localDir == "" && r.localFile == "" && r.agentAddr == "" {
 		log.Println(string(b))
 	}
 }

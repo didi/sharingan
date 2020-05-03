@@ -1,22 +1,19 @@
 package main
 
 import (
-	"context"
+	"io/ioutil"
 	"log"
-	"net"
+	"net/http"
 	"runtime/debug"
 
 	"github.com/didi/sharingan/recorder-agent/common/conf"
 	"github.com/didi/sharingan/recorder-agent/common/zap"
-	"github.com/didi/sharingan/recorder-agent/proto"
 	"github.com/didi/sharingan/recorder-agent/record"
-
-	"google.golang.org/grpc"
+	"github.com/didi/sharingan/recorder-agent/server"
 )
 
 var (
-	svr      = grpc.NewServer()
-	grpcAddr = conf.Handler.GetString("grpc.grpc_addr")
+	svr = server.New()
 )
 
 func main() {
@@ -26,36 +23,42 @@ func main() {
 		}
 	}()
 
-	lis, err := net.Listen("tcp", grpcAddr)
-	if err != nil {
-		log.Fatalf("[grpc] Listen failed! error:%s.", err)
-	}
+	svr.SetHTTPAddr(conf.Handler.GetString("http.http_addr"))
+	svr.SetHTTPHandlerTimeout(conf.Handler.GetInt("http.handlerTimeout"))
+	svr.SetHTTPReadTimeout(conf.Handler.GetInt("http.readTimeout"))
+	svr.SetHTTPWriteTimeout(conf.Handler.GetInt("http.writeTimeout"))
+	svr.SetHTTPIdleTimeout(conf.Handler.GetInt("http.idleTimeout"))
+	svr.AddHTTPHandleFunc("/", indexHandler)
 
-	proto.RegisterAgentServer(svr, new(Controller))
-
-	log.Printf("[grpc] Server Running! addr:%s.", grpcAddr)
-	if err := svr.Serve(lis); err != nil {
-		log.Fatalf("[grpc] Server failed! error:%s.", err)
+	log.Printf("[http] Server Running! addr:%s.\n", conf.Handler.GetString("http.http_addr"))
+	if err := svr.Run(); err != nil {
+		log.Fatalf("[http] Server failed! error:%s.", err)
 	}
 }
 
-// Controller 业务逻辑
-type Controller struct{}
+func indexHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/plain")
 
-// Record Record
-func (s *Controller) Record(ctx context.Context, req *proto.RecordReq) (*proto.RecordRsp, error) {
-	// 异常
-	isFilter, err := record.Fliter(req.EsData)
+	buf, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		return nil, err
+		w.Write([]byte("READ ERROR, err:" + err.Error()))
+		return
 	}
 
-	// 正常，不过滤情况下才录制
-	res := &proto.RecordRsp{Data: "FLITER"}
-	if !isFilter {
-		res.Data = "OK"
-		zap.Logger.Info(req.EsData) // 日志收集，最终入ES
+	isFilter, err := record.Fliter(string(buf))
+	if err != nil {
+		w.Write([]byte("FILTER ERROR, err:" + err.Error()))
+		return
 	}
 
-	return res, nil
+	// Filter
+	if isFilter {
+		w.Write([]byte("FILTER"))
+		return
+	}
+
+	// TO log
+	w.Write([]byte("OK"))
+	zap.Logger.Info(string(buf)) // 日志收集，最终入ES
+	return
 }

@@ -42,17 +42,17 @@ Sharingan是一个基于golang的流量录制回放工具，录制线上真实�
 $ git clone https://github.com/didi/sharingan.git
 $ cd sharingan
 
-# Step2: 使用定制版golang，以go1.13为例（慢？科学上网试试）
+# Step2: 使用定制版golang，以go1.13为例「慢？科学上网试试」
 $ sh install.sh go1.13 # 支持go1.10 ~ go1.14，限mac、linux amd64系统
 $ export GOROOT=/tmp/recorder-go1.13
 $ export PATH=$GOROOT/bin:$PATH
 
-# Step3: 编译、后台启动replayer-agent「会占用3515、8998端口」
+# Step3: 编译、后台启动replayer-agent「默认会占用3515、8998端口，可修改」
 $ cd replayer-agent
 $ go build
 $ nohup ./replayer-agent >> run.log 2>&1 &
 
-# Step4: 编译、后台启动example示例「会占用9999端口」
+# Step4: 编译、后台启动example示例「默认会占用9999端口，可修改」
 $ cd ../example
 $ go build -tags="replayer" -gcflags="all=-N -l"
 $ nohup ./example >> run.log 2>&1 &

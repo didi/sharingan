@@ -1,7 +1,10 @@
 
-[grpc]
-grpc_addr = ":9003"          # grpc server地址
-grpc_handler_timeout = 5000  # grpc Handler timeout(ms), default 5000
+[http]
+http_addr = ":9003"      # Listen ip:port, http server地址
+handlerTimeout = 1000    # Handler timeout(ms), default 5000
+readTimeout = 1000       # Recieve http request timeout(ms), including the body
+writeTimeout = 1000      # Recieve http body and response timeout(ms)
+idleTimeout = 5000       # Keep-alive timeout(ms)
 
 [log]
 filename = "log/recorder.log.%Y%m%d%H"

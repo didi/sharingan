@@ -73,9 +73,9 @@ cd /path/to/your/project && ./$project    // 使用上一步编译生成二进�
 #### 4.2、线上流量录制「流量发送给recorder-agent」
 
 ```shell
-export RECORDER_ENABLED=true                // 开启录制
-export RECORDER_TO_AGENT="127.0.0.1:9003"   // 指定agent地址，确保recorder-agent已经启动
-cd /path/to/your/project && ./$project      // 使用上一步编译生成二进制文件启动项目
+export RECORDER_ENABLED=true                     // 开启录制
+export RECORDER_TO_AGENT="http://127.0.0.1:9003" // 指定agent地址，确保recorder-agent已经启动
+cd /path/to/your/project && ./$project           // 使用上一步编译生成二进制文件启动项目
 ```
 
 * 启动recorder-agent：[recorder-agent](https://github.com/didi/sharingan/blob/master/doc/recorder/recorder-agent.md)
@@ -110,7 +110,7 @@ app=test
 # 将xxx机器名替换为待录制机器的hostname，通常只在一台机器录制
 if [ `hostname`x = "xxx机器名"x ] ; then
     export RECORDER_ENABLED=true
-    export RECORDER_TO_AGENT="127.0.0.1:9003"
+    export RECORDER_TO_AGENT="http://127.0.0.1:9003"
     app=${app}-recorder
 fi
 
