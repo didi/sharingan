@@ -4,19 +4,19 @@ package sharingan
 
 import (
 	"log"
-	"runtime"
 
+	"github.com/didi/sharingan/replayer"
 	"github.com/didi/sharingan/replayer/fastmock"
 )
 
-// GetCurrentGoRoutineID get current goRoutineID incase with delegatedID
+// GetCurrentGoRoutineID get current goroutineID incase SetDelegatedFromGoRoutineID
 func GetCurrentGoRoutineID() int64 {
-	return runtime.GetCurrentGoRoutineId()
+	return replayer.GetCurrentGoRoutineID()
 }
 
-// SetDelegatedFromGoRoutineID set goRoutine delegatedID
+// SetDelegatedFromGoRoutineID should be used when this goroutine is doing work for another goroutine
 func SetDelegatedFromGoRoutineID(gID int64) {
-	runtime.SetDelegatedFromGoRoutineId(gID)
+	replayer.SetDelegatedFromGoRoutineID(gID)
 }
 
 func init() {

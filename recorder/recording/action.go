@@ -31,7 +31,7 @@ func (action *action) GetOccurredAt() int64 {
 	return action.OccurredAt
 }
 
-// CallFromInbound Inbound请求
+// CallFromInbound Inbound Request
 type CallFromInbound struct {
 	action
 	Peer     net.TCPAddr
@@ -50,7 +50,7 @@ func (callFromInbound *CallFromInbound) MarshalJSON() ([]byte, error) {
 	})
 }
 
-// ReturnInbound Inbound返回
+// ReturnInbound Inbound Response
 type ReturnInbound struct {
 	action
 	Response []byte
@@ -67,7 +67,7 @@ func (returnInbound *ReturnInbound) MarshalJSON() ([]byte, error) {
 	})
 }
 
-// CallOutbound Outbound请求和返回
+// CallOutbound Outbound Request and Response
 type CallOutbound struct {
 	action
 	SocketFD     int
@@ -77,7 +77,7 @@ type CallOutbound struct {
 	ResponseTime int64
 	Response     []byte
 	UnixAddr     net.UnixAddr
-	CSpanId      []byte
+	CSpanID      []byte `json:"CSpanId"`
 }
 
 // MarshalJSON MarshalJSON
@@ -86,12 +86,12 @@ func (callOutbound *CallOutbound) MarshalJSON() ([]byte, error) {
 		CallOutbound
 		Request  json.RawMessage
 		Response json.RawMessage
-		CSpanId  json.RawMessage
+		CSpanID  json.RawMessage `json:"CSpanId"`
 	}{
 		CallOutbound: *callOutbound,
 		Request:      EncodeAnyByteArray(callOutbound.Request),
 		Response:     EncodeAnyByteArray(callOutbound.Response),
-		CSpanId:      EncodeAnyByteArray(callOutbound.CSpanId),
+		CSpanID:      EncodeAnyByteArray(callOutbound.CSpanID),
 	})
 }
 
@@ -254,6 +254,7 @@ var safeSet = [utf8.RuneSelf]bool{
 }
 var hex = "0123456789abcdef"
 
+// EncodeAnyByteArray custom Marshal
 func EncodeAnyByteArray(s []byte) json.RawMessage {
 	encoded := []byte{'"'}
 	i := 0

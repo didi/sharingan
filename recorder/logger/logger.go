@@ -11,7 +11,8 @@ var logFile = "STDOUT"
 var logLevel = countlog.LevelInfo
 var logFormat = "HumanReadableFormat"
 
-func init() {
+// Init int logger
+func Init() {
 	if level := os.Getenv("RECORDER_LOG_LEVEL"); level != "" {
 		SetLogLevel(level)
 	}
@@ -19,10 +20,7 @@ func init() {
 	if file := os.Getenv("RECORDER_LOG_FILE"); file != "" {
 		SetLogFile(file)
 	}
-}
 
-// Setup 设置countlog
-func Setup() {
 	logWriter := countlog.NewAsyncLogWriter(logLevel, countlog.NewFileLogOutput(logFile))
 	logWriter.LogFormatter = &countlog.HumanReadableFormat{
 		ContextPropertyNames: []string{"threadID", "outboundSrc"},
@@ -33,12 +31,12 @@ func Setup() {
 	countlog.LogWriters = append(countlog.LogWriters, logWriter)
 }
 
-// SetLogFile 设置日志文件, default: STDOUT
+// SetLogFile set log file, default: STDOUT
 func SetLogFile(file string) {
 	logFile = file
 }
 
-// SetLogLevel 设置日志级别，TRACE, DEBUG, INFO, WARN, ERROR, FATAL, default: DEBUG
+// SetLogLevel set log level，TRACE, DEBUG, INFO, WARN, ERROR, FATAL, default: DEBUG
 func SetLogLevel(level string) {
 	level = strings.ToUpper(level)
 

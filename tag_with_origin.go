@@ -3,12 +3,12 @@
 
 package sharingan
 
-// GetCurrentGoRoutineID get current goRoutineID incase with delegatedID
+// GetCurrentGoRoutineID get current goroutineID incase SetDelegatedFromGoRoutineID
 func GetCurrentGoRoutineID() int64 {
 	return 0
 }
 
-// SetDelegatedFromGoRoutineID set goRoutine delegatedID
+// SetDelegatedFromGoRoutineID should be used when this goroutine is doing work for another goroutine
 func SetDelegatedFromGoRoutineID(gID int64) {
 }
 

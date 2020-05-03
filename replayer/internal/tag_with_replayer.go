@@ -39,6 +39,11 @@ func GetCurrentGoRoutineID() int64 {
 	return runtime.GetCurrentGoRoutineId()
 }
 
+// SetDelegatedFromGoRoutineID SetDelegatedFromGoRoutineID
+func SetDelegatedFromGoRoutineID(gID int64) {
+	runtime.SetDelegatedFromGoRoutineId(gID)
+}
+
 // RegisterOnClose RegisterOnClose
 func RegisterOnClose(callback func(fd int)) {
 	net.OnClose = callback

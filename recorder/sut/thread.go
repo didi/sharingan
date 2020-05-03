@@ -31,7 +31,7 @@ type RecvFlags int
 // ThreadIDKey ThreadIDKey
 type ThreadIDKey string
 
-// newThread 新建Thread
+// newThread new Thread
 func newThread(threadID ThreadID) *Thread {
 	thread := &Thread{
 		Context:          context.WithValue(context.Background(), ThreadIDKey("threadID"), threadID),
@@ -56,7 +56,7 @@ func (thread *Thread) OnAccept(serverSocketFD SocketFD, clientSocketFD SocketFD,
 	}
 }
 
-// OnConnect socketFD加入全局数组
+// OnConnect add global socketFD
 func (thread *Thread) OnConnect(socketFD SocketFD, remoteAddr net.TCPAddr) {
 	thread.socks[socketFD] = &socket{
 		socketFD: socketFD,
@@ -73,7 +73,7 @@ func (thread *Thread) OnSend(socketFD SocketFD, span []byte, extraHeaderSentSize
 
 	sock, err := thread.lookupSocket(socketFD)
 	if sock == nil || err != nil {
-		// fd 连接异常
+		// not connect
 		if err == syscall.ENOTCONN {
 			countlog.Warn("event!sut.unknown-send",
 				"threadID", thread.threadID,
@@ -83,7 +83,7 @@ func (thread *Thread) OnSend(socketFD SocketFD, span []byte, extraHeaderSentSize
 			return
 		}
 
-		// 连接池内的连接没有设置超时时间，可能会被回收
+		// if net set timeout in connect pool, maybe gc
 		sock = &socket{
 			socketFD: socketFD,
 			isServer: false,
@@ -172,7 +172,7 @@ func (thread *Thread) OnRecv(socketFD SocketFD, span []byte, flags RecvFlags) []
 		return nil
 	}
 
-	if thread.recordingSession.HasResponded() {
+	if thread.recordingSession.HasResponse() {
 		countlog.Trace("event!sut.recv_from_inbound_found_responded",
 			"threadID", thread.threadID,
 			"socketFD", socketFD)
@@ -188,12 +188,12 @@ func (thread *Thread) OnShutdown() {
 	thread.shutdownRecordingSession()
 }
 
-// OnAccess 最多1000个Actions
+// OnAccess check action limit, max = 1000
 func (thread *Thread) OnAccess() {
 	if thread.recordingSession != nil && len(thread.recordingSession.Actions) > 1000 {
 		countlog.Warn("event!sut.recorded_too_many_actions",
 			"threadID", thread.threadID,
-			"sessionId", thread.recordingSession.SessionId)
+			"sessionId", thread.recordingSession.SessionID)
 		thread.shutdownRecordingSession()
 	}
 }
@@ -216,7 +216,7 @@ func (thread *Thread) IgnoreSocketFD(socketFD SocketFD, remoteAddr net.TCPAddr) 
 	thread.ignoreSocks[socketFD] = true
 }
 
-// 检查socketFD
+// check socketFD
 func (thread *Thread) lookupSocket(socketFD SocketFD) (*socket, error) {
 	sock := thread.socks[socketFD]
 	if sock != nil {

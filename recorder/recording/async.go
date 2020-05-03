@@ -6,6 +6,8 @@ import (
 	"github.com/v2pro/plz/countlog"
 )
 
+const defaultChanSize = 100
+
 // AsyncRecorder AsyncRecorder
 type AsyncRecorder struct {
 	Context      context.Context
@@ -16,7 +18,7 @@ type AsyncRecorder struct {
 // NewAsyncRecorder NewAsyncRecorder
 func NewAsyncRecorder(realRecorder Recorder) *AsyncRecorder {
 	return &AsyncRecorder{
-		recordChan:   make(chan *Session, 100),
+		recordChan:   make(chan *Session, defaultChanSize),
 		realRecorder: realRecorder,
 	}
 }
