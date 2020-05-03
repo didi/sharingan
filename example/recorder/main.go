@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/didi/sharingan"
 )
@@ -21,11 +20,15 @@ func indexHandle(w http.ResponseWriter, r *http.Request) {
 
 // Tips：正常http请求不需要设置，只有使用go异步执行时需要
 func goHandle(w http.ResponseWriter, r *http.Request) {
+	doneChan := make(chan bool)
+
 	go func(delegatedID int64) {
 		sharingan.SetDelegatedFromGoRoutineID(delegatedID)
 		defer sharingan.SetDelegatedFromGoRoutineID(0)
 		http.Get("http://127.0.0.1:8888")
+
+		doneChan <- true
 	}(sharingan.GetCurrentGoRoutineID())
 
-	time.Sleep(time.Second)
+	<-doneChan
 }

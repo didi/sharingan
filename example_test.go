@@ -1,19 +1,22 @@
 package sharingan_test
 
 import (
-	"fmt"
+	"net/http"
 
 	"github.com/didi/sharingan"
 )
 
 func Example() {
-	sharingan.SetDelegatedFromGoRoutineID(1)
+	doneChan := make(chan bool)
 
-	// goroutineID = 0 「without any tag，default」
-	// goroutineID = 1 「with recorder or replayer」
-	goroutineID := sharingan.GetCurrentGoRoutineID()
+	go func(delegatedID int64) {
+		sharingan.SetDelegatedFromGoRoutineID(delegatedID)
+		defer sharingan.SetDelegatedFromGoRoutineID(0)
 
-	//Output:
-	//goroutineID = 0
-	fmt.Printf("goroutineID = %d\n", goroutineID)
+		http.Get("http://127.0.0.1:8888")
+
+		doneChan <- true
+	}(sharingan.GetCurrentGoRoutineID())
+
+	<-doneChan
 }
