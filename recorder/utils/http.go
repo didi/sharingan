@@ -16,7 +16,7 @@ func NewHTTP() *HTTP {
 	return &HTTP{Header: make(map[string][]byte)}
 }
 
-// ParseRequest 解析请求
+// ParseRequest parse http request
 func (http *HTTP) ParseRequest(content []byte) error {
 	if len(content) < 4 {
 		return nil
@@ -39,7 +39,7 @@ func (http *HTTP) ParseRequest(content []byte) error {
 	return nil
 }
 
-// ParseResponse 解析返回
+// ParseResponse parse http response
 func (http *HTTP) ParseResponse(content []byte) error {
 	if len(content) < 4 {
 		return nil

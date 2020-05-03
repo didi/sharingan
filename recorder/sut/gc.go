@@ -2,7 +2,6 @@ package sut
 
 import (
 	"net"
-	"os"
 	"strconv"
 	"sync"
 	"time"
@@ -21,15 +20,14 @@ var globalSocksMutex = &sync.Mutex{}
 var globalThreads = map[ThreadID]*Thread{} // real thread id => virtual thread
 var globalThreadsMutex = &sync.Mutex{}
 
-func init() {
-	if os.Getenv("RECORDER_ENABLED") == "true" {
-		go gcStatesInBackground()
-	}
+// StartGC gc global socket and thread
+func StartGC() {
+	go gcStatesInBackground()
 }
 
-/* 全局gc */
+/* global gc */
 
-// gcStatesInBackground 后台gc
+// gcStatesInBackground background gc
 func gcStatesInBackground() {
 	defer func() {
 		if recovered := recover(); recovered != nil {
@@ -50,7 +48,7 @@ func gcStatesInBackground() {
 	}
 }
 
-// gcGlobalSocks 回收socket
+// gcGlobalSocks gc socket
 func gcGlobalSocks() int {
 	globalSocksMutex.Lock()
 	defer globalSocksMutex.Unlock()
@@ -71,7 +69,7 @@ func gcGlobalSocks() int {
 	return expiredSocksCount
 }
 
-// gcGlobalRealThreads 回收thread
+// gcGlobalRealThreads gc thread
 func gcGlobalRealThreads() int {
 	globalThreadsMutex.Lock()
 	defer globalThreadsMutex.Unlock()
@@ -95,9 +93,9 @@ func gcGlobalRealThreads() int {
 	return expiredThreadsCount
 }
 
-/* 全局socket管理 */
+/* global socket manager */
 
-// RemoveGlobalSock 移除socket， case: Close
+// RemoveGlobalSock rm socket， case: Close
 func RemoveGlobalSock(socketFD SocketFD) {
 	globalSocksMutex.Lock()
 	defer globalSocksMutex.Unlock()
@@ -108,7 +106,7 @@ func RemoveGlobalSock(socketFD SocketFD) {
 	}
 }
 
-// AddGlobalSock 新增socket， case: Accept、Connect
+// AddGlobalSock add socket， case: Accept、Connect
 func AddGlobalSock(socketFD SocketFD, remoteAddr net.TCPAddr, isServer bool) {
 	sock := &socket{
 		socketFD: socketFD,
@@ -140,7 +138,7 @@ func getGlobalSock(socketFD SocketFD) *socket {
 	return sock
 }
 
-// exportSocks 导出全部socket
+// exportSocks export all sockets
 func exportSocks() map[string]interface{} {
 	globalSocksMutex.Lock()
 	defer globalSocksMutex.Unlock()
@@ -153,7 +151,7 @@ func exportSocks() map[string]interface{} {
 	return state
 }
 
-/* 全局thread管理 */
+/* global thread manager */
 
 // OperateThread create when session notExist
 func OperateThread(threadID ThreadID, op func(thread *Thread)) {
@@ -175,7 +173,7 @@ func OperateThreadOnRecordingSession(threadID ThreadID, op func(thread *Thread))
 
 	thread := globalThreads[threadID]
 
-	// 录制session不存在CallFromInbound提前结束
+	// if no CallFromInbound.Request in session，return first
 	if thread == nil ||
 		thread.recordingSession == nil ||
 		thread.recordingSession.CallFromInbound == nil ||
@@ -192,7 +190,7 @@ func OperateThreadOnRecordingSession(threadID ThreadID, op func(thread *Thread))
 	op(thread)
 }
 
-// getThread 获取Thread信息，没有会新建一个
+// getThread get thread Info，can new incase not found
 func getThread(threadID ThreadID) *Thread {
 	globalThreadsMutex.Lock()
 	defer globalThreadsMutex.Unlock()
@@ -206,7 +204,7 @@ func getThread(threadID ThreadID) *Thread {
 	return thread
 }
 
-// exportThreads 导出全部Thread
+// exportThreads export all threads
 func exportThreads() map[string]interface{} {
 	globalThreadsMutex.Lock()
 	defer globalThreadsMutex.Unlock()

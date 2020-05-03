@@ -11,29 +11,30 @@ import (
 	"github.com/v2pro/plz/countlog"
 )
 
+// TraceHeader TraceHeader
 type TraceHeader []byte
 
 // Session Session
 type Session struct {
-	Context             string
-	SessionId           string
-	ThreadId            int32
-	TraceHeader         TraceHeader
-	TraceId             []byte
-	SpanId              []byte
-	NextSessionId       string
-	CallFromInbound     *CallFromInbound
-	ReturnInbound       *ReturnInbound
-	Actions             []Action
-	currentAppendFiles  map[string]*AppendFile `json:"-"`
-	currentCallOutbound *CallOutbound          `json:"-"`
+	Context             string           `json:"Context"`
+	SessionID           string           `json:"SessionId"`
+	ThreadID            int32            `json:"ThreadId"`
+	TraceHeader         TraceHeader      `json:"TraceHeader"`
+	TraceID             []byte           `json:"TraceId"`
+	SpanID              []byte           `json:"SpanId"`
+	NextSessionID       string           `json:"NextSessionId"`
+	CallFromInbound     *CallFromInbound `json:"CallFromInbound"`
+	ReturnInbound       *ReturnInbound   `json:"ReturnInbound"`
+	Actions             []Action         `json:"Actions"`
+	currentAppendFiles  map[string]*AppendFile
+	currentCallOutbound *CallOutbound
 }
 
 // NewSession NewSession
 func NewSession(threadID int32) *Session {
 	return &Session{
-		ThreadId:  threadID,
-		SessionId: fmt.Sprintf("%d-%d", time.Now().UnixNano(), threadID),
+		ThreadID:  threadID,
+		SessionID: fmt.Sprintf("%d-%d", time.Now().UnixNano(), threadID),
 	}
 }
 
@@ -41,12 +42,12 @@ func NewSession(threadID int32) *Session {
 func (session *Session) MarshalJSON() ([]byte, error) {
 	return json.Marshal(struct {
 		Session
-		TraceId json.RawMessage
-		SpanId  json.RawMessage
+		TraceID json.RawMessage `json:"TraceId"`
+		SpanID  json.RawMessage `json:"SpanId"`
 	}{
 		Session: *session,
-		TraceId: EncodeAnyByteArray(session.TraceId),
-		SpanId:  EncodeAnyByteArray(session.SpanId),
+		TraceID: EncodeAnyByteArray(session.TraceID),
+		SpanID:  EncodeAnyByteArray(session.SpanID),
 	})
 }
 
@@ -81,7 +82,7 @@ func (session *Session) ReadStorage(ctx context.Context, span []byte) {
 	})
 }
 
-// RecvFromInbound Inbound请求
+// RecvFromInbound Inbound Request
 func (session *Session) RecvFromInbound(ctx context.Context, span []byte, peer net.TCPAddr, unix net.UnixAddr) {
 	if session == nil {
 		return
@@ -98,7 +99,7 @@ func (session *Session) RecvFromInbound(ctx context.Context, span []byte, peer n
 	session.CallFromInbound.Request = append(session.CallFromInbound.Request, span...)
 }
 
-// SendToInbound Inbound回复
+// SendToInbound Inbound Response
 func (session *Session) SendToInbound(ctx context.Context, span []byte, peer net.TCPAddr) {
 	if session == nil {
 		return
@@ -117,7 +118,7 @@ func (session *Session) SendToInbound(ctx context.Context, span []byte, peer net
 	session.ReturnInbound.Response = append(session.ReturnInbound.Response, span...)
 }
 
-// SendToOutbound OutboundTCP请求
+// SendToOutbound Outbound TCP Request
 func (session *Session) SendToOutbound(ctx context.Context, span []byte, peer net.TCPAddr, local *net.TCPAddr, socketFD int) {
 	if session == nil {
 		return
@@ -136,7 +137,7 @@ func (session *Session) SendToOutbound(ctx context.Context, span []byte, peer ne
 	session.currentCallOutbound.Request = append(session.currentCallOutbound.Request, span...)
 }
 
-// SendUDPToOutbound Outbound的UDP请求
+// SendUDPToOutbound Outbound UDP Request
 func (session *Session) SendUDPToOutbound(ctx context.Context, span []byte, peer net.UDPAddr) {
 	session.addAction(&SendUDP{
 		action:  session.newAction("SendUDP"),
@@ -145,13 +146,13 @@ func (session *Session) SendUDPToOutbound(ctx context.Context, span []byte, peer
 	})
 }
 
-// RecvFromOutbound Outbound返回
+// RecvFromOutbound Outbound Response
 func (session *Session) RecvFromOutbound(ctx context.Context, span []byte, peer net.TCPAddr, local *net.TCPAddr, socketFD int) {
 	if session == nil {
 		return
 	}
 
-	// 匹配返回值，逆序遍历所有的actions，找到最匹配的一个， 最多找10个
+	// match response, find best match action int reverse order, limit 10 times
 	searchCnt, searchLimit := 0, 10
 	for i := len(session.Actions) - 1; i >= 0; i-- {
 		if outbound, ok := session.Actions[i].(*CallOutbound); ok {
@@ -180,7 +181,7 @@ func (session *Session) RecvFromOutbound(ctx context.Context, span []byte, peer 
 	session.currentCallOutbound.Response = append(session.currentCallOutbound.Response, span...)
 }
 
-// HasRequest 是否有请求
+// HasRequest has Request
 func (session *Session) HasRequest() bool {
 	if session == nil {
 		return false
@@ -193,8 +194,8 @@ func (session *Session) HasRequest() bool {
 	return true
 }
 
-// HasResponded 是否有返回
-func (session *Session) HasResponded() bool {
+// HasResponse has Response
+func (session *Session) HasResponse() bool {
 	if session == nil {
 		return false
 	}
@@ -204,7 +205,7 @@ func (session *Session) HasResponded() bool {
 	return true
 }
 
-// newAction 新建action
+// newAction new action
 func (session *Session) newAction(actionType string) action {
 	occurredAt := time.Now().UnixNano()
 
@@ -215,14 +216,14 @@ func (session *Session) newAction(actionType string) action {
 	}
 }
 
-// newCallOutbound 新的Outbound请求
+// newCallOutbound new call outbound
 func (session *Session) newCallOutbound(peer net.TCPAddr, local *net.TCPAddr, socketFD int) {
 	session.currentCallOutbound = &CallOutbound{
 		action:   session.newAction("CallOutbound"),
 		Peer:     peer,
 		Local:    local,
 		SocketFD: socketFD,
-		CSpanId:  []byte(nil),
+		CSpanID:  []byte(nil),
 	}
 
 	session.addAction(session.currentCallOutbound)
@@ -241,7 +242,7 @@ func (session *Session) addAction(action Action) {
 	session.Actions = append(session.Actions, action)
 }
 
-// Shutdown 关闭session并进行录制
+// Shutdown shotdown and recorder
 func (session *Session) Shutdown(ctx context.Context, newSession *Session) {
 	if session == nil {
 		return
@@ -257,19 +258,19 @@ func (session *Session) Shutdown(ctx context.Context, newSession *Session) {
 		return
 	}
 
-	session.NextSessionId = newSession.SessionId
+	session.NextSessionID = newSession.SessionID
 	for _, recorder := range Recorders {
 		recorder.Record(session)
 	}
 
 	countlog.Debug("event!recording.session_recorded",
 		"ctx", ctx,
-		"threadID", session.ThreadId,
+		"threadID", session.ThreadID,
 		"session", session,
 	)
 }
 
-// Summary 统计
+// Summary sunmmary
 func (session *Session) Summary(newSession *Session) {
 	reqLen := 0
 	respLen := 0
@@ -283,9 +284,9 @@ func (session *Session) Summary(newSession *Session) {
 	}
 
 	countlog.Trace("event!recording.shutdown_recording_session",
-		"threadID", session.ThreadId,
-		"sessionId", session.SessionId,
-		"nextSessionId", newSession.SessionId,
+		"threadID", session.ThreadID,
+		"sessionId", session.SessionID,
+		"nextSessionId", newSession.SessionID,
 		"callFromInboundBytes",
 		reqLen,
 		"returnInboundBytes",

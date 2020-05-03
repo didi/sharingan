@@ -39,6 +39,10 @@ func GetCurrentGoRoutineID() int64 {
 	return 0
 }
 
+// SetDelegatedFromGoRoutineID SetDelegatedFromGoRoutineID
+func SetDelegatedFromGoRoutineID(gID int64) {
+}
+
 // RegisterOnClose RegisterOnClose
 func RegisterOnClose(callback func(fd int)) {
 }
