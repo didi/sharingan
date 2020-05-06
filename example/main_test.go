@@ -7,13 +7,14 @@ import (
 	"sync"
 	"syscall"
 	"testing"
+	"time"
 
 	_ "github.com/didi/sharingan"
 )
 
-var systemTest *bool
-var endRunning chan bool
+const waitFlagParseTime = 10
 
+var endRunning chan bool
 func stop() {
 	endRunning <- true
 }
@@ -29,16 +30,33 @@ func signalHandler() {
 	}()
 }
 
-func init() {
-	systemTest = flag.Bool("systemTest", false, "Set to true when running system tests")
-}
 
-// Test started when the test binary is started. Only calls main.
-func Test_main(t *testing.T) {
-	if *systemTest {
+// TestMain Test started when the test binary is started. Only calls main.
+func TestMain(m *testing.M) {
+	if os.Getenv("SYSTEM_TEST") == "true" {
+		go main()
 		signalHandler()
 		endRunning = make(chan bool, 1)
-		go main()
+		// Maximum waiting time(10s) for flag.Parse.
+		// If the flag still missed to execute after 10 seconds, check your logic with main function.
+		checkTime := time.After(waitFlagParseTime * time.Second)
+		for {
+			if flag.Parsed() {
+				break
+			}
+			select {
+			case <-checkTime:
+				if !flag.Parsed() {
+					flag.Parse()
+				}
+				break
+			default:
+				time.Sleep(200 * time.Millisecond)
+			}
+		}
 		<-endRunning
+		os.Exit(m.Run())
 	}
+	// Original test flow
+	m.Run()
 }

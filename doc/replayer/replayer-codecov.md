@@ -36,12 +36,13 @@ curl https://raw.githubusercontent.com/didi/sharingan-go/recorder/install/go1.13
 ```shell script
 go test -gcflags="all=-N -l" -tags="replayer" -v -c -covermode=count -coverpkg ./...
 ```
-> 相比普通回放，启动命令 多了两个参数 -systemTest -test.coverprofile。
+> 相比普通回放，启动命令 多了一个参数 -test.coverprofile 和配置环境变量 SYSTEM_TEST=true
+> 环境变量SYSTEM_TEST用以标识，是否开启集成测试覆盖率支持，true为开启，而其他值为原始test流程(如跑单测等流程)。
 ```shell script
 #linux下启动：
-nohup ./$binName.test -systemTest -test.coverprofile=/tmp/ShaRinGan/coverage.$binName.cov >> run.log 2>&1 &
+SYSTEM_TEST=true nohup ./$binName.test -test.coverprofile=/tmp/ShaRinGan/coverage.$binName.cov >> run.log 2>&1 &
 #mac下启动(务必 绝对路径 启动):
-nohup /xx/$binName.test -systemTest -test.coverprofile=/tmp/ShaRinGan/coverage.$binName.cov >> run.log 2>&1 &
+SYSTEM_TEST=true nohup /xx/$binName.test -test.coverprofile=/tmp/ShaRinGan/coverage.$binName.cov >> run.log 2>&1 &
 ```
 > SUT一键接入和启动[脚本](../../example/replayer/sut_replayer.sh) 及其 [使用方法](./replayer-sut.md)
 

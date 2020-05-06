@@ -527,7 +527,7 @@ func (srg ShaRinGan) CodeCoverage(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	//重启服务 （.cov文件以 起始yyyymmddHHiiss为后缀）
-	fullCMD := "cd " + filepath.Dir(fullEXE) + " && nohup " + fullEXE + " -systemTest -test.coverprofile=" + global.DirCodeCov + "/coverage." + binName + "." + time.Now().Format("20060102150405") + ".cov &"
+	fullCMD := "cd " + filepath.Dir(fullEXE) + " && SYSTEM_TEST=true nohup " + fullEXE + " -test.coverprofile=" + global.DirCodeCov + "/coverage." + binName + "." + time.Now().Format("20060102150405") + ".cov &"
 	cmd = exec.Command("/bin/bash", "-c", fullCMD)
 	err = cmd.Start()
 	if err != nil {
