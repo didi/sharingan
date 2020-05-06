@@ -14,9 +14,7 @@ import (
 
 const waitFlagParseTime = 10
 
-var systemTest *bool
 var endRunning chan bool
-
 func stop() {
 	endRunning <- true
 }
@@ -32,13 +30,10 @@ func signalHandler() {
 	}()
 }
 
-func init() {
-	systemTest = flag.Bool("systemTest", false, "Set to true when running system tests")
-}
 
 // TestMain Test started when the test binary is started. Only calls main.
 func TestMain(m *testing.M) {
-	if *systemTest {
+	if os.Getenv("SYSTEM_TEST") == "true" {
 		go main()
 		signalHandler()
 		endRunning = make(chan bool, 1)
@@ -62,4 +57,6 @@ func TestMain(m *testing.M) {
 		<-endRunning
 		os.Exit(m.Run())
 	}
+	// Original test flow
+	m.Run()
 }
