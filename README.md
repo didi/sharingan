@@ -1,6 +1,6 @@
 # Sharingan
 
-<!-- [![Build Status](https://www.travis-ci.org/didi/sharingan.svg?branch=master)](https://www.travis-ci.org/didi/sharingan) -->
+[![Build Status](https://www.travis-ci.org/didi/sharingan.svg?branch=master)](https://www.travis-ci.org/didi/sharingan)
 [![Gitter](https://badges.gitter.im/didi-sharingan/community.svg)](https://gitter.im/didi-sharingan/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/didi/sharingan/blob/master/LICENSE)
 [![GoDoc](https://godoc.org/github.com/didi/sharingan?status.svg)](https://godoc.org/github.com/didi/sharingan)
