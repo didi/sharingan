@@ -169,8 +169,10 @@ $ 页面选择要回放的流量点执行          # 内置提前录制好的3�
 
 ### 6.5、联系我们
 
-欢迎加入QQ交流群「群号:417146801」一起交流~
+* 微信交流群
+
+![WX](http://img-hxy021.didistatic.com/static/sharingan/WX_v2.jpeg)
+
+* QQ交流群「群号:417146801，长期有效」
 
 ![QQ](http://img-hxy021.didistatic.com/static/sharingan/QQ_v2.JPG)
-
-Tips：联系QQ群主可拉入微信交流群，日常交流**以微信群为主**。
