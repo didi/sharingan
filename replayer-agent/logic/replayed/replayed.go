@@ -465,18 +465,9 @@ func (c *Composer) DiffOther(ctx context.Context, ajaxs []*DiffRecord, cnt int) 
 	out := c.Sess.OnlineOutbounds[cnt]
 	// put back to buffer pool
 	defer pool.PutBuf(out.Request)
-	// ignore dns outbounds
-	if out.Peer.IP.String() == "127.0.0.1" && out.Peer.Port == 53 {
-		return ajaxs
-	}
 
-	// ignore redis ping
-	if bytes.Equal(out.Request, []byte("*1\r\n$4\r\nPING\r\n")) {
-		return ajaxs
-	}
-
-	// ignore mysql COM_STMT_CLOSE
-	if bytes.HasPrefix(out.Request, []byte{0x5, 0x0, 0x0, 0x0, 0x19}) && len(out.Request) == 9 {
+	// ignore Online Request
+	if c.ignoreOnlineRequest(out) {
 		return ajaxs
 	}
 
@@ -608,4 +599,38 @@ func setTestStatus(diff *DiffRecord, isDiff int, content string) {
 	diff.IsDiff = isDiff
 	diff.TestReq = content
 	diff.BinaryTestReq = content
+}
+
+func (c *Composer) ignoreOnlineRequest(out *recording.CallOutbound) bool {
+	// ignore dns outbounds
+	if out.Peer.IP.String() == "127.0.0.1" && out.Peer.Port == 53 {
+		return true
+	}
+
+	// ignore redis ping
+	if bytes.Equal(out.Request, []byte("*1\r\n$4\r\nPING\r\n")) {
+		return true
+	}
+
+	// ignore mysql COM_STMT_CLOSE
+	if bytes.HasPrefix(out.Request, []byte{0x5, 0x0, 0x0, 0x0, 0x19}) && len(out.Request) == 9 {
+		return true
+	}
+
+	// ignore mysql mysql_native_password
+	if bytes.Contains(out.Request, []byte("mysql_native_password")) {
+		return true
+	}
+
+	// ignore mysql SET autocommit=1
+	if bytes.Contains(out.Request, []byte("SET autocommit=1")) {
+		return true
+	}
+
+	// ignore mysql SET NAMES utf8
+	if bytes.Contains(out.Request, []byte("SET NAMES utf8")) {
+		return true
+	}
+
+	return false
 }

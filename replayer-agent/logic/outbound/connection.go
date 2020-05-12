@@ -3,6 +3,7 @@ package outbound
 import (
 	"bytes"
 	"context"
+	"errors"
 	"net"
 	"regexp"
 	"strconv"
@@ -21,6 +22,7 @@ var (
 	contentLengthRegex = regexp.MustCompile("Content-Length: [0-9]+\r\n")
 	traficRegex        = regexp.MustCompile(`/\*{"rid":"(.*?)","addr":"(.*?)"}\*/`)
 	mysqlGreetingTrace = "ca4bc2ca79c2f79729b322fbfbd91ef3" // md5("MYSQL_GREETING")
+	errMissMatchTalk   = errors.New("MISS match")
 )
 
 // ConnState 连接管理
@@ -194,7 +196,7 @@ func (cs *ConnState) match(ctx context.Context, request []byte) error {
 		if matchedTalk == nil {
 			cs.Handler.replayedSession.Outbounds = append(cs.Handler.replayedSession.Outbounds, callOutbound)
 			tlog.Handler.Warnf(ctx, tlog.DebugTag, "errmsg=find matching talk failed||request=%s||traceID=%s", quotedRequest, string(cs.traceID))
-			return nil
+			return errMissMatchTalk
 		}
 		response := callOutbound.MatchedResponse
 		response = bytes.Replace(response, []byte("Connection: keep-alive\r\n"), []byte("Connection: close\r\n"), -1)
