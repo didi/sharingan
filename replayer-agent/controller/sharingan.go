@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"bytes"
 	"context"
 	"encoding/base64"
 	"encoding/json"
@@ -527,7 +528,7 @@ func (srg ShaRinGan) CodeCoverage(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	//重启服务 （.cov文件以 起始yyyymmddHHiiss为后缀）
-	fullCMD := "cd " + filepath.Dir(fullEXE) + " && nohup " + fullEXE + " -systemTest -test.coverprofile=" + global.DirCodeCov + "/coverage." + binName + "." + time.Now().Format("20060102150405") + ".cov &"
+	fullCMD := "cd " + filepath.Dir(fullEXE) + " && nohup " + fullEXE + " -test.coverprofile=" + global.DirCodeCov + "/coverage." + binName + "." + time.Now().Format("20060102150405") + ".cov &"
 	cmd = exec.Command("/bin/bash", "-c", fullCMD)
 	err = cmd.Start()
 	if err != nil {
@@ -584,9 +585,11 @@ func (srg ShaRinGan) CodeCoverage(w http.ResponseWriter, r *http.Request) {
 	defer stdout.Close()
 	cmd = exec.Command("/bin/bash", "-c", covCmd)
 	cmd.Stdout = stdout
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
 	err = cmd.Run()
 	if err != nil {
-		tlog.Handler.Errorf(r.Context(), tlog.DLTagUndefined, "Failed to execute"+covCmd+"! err="+err.Error())
+		tlog.Handler.Errorf(r.Context(), tlog.DLTagUndefined, "Failed to execute"+covCmd+"! err="+err.Error() + stderr.String())
 		resErr["errmsg"] = "Failed to execute " + covCmd + "!"
 		srg.EchoJSON(w, r, resErr)
 		return
