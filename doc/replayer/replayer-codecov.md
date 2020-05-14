@@ -36,12 +36,16 @@ curl https://raw.githubusercontent.com/didi/sharingan-go/recorder/install/go1.13
 ```shell script
 go test -gcflags="all=-N -l" -tags="replayer" -v -c -covermode=count -coverpkg ./...
 ```
-> 相比普通回放，启动命令 多了两个参数 -systemTest -test.coverprofile。
+> 相比普通回放，启动命令 多了一个参数 -test.coverprofile
+
+##### 可选环境变量**BAN_SYSTEM_TEST**, 用以标识是否关闭集成测试覆盖率支持，设置为1时为原始test流程(如跑单测等流程) 
+>示例：export BAN_SYSTEM_TEST=1 #关闭集成测试
+
 ```shell script
 #linux下启动：
-nohup ./$binName.test -systemTest -test.coverprofile=/tmp/ShaRinGan/coverage.$binName.cov >> run.log 2>&1 &
+nohup ./$binName.test -test.coverprofile=/tmp/ShaRinGan/coverage.$binName.cov >> run.log 2>&1 &
 #mac下启动(务必 绝对路径 启动):
-nohup /xx/$binName.test -systemTest -test.coverprofile=/tmp/ShaRinGan/coverage.$binName.cov >> run.log 2>&1 &
+nohup /xx/$binName.test -test.coverprofile=/tmp/ShaRinGan/coverage.$binName.cov >> run.log 2>&1 &
 ```
 > SUT一键接入和启动[脚本](../../example/replayer/sut_replayer.sh) 及其 [使用方法](./replayer-sut.md)
 
@@ -84,11 +88,9 @@ B. [批量回放](./replayer-parallel.md)结果页
 
 ##### 2. 支持SUT使用flag
 
-对于使用flag的SUT，不仅需要新增test文件，还需要改造main.go代码。
+对于使用flag的SUT,需要保证SUT在启动后10s内完成flag.Parse()
 
-a. 新增 [main_flag_test.go](../../replayer-agent/install/codeCov/main_with_flag/main_flag_test.go) 文件到SUT根目录。
-
-b. 按 [main_flag.go](../../replayer-agent/install/codeCov/main_with_flag/main_flag.go) 文件注释里的TODO修改代码即可。
+若10s仍然不能完成，请首先考虑SUT的代码是否合理。确认必须后，可修改replayer-agent/install/codeCov/main_test.go中waitFlagParseTime常量的值
 
 其他接入操作不变，同 [配置并启动SUT](#2-配置并启动sut)。
 
