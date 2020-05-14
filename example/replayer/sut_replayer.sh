@@ -224,7 +224,7 @@ function start() {
         binName=$appcov
         binFile=$sut_file_cov
         curTime=`date +%s`
-        cmdStart="SYSTEM_TEST=true $sut_file_cov -test.coverprofile=$cov_file_path$cov_file_prefix$app.$curTime$cov_file_suffix >> $sut_log_file"
+        cmdStart="$sut_file_cov -test.coverprofile=$cov_file_path$cov_file_prefix$app.$curTime$cov_file_suffix >> $sut_log_file"
         cmdBuild="sh sut_replayer.sh build $cov_cmd"
     fi
 

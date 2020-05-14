@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -11,6 +12,7 @@ import (
 )
 
 func main() {
+	flagTest()
 	http.HandleFunc("/", indexHandle)
 	log.Fatal(http.ListenAndServe(":9999", nil))
 }
@@ -32,5 +34,16 @@ func testHTTPRequest() {
 	body, err := ioutil.ReadAll(rsp.Body)
 	if err != nil {
 		fmt.Println("res:", string(body), err)
+	}
+}
+
+func flagTest() {
+	var v string
+	flag.StringVar(&v, "kk", "0", "1")
+	flag.Parse()
+	if v == "1" {
+		fmt.Printf("1\n")
+	} else {
+		fmt.Printf("2\n")
 	}
 }
