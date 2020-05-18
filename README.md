@@ -171,7 +171,7 @@ $ 页面选择要回放的流量点执行          # 内置提前录制好的3�
 
 * 微信交流群
 
-![WX](http://img-hxy021.didistatic.com/static/sharingan/WX_v2.jpeg)
+![WEIXIN](http://img-hxy021.didistatic.com/static/sharingan/weixin_v2.jpeg)
 
 * QQ交流群「群号:417146801，长期有效」
 
