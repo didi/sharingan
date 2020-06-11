@@ -42,10 +42,10 @@ func Start(addr *net.TCPAddr) {
 }
 
 type Handler struct {
-	ctx              context.Context    // 串联日志
-	matcher          *match.Matcher     // 匹配引擎
-	replayingSession *replaying.Session // 待匹配session
-	replayedSession  *replayed.Session  // 记录匹配详细信息
+	Ctx              context.Context    // 串联日志
+	Matcher          match.MatcherIf    // 匹配引擎
+	ReplayingSession *replaying.Session // 待匹配session
+	ReplayedSession  *replayed.Session  // 记录匹配详细信息
 }
 
 type Server struct {
@@ -78,9 +78,9 @@ func StoreHandler(ctx context.Context, traceID string) {
 	defer OutboundServer.Unlock()
 
 	handler := &Handler{}
-	handler.ctx = ctx
-	handler.matcher = match.New()
-	handler.replayingSession, handler.replayedSession = station.Load(traceID)
+	handler.Ctx = ctx
+	handler.Matcher = match.New()
+	handler.ReplayingSession, handler.ReplayedSession = station.Load(traceID)
 	OutboundServer.Handlers[traceID] = handler
 }
 

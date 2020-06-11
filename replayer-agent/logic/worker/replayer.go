@@ -40,10 +40,28 @@ type Replayer struct {
 }
 
 func (r *Replayer) ReplaySession(ctx context.Context, session *replaying.Session, project string) error {
+	stat, err := r.ReplaySessionPreHandle(ctx, session)
+	if stat != 0 {
+		return err
+	}
+
+	traceID := GenTraceID()
+	// store session
+	station.Store(traceID, session, r.ReplayedSession)
+	defer station.Remove(traceID)
+	// pass session to outbound-matcher
+	outbound.StoreHandler(ctx, traceID)
+	defer outbound.RemoveHandler(ctx, traceID)
+
+	stat, err = r.ReplaySessionDoreplay(ctx, session, traceID, project)
+	return err
+}
+
+func (r *Replayer) ReplaySessionPreHandle(ctx context.Context, session *replaying.Session) (int, error) {
 	if session == nil || session.CallFromInbound == nil || session.ReturnInbound == nil {
 		err := errors.New("CallFromInbound is nill or ReturnInbound is nil")
 		tlog.Handler.Errorf(ctx, tlog.DebugTag, "errmsg=", err)
-		return err
+		return 1, err
 	}
 
 	// replayed record
@@ -53,20 +71,14 @@ func (r *Replayer) ReplaySession(ctx context.Context, session *replaying.Session
 	r.ReplayedSession.OnlineOutbounds = session.CallOutbounds
 	r.ReplayedSession.OnlineAppendFiles = session.AppendFiles
 
-	traceID := GenTraceID()
+	return 0, nil
+}
 
-	// store session
-	station.Store(traceID, session, r.ReplayedSession)
-	defer station.Remove(traceID)
-
-	// pass session to outbound-matcher
-	outbound.StoreHandler(ctx, traceID)
-	defer outbound.RemoveHandler(ctx, traceID)
-
+func (r *Replayer) ReplaySessionDoreplay(ctx context.Context, session *replaying.Session, traceID string, project string) (int, error) {
 	request := session.CallFromInbound.Request
 	conn, err := newConn(ctx, r.ReplayAddr)
 	if err != nil {
-		return err
+		return 1, err
 	}
 
 	{
@@ -87,7 +99,7 @@ func (r *Replayer) ReplaySession(ctx context.Context, session *replaying.Session
 	r.ReplayedSession.Request = []byte(session.CallFromInbound.Request)
 	r.ReplayedSession.OnlineResponse = session.ReturnInbound.Response
 	r.ReplayedSession.TestResponse = testResponse
-	return nil
+	return 0, nil
 }
 
 //GenTraceID 生成traceID

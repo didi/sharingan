@@ -10,6 +10,7 @@ import (
 )
 
 var Handler *viper.Viper
+var HandlerInfo *viper.Viper
 var newConfs map[string]*viper.Viper
 
 // Root current dir
@@ -26,6 +27,7 @@ func Init(confPath string) {
 	}
 
 	Handler = LoadConfig(confPath)
+	HandlerInfo = LoadConfig(Root + "/conf/info.toml")
 }
 
 func LoadConfig(confPath string) *viper.Viper {
@@ -48,6 +50,7 @@ func LoadConfig(confPath string) *viper.Viper {
 // FreshHandler 从磁盘读取配置文件，方便本地修改配置的测试，无需重启服务
 func FreshHandler() {
 	Handler.ReadInConfig()
+	HandlerInfo.ReadInConfig()
 }
 
 // NewConf 实例化读取配置文件

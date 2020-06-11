@@ -18,6 +18,11 @@ import (
 
 var expect100 = []byte("Expect: 100-continue")
 var httpRegex = regexp.MustCompile(`(?U)(^(?:GET|POST|PUT|DELETE|HEAD|OPTIONS|TRACE|CONNECT) .*?) HTTP/`)
+var CutUnit = 16
+
+type MatcherIf interface {
+	MatchOutboundTalk(ctx context.Context, session *replaying.Session, lastMatchedIndex int, request []byte) (int, float64, *recording.CallOutbound)
+}
 
 type Matcher struct {
 	sync.Mutex
@@ -37,8 +42,13 @@ func New() *Matcher {
 
 func (m *Matcher) MatchOutboundTalk(
 	ctx context.Context, session *replaying.Session, lastMatchedIndex int, request []byte) (int, float64, *recording.CallOutbound) {
-	unit := 16
-	chunks := cutToChunks(request, unit)
+	chunks := CutToChunks(request, CutUnit)
+
+	return m.DoMatchOutboundTalk(ctx, session, lastMatchedIndex, request, chunks)
+}
+
+func (m *Matcher) DoMatchOutboundTalk(
+	ctx context.Context, session *replaying.Session, lastMatchedIndex int, request []byte, chunks [][]byte) (int, float64, *recording.CallOutbound) {
 	reqCandidates := getRequests(session)
 	scores := make([]int, len(session.CallOutbounds))
 	reqExpect100 := bytes.Contains(request, expect100)
@@ -123,23 +133,45 @@ func getRequests(session *replaying.Session) [][]byte {
 	keys := make([][]byte, len(session.CallOutbounds))
 	for i, entry := range session.CallOutbounds {
 		//keys[i] = entry.Request
-		keys[i] = sortRequestParams(entry.Request)
+		keys[i] = SortRequestParams(entry.Request)
 	}
 	return keys
 }
 
-func cutToChunks(key []byte, unit int) [][]byte {
+func CutToChunks(key []byte, unit int) [][]byte {
+	key, unit = CutToChunksPreHandle(key, unit)
+
+	// 增加特殊协议cut需求
+	chunks := [][]byte{}
+	key, chunks = CutToChunksByProtocol(key, chunks)
+
+	chunks = CutToChunksPostHandle(key, unit, chunks)
+
+	return chunks
+}
+
+// CutToChunksPreHandle 预处理
+func CutToChunksPreHandle(key []byte, unit int) ([]byte, int) {
 	// 对Request内的参数进行排序
-	key = sortRequestParams(key)
+	key = SortRequestParams(key)
 	if unit <= 0 {
 		unit = 1
 	}
 	for len(key) < unit && unit > 1 {
 		unit = unit >> 1
 	}
-	chunks := [][]byte{}
-	key, chunks = cutHttpRequestToChunks(key, chunks)
 
+	return key, unit
+}
+
+// CutToChunksByProtocol 根据协议切分
+func CutToChunksByProtocol(key []byte, chunks [][]byte) ([]byte, [][]byte) {
+	key, chunks = cutHttpRequestToChunks(key, chunks)
+	return key, chunks
+}
+
+// CutToChunksPostHandle
+func CutToChunksPostHandle(key []byte, unit int, chunks [][]byte) [][]byte {
 	if len(key) > 256 {
 		offset := 0
 		for {
@@ -171,7 +203,7 @@ func cutToChunks(key []byte, unit int) [][]byte {
 }
 
 // sortRequestParams 对HTTP参数排序，解决因两次请求参数顺序不一致而导致匹配失败的情况
-func sortRequestParams(key []byte) []byte {
+func SortRequestParams(key []byte) []byte {
 	requestMarkDiff := &replayed.Diff{A: helper.BytesToString(key)}
 	pairs, _, _, pro := requestMarkDiff.ParseProtocol(requestMarkDiff.A)
 	switch pro {
