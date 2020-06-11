@@ -30,7 +30,6 @@ import (
 	"github.com/didi/sharingan/replayer-agent/logic/worker"
 	"github.com/didi/sharingan/replayer-agent/model/esmodel"
 	"github.com/didi/sharingan/replayer-agent/model/nuwaplt"
-	"github.com/didi/sharingan/replayer-agent/model/replaying"
 	"github.com/didi/sharingan/replayer-agent/utils/helper"
 
 	jsoniter "github.com/json-iterator/go"
@@ -113,14 +112,14 @@ func (srg ShaRinGan) Replayed(w http.ResponseWriter, r *http.Request, ps httprou
 	}
 
 	// fetch sessions
-	stat, resp, session, replayer := ReplayedFetchSession(ctx, sid, req)
+	stat, resp, replayer := ReplayedFetchAndPlay(ctx, sid, req)
 	if stat != 0 {
 		srg.EchoJSON(w, r, resp)
 		return
 	}
 
 	// after fetch session
-	stat, resp = ReplayedAfterFetchSession(ctx, sid, session, req, replayer)
+	stat, resp = ReplayedAfterFetchAndPlay(ctx, sid, req, replayer.ReplayedSession)
 
 	srg.EchoJSON(w, r, resp)
 }
@@ -146,30 +145,29 @@ func ReplayedBeforeFetchSession(r *http.Request, ps httprouter.Params) (int, str
 	return 0, sid, ctx, req, idl.ReplayedResp{}
 }
 
-func ReplayedFetchSession(ctx context.Context, sid string, req idl.ReplayedReq) (int, idl.ReplayedResp, *replaying.Session, *worker.Replayer) {
+func ReplayedFetchAndPlay(ctx context.Context, sid string, req idl.ReplayedReq) (int, idl.ReplayedResp, *worker.Replayer) {
 	// fetch sessions
 	sessions := worker.FetchSessions(ctx, sid, req.Project)
 	if len(sessions) <= 0 {
-		return 1, idl.ReplayedResp{Success: false, Errmsg: "search session failed"}, nil, nil
+		return 1, idl.ReplayedResp{Success: false, Errmsg: "search session failed"}, nil
 	}
+
 	replayer := &worker.Replayer{BasePort: outbound.BasePort}
-
-	return 0, idl.ReplayedResp{}, sessions[0], replayer
-}
-
-func ReplayedAfterFetchSession(ctx context.Context, sid string, session *replaying.Session, req idl.ReplayedReq, replayer *worker.Replayer) (int, idl.ReplayedResp) {
 	replayer.Protocol = nuwaplt.GetValueByKey(req.Project, nuwaplt.KProtocol, nuwaplt.PHttp)
 	replayer.Language = nuwaplt.GetValueByKey(req.Project, nuwaplt.KLanguage, nuwaplt.LGO)
 	replayer.ReplayAddr = nuwaplt.GetValueByKey(req.Project, nuwaplt.KListenAddr, global.ListenAddr)
-
 	// begin replay【ShaRinGan -> sut -> mock server】
 	// to replay
-	err := replayer.ReplaySession(ctx, session, req.Project)
+	err := replayer.ReplaySession(ctx, sessions[0], req.Project)
 	if err != nil {
-		return 1, idl.ReplayedResp{Success: false, Errmsg: err.Error()}
+		return 1, idl.ReplayedResp{Success: false, Errmsg: err.Error()}, nil
 	}
 
-	diffs := replayed.DiffReplayed(ctx, replayer.ReplayedSession, req.Project)
+	return 0, idl.ReplayedResp{}, replayer
+}
+
+func ReplayedAfterFetchAndPlay(ctx context.Context, sid string, req idl.ReplayedReq, replayedSession *replayed.Session) (int, idl.ReplayedResp) {
+	diffs := replayed.DiffReplayed(ctx, replayedSession, req.Project)
 
 	resp := idl.ReplayedResp{Success: replayed.Judge(diffs)}
 	switch req.RetType {
