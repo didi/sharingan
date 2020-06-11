@@ -17,20 +17,20 @@ import (
 	jsoniter "github.com/json-iterator/go"
 )
 
-type searchRecords []*SearchRecord
+type SearchRecords []*SearchRecord
 
 //Len()
-func (s searchRecords) Len() int {
+func (s SearchRecords) Len() int {
 	return len(s)
 }
 
 //Less():成绩将有低到高排序
-func (s searchRecords) Less(i, j int) bool {
+func (s SearchRecords) Less(i, j int) bool {
 	return s[i].Timestamp > s[j].Timestamp
 }
 
 //Swap()
-func (s searchRecords) Swap(i, j int) {
+func (s SearchRecords) Swap(i, j int) {
 	s[i], s[j] = s[j], s[i]
 }
 
@@ -39,8 +39,24 @@ func (s searchRecords) Swap(i, j int) {
  * @Return 多条session，封装成前端展示数据结构
  */
 func Search(ctx context.Context, req *idl.SearchReq) []*SearchRecord {
-	flowList := make([]*SearchRecord, 0)
+	req = SearchPreHandle(req)
 
+	// read from es
+	if conf.Handler.GetString("es_url.default") != "" {
+		return SearchFromES(ctx, req)
+	}
+
+	// read from local
+	stat, contents := GetTrafficFromLocal(ctx, req)
+	if stat != 0 {
+		return nil
+	}
+
+	return SearchHandleLocal(contents, req)
+}
+
+// SearchPreHandle 处理Search接口参数
+func SearchPreHandle(req *idl.SearchReq) *idl.SearchReq {
 	if len(req.Date) == 1 {
 		req.Start = req.Date[0]
 		req.End = time.Now().Format("2006-01-02")
@@ -49,44 +65,56 @@ func Search(ctx context.Context, req *idl.SearchReq) []*SearchRecord {
 		req.End = req.Date[1]
 	}
 
-	if conf.Handler.GetString("es_url.default") != "" {
-		body, qErr := Query(ctx, req, 0)
-		if qErr != nil {
-			return flowList
-		}
-
-		if queryForID(req.Field) {
-			return retrieveSessionIds(ctx, body, flowList)
-		}
-
-		return retrieveSessions(ctx, req.Project, body, flowList)
-	} else {
-		//读取配置文件conf/traffic/{project}
-		contents, err := helper.ReadLines(conf.Root + "/conf/traffic/" + req.Project)
-		if err != nil {
-			tlog.Handler.Errorf(ctx, tlog.DLTagUndefined, "Failed to read /conf/traffic/"+req.Project+", err="+err.Error())
-			return flowList
-		}
-		var json = jsoniter.ConfigCompatibleWithStandardLibrary
-
-		//原始流量格式
-		for _, flow := range contents {
-			traffic := &esmodel.Session{}
-			err := json.Unmarshal([]byte(flow), traffic)
-			if err != nil {
-				continue
-			}
-
-			flowList = appendFlowList(flowList, req, *traffic)
-			sort.Sort(searchRecords(flowList))
-		}
-
-		return flowList
-	}
+	return req
 }
 
-//appendFlowList 筛选流量并格式化，并追加到flowList数组
-func appendFlowList(flowList []*SearchRecord, req *idl.SearchReq, session esmodel.Session) []*SearchRecord {
+// SearchFromES 从es读取数据，并处理按Search接口返回
+func SearchFromES(ctx context.Context, req *idl.SearchReq) []*SearchRecord {
+	flowList := make([]*SearchRecord, 0)
+	body, qErr := Query(ctx, req, 0)
+	if qErr != nil {
+		return flowList
+	}
+
+	if queryForID(req.Field) {
+		return retrieveSessionIds(ctx, body, flowList)
+	}
+
+	return retrieveSessions(ctx, req.Project, body, flowList)
+}
+
+// SearchHandleLocal 处理本地流量符合Search接口
+func SearchHandleLocal(contents []string, req *idl.SearchReq) []*SearchRecord {
+	flowList := make([]*SearchRecord, 0)
+	var json = jsoniter.ConfigCompatibleWithStandardLibrary
+	//原始流量格式
+	for _, flow := range contents {
+		traffic := &esmodel.Session{}
+		err := json.Unmarshal([]byte(flow), traffic)
+		if err != nil {
+			continue
+		}
+
+		flowList = AppendFlowList(flowList, req, *traffic)
+		sort.Sort(SearchRecords(flowList))
+	}
+
+	return flowList
+}
+
+// GetTrafficFromLocal 从本地读取流量
+func GetTrafficFromLocal(ctx context.Context, req *idl.SearchReq) (int, []string) {
+	//读取配置文件conf/traffic/{project}
+	contents, err := helper.ReadLines(conf.Root + "/conf/traffic/" + req.Project)
+	if err != nil {
+		tlog.Handler.Errorf(ctx, tlog.DLTagUndefined, "Failed to read /conf/traffic/"+req.Project+", err="+err.Error())
+		return 1, nil
+	}
+	return 0, contents
+}
+
+//AppendFlowList 筛选流量并格式化，并追加到flowList数组
+func AppendFlowList(flowList []*SearchRecord, req *idl.SearchReq, session esmodel.Session) []*SearchRecord {
 	if valide, data := filterTraffic(req, session); valide {
 		if queryForID(req.Field) {
 			flowList = append(flowList, &SearchRecord{SessionId: data.SessionId})
@@ -167,45 +195,52 @@ func filterTraffic(req *idl.SearchReq, session esmodel.Session) (bool, *SearchRe
  * @Return 一个session，原始数据格式
  */
 func GetRawSessions(ctx context.Context, req *idl.SearchReq) *esmodel.Session {
-	var body []byte
-	var err error
-	session := new(esmodel.Session)
 	//优先读取es地址
 	if conf.Handler.GetString("es_url.default") != "" {
-		body, err = Query(ctx, req, 3*time.Second)
-		if err != nil {
-			tlog.Handler.Errorf(ctx, tlog.DLTagUndefined, "errmsg= GetRawSessions failed from es ||err=%s", err.Error())
-			return nil
-		}
-		sessions, err := esmodel.RetrieveSessions(body)
-		if err != nil {
-			tlog.Handler.Errorf(ctx, tlog.DLTagUndefined, "errmsg= GetRawSessions failed at retrieve session from es ||err=%s", err.Error())
-			return nil
-		} else if len(sessions) == 0 {
-			tlog.Handler.Errorf(ctx, tlog.DLTagUndefined, "errmsg= GetRawSessions got empty session from es!")
-			return nil
-		}
-		session = &sessions[0]
-	} else {
-		//读取配置文件conf/traffic/{project}
-		contents, err := helper.ReadLines(conf.Root + "/conf/traffic/" + req.Project)
-		if err != nil {
-			tlog.Handler.Errorf(ctx, tlog.DLTagUndefined, "Failed to read /conf/traffic/"+req.Project+", err="+err.Error())
-			return nil
-		}
-		var json = jsoniter.ConfigCompatibleWithStandardLibrary
+		return GetRawSessionFromES(ctx, req)
+	}
 
-		for _, flow := range contents {
-			traffic := &esmodel.Session{}
-			err := json.Unmarshal([]byte(flow), traffic)
-			if err != nil {
-				tlog.Handler.Warnf(ctx, tlog.DLTagUndefined, "errmsg= GetRawSessions failed at unmarshal from conf with origin struct ||err=%s", err.Error())
-				continue
-			}
-			if traffic.SessionId == req.SessionId {
-				session = traffic
-				break
-			}
+	// read from local
+	stat, contents := GetTrafficFromLocal(ctx, req)
+	if stat != 0 {
+		return nil
+	}
+
+	return GetRawSessionHandleLocal(ctx, contents, req)
+}
+
+func GetRawSessionFromES(ctx context.Context, req *idl.SearchReq) *esmodel.Session {
+	body, err := Query(ctx, req, 3*time.Second)
+	if err != nil {
+		tlog.Handler.Errorf(ctx, tlog.DLTagUndefined, "errmsg= GetRawSessions failed from es ||err=%s", err.Error())
+		return nil
+	}
+	sessions, err := esmodel.RetrieveSessions(body)
+	if err != nil {
+		tlog.Handler.Errorf(ctx, tlog.DLTagUndefined, "errmsg= GetRawSessions failed at retrieve session from es ||err=%s", err.Error())
+		return nil
+	} else if len(sessions) == 0 {
+		tlog.Handler.Errorf(ctx, tlog.DLTagUndefined, "errmsg= GetRawSessions got empty session from es!")
+		return nil
+	}
+
+	return &sessions[0]
+}
+
+// GetRawSessionHandleLocal 处理本地流量符合GetRawSessions接口
+func GetRawSessionHandleLocal(ctx context.Context, contents []string, req *idl.SearchReq) *esmodel.Session {
+	session := new(esmodel.Session)
+	var json = jsoniter.ConfigCompatibleWithStandardLibrary
+	for _, flow := range contents {
+		traffic := &esmodel.Session{}
+		err := json.Unmarshal([]byte(flow), traffic)
+		if err != nil {
+			tlog.Handler.Warnf(ctx, tlog.DLTagUndefined, "errmsg= GetRawSessions failed at unmarshal from conf with origin struct ||err=%s", err.Error())
+			continue
+		}
+		if traffic.SessionId == req.SessionId {
+			session = traffic
+			break
 		}
 	}
 

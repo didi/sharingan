@@ -43,7 +43,7 @@ func Test_findReadableChunk(t *testing.T) {
 	}
 }
 
-func Test_cutToChunks(t *testing.T) {
+func Test_CutToChunks(t *testing.T) {
 	type args struct {
 		key  []byte
 		unit int
@@ -65,7 +65,7 @@ func Test_cutToChunks(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := cutToChunks(tt.args.key, tt.args.unit); !reflect.DeepEqual(got, tt.want) {
+			if got := CutToChunks(tt.args.key, tt.args.unit); !reflect.DeepEqual(got, tt.want) {
 				for _, g := range got {
 					t.Errorf("cutToChunks() = %v", string(g))
 				}

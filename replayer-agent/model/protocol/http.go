@@ -16,6 +16,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/didi/sharingan/replayer-agent/common/handlers/conf"
 	"github.com/didi/sharingan/replayer-agent/utils/helper"
 )
 
@@ -258,14 +259,7 @@ func parseUrlencode(r *bufio.Reader) (string, url.Values, error) {
 }
 
 func addHeaders(pairs map[string]json.RawMessage, headers textproto.MIMEHeader) {
-	interests := []string{
-		"Content-Type",
-		"Origin",
-		"Access-Control-Allow-Origin",
-		"Access-Control-Allow-Credentials",
-		"Access-Control-Allow-Methods",
-		"Access-Control-Allow-Headers",
-	}
+	interests := conf.HandlerInfo.GetStringSlice("http.header")
 
 	for _, i := range interests {
 		if v := headers.Get(i); len(v) > 0 {

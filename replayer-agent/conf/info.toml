@@ -1,0 +1,33 @@
+[http]
+header = [
+    "Content-Type",
+    "Origin",
+    "Access-Control-Allow-Origin",
+    "Access-Control-Allow-Credentials",
+    "Access-Control-Allow-Methods",
+    "Access-Control-Allow-Headers",
+]
+
+[ignore]
+noise = [
+    # global field
+    "createTime",
+    "req_flag",
+    "request_id",
+    "sign",
+    "time_stamp",
+    "timeOffset",
+    "timeStamp",
+    "timestamp",
+    "token",
+    # http method field
+    #thrift method field
+    "mget.field_2.field_3",
+    "mset.field_2.field_3",
+    #controller field
+]
+
+seniorNoise = [
+    ".cyborg_sub_id",
+    ".sample.code",
+]

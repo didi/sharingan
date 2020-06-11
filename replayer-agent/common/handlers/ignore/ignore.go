@@ -1,5 +1,9 @@
 package ignore
 
+import (
+	"github.com/didi/sharingan/replayer-agent/common/handlers/conf"
+)
+
 const (
 	NoiseMatch = iota
 	NoisePrefix
@@ -13,42 +17,26 @@ type NoiseMeta struct {
 }
 
 // 常规请求级别噪音
-var Noise map[string]bool
+var Noise = map[string]bool{}
 
 // 定制请求级别噪音
-var SeniorNoise map[string]NoiseMeta
+var SeniorNoise = map[string]NoiseMeta{}
 
 // 接口级别噪音
-var OutboundNoise map[string]NoiseMeta
+var OutboundNoise = map[string]NoiseMeta{}
 
 // not matched接口级噪音，目前仅用于go模块
-var NotMatchedNoise map[string]NoiseMeta
+var NotMatchedNoise = map[string]NoiseMeta{}
 
 func Init() {
-	Noise = map[string]bool{
-		// global field
-		"createTime": true,
-		"req_flag":   true,
-		"request_id": true,
-		"sign":       true,
-		"time_stamp": true,
-		"timeOffset": true,
-		"timeStamp":  true,
-		"timestamp":  true,
-		"token":      true,
-
-		// http method field
-
-		// thrift method field
-		"mget.field_2.field_3": true,
-		"mset.field_2.field_3": true,
-
-		// controller field
+	noises := conf.HandlerInfo.GetStringSlice("ignore.noise")
+	for _, noise := range noises {
+		Noise[noise] = true
 	}
 
-	SeniorNoise = map[string]NoiseMeta{
-		".cyborg_sub_id": NoiseMeta{NoiseSuffix, ""},
-		".sample.code":   NoiseMeta{NoiseSuffix, ""},
+	seniorNoises := conf.HandlerInfo.GetStringSlice("ignore.seniorNoise")
+	for _, seniorNoise := range seniorNoises {
+		SeniorNoise[seniorNoise] = NoiseMeta{NoiseSuffix, ""}
 	}
 
 	OutboundNoise = map[string]NoiseMeta{

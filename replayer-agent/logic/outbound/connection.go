@@ -177,10 +177,10 @@ func (cs *ConnState) match(ctx context.Context, request []byte) error {
 
 	var matchedTalk *recording.CallOutbound
 	var mark float64
-	cs.LastMatchedIndex, mark, matchedTalk = cs.Handler.matcher.MatchOutboundTalk(ctx, cs.Handler.replayingSession, cs.LastMatchedIndex, request)
+	cs.LastMatchedIndex, mark, matchedTalk = cs.Handler.Matcher.MatchOutboundTalk(ctx, cs.Handler.ReplayingSession, cs.LastMatchedIndex, request)
 	if callOutbound.MatchedActionIndex != fakeIndexSimulated {
 		if matchedTalk == nil && cs.LastMatchedIndex != 0 {
-			cs.LastMatchedIndex, mark, matchedTalk = cs.Handler.matcher.MatchOutboundTalk(ctx, cs.Handler.replayingSession, -1, request)
+			cs.LastMatchedIndex, mark, matchedTalk = cs.Handler.Matcher.MatchOutboundTalk(ctx, cs.Handler.ReplayingSession, -1, request)
 		}
 		if matchedTalk == nil {
 			callOutbound.MatchedRequest = nil
@@ -194,7 +194,7 @@ func (cs *ConnState) match(ctx context.Context, request []byte) error {
 		callOutbound.MatchedMark = mark
 
 		if matchedTalk == nil {
-			cs.Handler.replayedSession.Outbounds = append(cs.Handler.replayedSession.Outbounds, callOutbound)
+			cs.Handler.ReplayedSession.Outbounds = append(cs.Handler.ReplayedSession.Outbounds, callOutbound)
 			tlog.Handler.Warnf(ctx, tlog.DebugTag, "errmsg=find matching talk failed||request=%s||traceID=%s", quotedRequest, string(cs.traceID))
 			return errMissMatchTalk
 		}
@@ -217,7 +217,7 @@ func (cs *ConnState) match(ctx context.Context, request []byte) error {
 		callOutbound.MatchedRequest = removeMysqlStmtClose(callOutbound.MatchedRequest)
 	}
 
-	cs.Handler.replayedSession.Outbounds = append(cs.Handler.replayedSession.Outbounds, callOutbound)
+	cs.Handler.ReplayedSession.Outbounds = append(cs.Handler.ReplayedSession.Outbounds, callOutbound)
 
 	tlog.Handler.Infof(ctx, tlog.DebugTag,
 		"%s||to=%s||actionId=%s||matchedActionIndex=%v||matchedResponse=%s",
