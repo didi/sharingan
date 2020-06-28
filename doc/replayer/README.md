@@ -34,6 +34,16 @@
 * 如需 读取上报到自有服务的噪音或DSL，只需根据[Replayer-Agent配置](./replayer-conf.md#4-http_api)修改http_api字段即可；
 * 如需 新增本地回放模块，请参考[本地回放接入](./replayer-local.md)。
 
+##### 快速安装(推荐)
+```shell script
+# mac
+wget https://github.com/didi/sharingan/releases/download/v1.0.1/replayer-agent.mac.tar
+# linux
+wget https://github.com/didi/sharingan/releases/download/v1.0.1/replayer-agent.linux.tar
+```
+最新版本请查看 [releases](https://github.com/didi/sharingan/releases) 
+
+##### 编译安装
 首先，确保本地存在go环境(官方或定制版均可，且版本无要求), 并根据本地go版本选择go mod或glide来安装sharingan的依赖。
 ```shell script
 git clone https://github.com/didi/sharingan.git
