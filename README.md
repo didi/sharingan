@@ -48,6 +48,7 @@ $ export GOROOT=/tmp/recorder-go1.13
 $ export PATH=$GOROOT/bin:$PATH
 
 # Step3: 编译、后台启动replayer-agent「默认会占用3515、8998端口，可修改」
+# [回放接入文档]内有直接下载bin文件的链接，无需build
 $ cd replayer-agent
 $ go build
 $ nohup ./replayer-agent >> run.log 2>&1 &
