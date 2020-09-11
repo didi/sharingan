@@ -19,6 +19,10 @@ level = "info"
 [outbound]
 server_addr = "127.0.0.1:3515"         # mock server addr
 
+[flow]
+un_gzip = 0           # 回放的流量是否做了gzip解压；默认0未解压；1解压(mock服务会删除header Content-Encoding: gzip)
+line_max_size = 512   # 本地回放时，每条流量最大512K, 不设置默认100K
+
 [http_api]
 # dsl_get = "http://{{your_domain}}/dsl?project=%s"
 # dsl_push = "http://{{your_domain}}/dsl"

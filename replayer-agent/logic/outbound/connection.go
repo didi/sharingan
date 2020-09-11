@@ -4,11 +4,13 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"fmt"
 	"net"
 	"regexp"
 	"strconv"
 	"time"
 
+	"github.com/didi/sharingan/replayer-agent/common/handlers/conf"
 	"github.com/didi/sharingan/replayer-agent/common/handlers/tlog"
 	"github.com/didi/sharingan/replayer-agent/model/pool"
 	"github.com/didi/sharingan/replayer-agent/model/recording"
@@ -200,6 +202,13 @@ func (cs *ConnState) match(ctx context.Context, request []byte) error {
 		}
 		response := callOutbound.MatchedResponse
 		response = bytes.Replace(response, []byte("Connection: keep-alive\r\n"), []byte("Connection: close\r\n"), -1)
+
+		// for unzip flow
+		ungzip := conf.Handler.GetInt("flow.un_gzip")
+		if ungzip == 1 {
+			response = resetContentLength(ctx, response)
+		}
+
 		_, err := cs.conn.Write(response)
 		if err != nil {
 			tlog.Handler.Errorf(ctx, tlog.DebugTag, "errmsg=write back response failed||err=%s", err)
@@ -229,6 +238,27 @@ func (cs *ConnState) match(ctx context.Context, request []byte) error {
 		strconv.Quote(helper.BytesToString(callOutbound.MatchedResponse)))
 
 	return nil
+}
+
+// resetContentLength 对于录制时做了gzip解压的流量，重新计算Content-Length
+func resetContentLength(ctx context.Context, data []byte) []byte {
+	var contents [][]byte
+
+	if !bytes.Contains(data, []byte("Content-Encoding: gzip\r\n")) {
+		return data
+	}
+
+	bodySplit := []byte("\r\n\r\n")
+	if contents = bytes.Split(data, bodySplit); len(contents) != 2 {
+		return data
+	}
+
+	// 如果流量录制时，对流量做了gzip解压，则header Content-Length值相对会偏小
+	newLength := fmt.Sprintf("Content-Length: %d\r\n", len(contents[1])) // 计算body长度
+	data = contentLengthRegex.ReplaceAll(data, []byte(newLength))
+	data = bytes.Replace(data, []byte("Content-Encoding: gzip\r\n"), []byte(""), -1)
+
+	return data
 }
 
 // applySimulation

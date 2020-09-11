@@ -7,11 +7,11 @@
 <br>
 
 ## 一、名词解释
-* **SUT**: System Under Test, 在这里特指被测业务服务。目前仅支持对外提供HTTP接口的SUT回放。
-* **Inbound**: 指SUT对外提供的HTTP接口的请求和响应，即Inbound Request/Response。
-* **Outbound**: 指SUT提供的http接口内调用的下游请求和响应，即Outboud Request/Response。目前支持的Outbound协议有 MYSQL、REDIS、HTTP、Binary Thrift、Compact Thrift。
+* **SUT**: System Under Test, 在这里特指被测业务服务。
+* **Inbound**: 指SUT对外提供的 HTTP/Thrift 接口的请求和响应，即Inbound Request/Response。目前支持对外提供 HTTP/Thrift 接口的SUT回放。
+* **Outbound**: 指SUT提供的 http/thrift 接口内调用的下游请求和响应，即Outboud Request/Response。目前支持的Outbound协议有 MYSQL、REDIS、HTTP、Binary Thrift、Compact Thrift。
 * **流量**: 指在TCP层对SUT录制的Inbound请求/响应 和 对应的Outbound请求/响应。
-* **回放**: 基于录制的一条流量，Replayer-Agent根据Inbound Request构造HTTP Request并对SUT发起请求；其中SUT的Outbound请求会发送到Mock Server进行流量匹配并返回Outbound响应；最后，Replayer-Agent将收到的SUT HTTP Response与Inbound Response做对比，给出回放结果。
+* **回放**: 基于录制的一条流量，Replayer-Agent根据Inbound Request构造 HTTP/Thrift Request并对SUT发起请求；其中SUT的Outbound请求会发送到Mock Server进行流量匹配并返回Outbound响应；最后，Replayer-Agent将收到的SUT HTTP/Thrift Response与Inbound Response做对比，给出回放结果。
 * **Replayer-Agent**: 包括回放过程的Web Server和Mock Server。其中Web Server默认监听8998端口，主要负责流量搜索，回放请求的构造和发起，以及回放结果的对比和展示。
 * **Mock Server**: 默认监听**3515**端口，主要负责接收SUT的下游请求，然后与回放流量的Outbound请求匹配，将最匹配的Outbound响应返回SUT。
 * **噪音**: 即在Inbound Response对比和Outbound Request匹配过程里，出现的不影响回放结果和匹配度的diff字段，如时间戳。Replayer-Agent回放结果页支持上报噪音，方便再次回放时精确回放结果。
