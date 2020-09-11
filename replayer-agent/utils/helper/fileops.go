@@ -11,6 +11,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/didi/sharingan/replayer-agent/common/handlers/conf"
 	"github.com/didi/sharingan/replayer-agent/common/handlers/tlog"
 )
 
@@ -89,6 +90,16 @@ func ReadLines(confFile string) ([]string, error) {
 
 	var contents []string
 	scanner := bufio.NewScanner(file)
+
+	maxCapacity := 100 * 1024
+	// for local replay, when flow is too big
+	lineSize := conf.Handler.GetInt("flow.line_max_size")
+	if lineSize > 0 {
+		maxCapacity = lineSize * 1024
+	}
+	buf := make([]byte, maxCapacity)
+	scanner.Buffer(buf, maxCapacity)
+
 	for scanner.Scan() {
 		contents = append(contents, scanner.Text())
 	}
