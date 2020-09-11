@@ -131,6 +131,15 @@ sharingan已经在滴滴内部服务了一批go业务模块，现将各业务模
 * **解决**：参考 [覆盖率统计回放-2. 配置并启动SUT](../replayer-codecov.md#2-配置并启动SUT) 修改编译命令，设置-coverpkg为指定目录 
 
 <br>
+
+##### 7. 本地回放时，首页搜索不到流量
+* **现象**：按 [本地流量回放](../replayer-local.md) 修改好相关配置后，启动replayer-agent，但首页搜索不到流量。
+
+* **原因**：本地流量文件，单条过大，超过100K
+
+* **解决**：请按 [回放配置文件-flow](../replayer-conf.md#6-flow) 修改line_max_size即可。
+
+<br>
 <br>
 
 ##### 交流群
