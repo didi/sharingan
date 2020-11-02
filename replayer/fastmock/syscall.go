@@ -16,8 +16,8 @@ import (
 
 var (
 	// inbound header feature, include traceID、replay Time
-	traceRegex = regexp.MustCompile(`Sharingan-Replayer-Traceid: (\w{32})\r\n`)
-	timeRegex  = regexp.MustCompile(`Sharingan-Replayer-Time: (\d{19})\r\n`)
+	traceRegex = regexp.MustCompile(`Sharingan-Replayer-Trace(?:id|ID)\s?: (\w{32})\r\n`)
+	timeRegex  = regexp.MustCompile(`Sharingan-Replayer-Time\s?: (\d{19})\r\n`)
 
 	// outbound traffic prefix, include traceID、origin connect addr
 	trafficPrefix = `/*{"rid":"%s","addr":"%s"}*/`
