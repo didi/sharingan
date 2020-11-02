@@ -14,5 +14,6 @@ require (
 	github.com/spf13/viper v1.6.3
 	github.com/ugorji/go v1.1.7 // indirect
 	go.uber.org/zap v1.15.0
+	golang.org/x/sys v0.0.0-20190412213103-97732733099d
 	gopkg.in/go-playground/validator.v8 v8.18.2 // indirect
 )

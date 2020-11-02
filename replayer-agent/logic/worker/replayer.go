@@ -88,12 +88,14 @@ func (r *Replayer) ReplaySessionDoreplay(ctx context.Context, session *replaying
 		timeHeader := fmt.Sprintf("\r\nSharingan-Replayer-Time: %d", session.CallFromInbound.OccurredAt)
 		s := bytes.Split(request, []byte("\r\n"))
 		if strings.Contains(string(s[0]), " HTTP/") {
-			// http: add at the second line，the first line cannot be changed for 400 Bad Request
+			// http: add header at the second line of http inbound. the first line cannot be changed for 400 Bad Request
 			s[0] = append(s[0], []byte(traceHeader+timeHeader)...)
 			request = bytes.Join(s, []byte("\r\n"))
 		} else {
-			// thrift: add at the end for the thrift inbound
-			request = append(request, []byte(traceHeader+timeHeader)...)
+			// thrift: add header at the first line of thrift inbound, for thrift request may be too large
+			traceHeader = fmt.Sprintf("Sharingan-Replayer-Traceid: %s\r\n", traceID)
+			timeHeader = fmt.Sprintf("Sharingan-Replayer-Time: %d\r\n", session.CallFromInbound.OccurredAt)
+			request = append([]byte(traceHeader+timeHeader), request...)
 		}
 	}
 
