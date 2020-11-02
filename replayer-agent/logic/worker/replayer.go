@@ -10,6 +10,7 @@ import (
 	"net"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/didi/sharingan/replayer-agent/common/handlers/tlog"
@@ -83,12 +84,17 @@ func (r *Replayer) ReplaySessionDoreplay(ctx context.Context, session *replaying
 
 	{
 		// add header
-		traceHeader := fmt.Sprintf("Sharingan-Replayer-Traceid: %s\r\n", traceID)
-		timeHeader := fmt.Sprintf("Sharingan-Replayer-Time: %d\r\n", session.CallFromInbound.OccurredAt)
+		traceHeader := fmt.Sprintf("\r\nSharingan-Replayer-Traceid: %s", traceID)
+		timeHeader := fmt.Sprintf("\r\nSharingan-Replayer-Time: %d", session.CallFromInbound.OccurredAt)
 		s := bytes.Split(request, []byte("\r\n"))
-		// add at the front for the thrift inbound
-		s[0] = append([]byte(traceHeader+timeHeader), s[0]...)
-		request = bytes.Join(s, []byte("\r\n"))
+		if strings.Contains(string(s[0]), " HTTP/") {
+			// http: add at the second line，the first line cannot be changed for 400 Bad Request
+			s[0] = append(s[0], []byte(traceHeader+timeHeader)...)
+			request = bytes.Join(s, []byte("\r\n"))
+		} else {
+			// thrift: add at the end for the thrift inbound
+			request = append(request, []byte(traceHeader+timeHeader)...)
+		}
 	}
 
 	testResponse, err := handleConn(ctx, conn, request, true, project)
