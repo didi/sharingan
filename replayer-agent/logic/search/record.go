@@ -1,6 +1,7 @@
 package search
 
 import (
+	"bytes"
 	"context"
 	"strconv"
 	"strings"
@@ -8,6 +9,7 @@ import (
 
 	"github.com/didi/sharingan/replayer-agent/common/handlers/tlog"
 	"github.com/didi/sharingan/replayer-agent/model/esmodel"
+	"github.com/didi/sharingan/replayer-agent/utils/fastcgi"
 	"github.com/didi/sharingan/replayer-agent/utils/helper"
 )
 
@@ -95,20 +97,29 @@ func handleOneSessionRaw(ctx context.Context, sess esmodel.Session, project stri
 				"res": string(action.Response.Data),
 			}
 			rec.Actions = append(rec.Actions, ac)
-		} else if action.ActionMeta.ActionType == "SendUDP" {
-			ac := map[string]string{
-				"apollo": string(action.Content.Data),
-			}
-			rec.Actions = append(rec.Actions, ac)
 		}
-
+		//else if action.ActionMeta.ActionType == "SendUDP" {
+		//	ac := map[string]string{
+		//		"apollo": string(action.Content.Data),
+		//	}
+		//	rec.Actions = append(rec.Actions, ac)
+		//}
 	}
 
 	return rec
 }
 
 func uniform(ctx context.Context, sess esmodel.Session) (string, string, bool) {
+	var err error
 	req := helper.BytesToString(sess.CallFromInbound.Request.Data)
+
+	if bytes.HasPrefix(sess.CallFromInbound.Request.Data, fastcgi.FastCGIRequestHeader) {
+		req, err = fastcgi.Decode(sess.CallFromInbound.Request.Data)
+		if err != nil {
+			tlog.Handler.Warnf(ctx, tlog.DLTagUndefined, "errmsg=decode fastcgi request failed||err=%s", err)
+			return "", "", false
+		}
+	}
 
 	if sess.ReturnInbound == nil {
 		tlog.Handler.Warnf(ctx, tlog.DLTagUndefined, "errmsg=returnInboud is nil||sessionid=%s", sess.SessionId)
@@ -124,6 +135,13 @@ func uniform(ctx context.Context, sess esmodel.Session) (string, string, bool) {
 	}
 
 	res := helper.BytesToString(sess.ReturnInbound.Response.Data)
+	if bytes.HasPrefix(sess.ReturnInbound.Response.Data, fastcgi.FastCGIResponseHeader) {
+		res, err = fastcgi.Decode(sess.ReturnInbound.Response.Data)
+		if err != nil {
+			tlog.Handler.Warnf(ctx, tlog.DLTagUndefined, "errmsg=decode fastcgi response failed||err=%s", err)
+			return "", "", false
+		}
+	}
 	return req, res, true
 }
 
