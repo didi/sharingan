@@ -45,8 +45,8 @@ func (action *action) SetOccurredAt(occurredAt int64) {
 type CallFromInbound struct {
 	action
 	Peer     net.TCPAddr
-	Request  []byte // http format
-	Raw      []byte // fastcgi format
+	Request  []byte // depends on Raw,  http    | http
+	Raw      []byte // decides Request, fastcgi | http
 	UnixAddr net.UnixAddr
 }
 

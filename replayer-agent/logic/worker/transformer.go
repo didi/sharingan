@@ -2,13 +2,16 @@ package worker
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"strings"
 	"time"
 
+	"github.com/didi/sharingan/replayer-agent/common/handlers/tlog"
 	"github.com/didi/sharingan/replayer-agent/model/esmodel"
 	"github.com/didi/sharingan/replayer-agent/model/recording"
 	"github.com/didi/sharingan/replayer-agent/model/replaying"
+	"github.com/didi/sharingan/replayer-agent/utils/fastcgi"
 	"github.com/didi/sharingan/replayer-agent/utils/helper"
 )
 
@@ -38,8 +41,15 @@ func (t *Transformer) BuildSessions(sessions []esmodel.Session) ([]*replaying.Se
 }
 
 func (t *Transformer) buildCallFromInBound(callFromInBound *esmodel.CallFromInbound) *recording.CallFromInbound {
+	req, err := decodeFastCGIRequest(callFromInBound.Request.Data)
+	if err != nil {
+		return nil
+	}
+	if req == nil {
+		req = callFromInBound.Request.Data
+	}
 	inbound := recording.CallFromInbound{
-		Request: callFromInBound.Request.Data,
+		Request: req,
 		Raw:     callFromInBound.Request.Data,
 	}
 
@@ -62,10 +72,44 @@ func (t *Transformer) buildReturnInBound(returnInBound *esmodel.ReturnInbound, a
 		}
 	}
 
+	resp, err := decodeFastCGIResponse(response)
+	if err != nil {
+		return nil
+	}
+	if resp == nil {
+		resp = returnInBound.Response.Data
+	}
+
 	return &recording.ReturnInbound{
-		Response: returnInBound.Response.Data,
+		Response: resp,
 		Raw:      returnInBound.Response.Data,
 	}
+}
+
+func decodeFastCGIRequest(request []byte) ([]byte, error) {
+	if bytes.HasPrefix(request, fastcgi.FastCGIRequestHeader) {
+		req, err := fastcgi.Decode(request)
+		if err != nil {
+			tlog.Handler.Errorf(context.Background(), tlog.DLTagUndefined, "errmsg=translate callFromInBound fastcgi to http failed||err=%s", err)
+			return nil, err
+		}
+		return []byte(req), nil
+	}
+
+	return nil, nil
+}
+
+func decodeFastCGIResponse(response []byte) ([]byte, error) {
+	if bytes.HasPrefix(response, fastcgi.FastCGIResponseHeader) {
+		resp, err := fastcgi.Decode(response)
+		if err != nil {
+			tlog.Handler.Errorf(context.Background(), tlog.DLTagUndefined, "errmsg=translate returnInBound fastcgi to http failed||err=%s", err)
+			return nil, err
+		}
+		return []byte(resp), nil
+	}
+
+	return nil, nil
 }
 
 type Rule struct {
