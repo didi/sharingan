@@ -46,5 +46,6 @@ func Init() {
 	NotMatchedNoise = map[string]NoiseMeta{
 		"mysql_native_password": NoiseMeta{NoiseContains, ""},
 		"SET NAMES utf8":        NoiseMeta{NoiseContains, ""},
+		"SET autocommit=1":      NoiseMeta{NoiseContains, ""},
 	}
 }
