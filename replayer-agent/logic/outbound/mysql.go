@@ -47,6 +47,11 @@ func _simulateMysql(ctx context.Context, request []byte) []byte {
 		return []byte{0x07, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00}
 	}
 
+	if bytes.Index(request, []byte("SET autocommit=1")) != -1 {
+		tlog.Handler.Debugf(ctx, tlog.DebugTag, "simulated_mysql||requestKeyword=SET autocommit=1||content=%s", strconv.Quote(string(request)))
+		return []byte{0x07, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00}
+	}
+
 	//if bytes.Index(request, []byte("START TRANSACTION")) != -1 {
 	//    tlog.Handler.Debugf(ctx, tlog.DebugTag, "simulated_mysql||requestKeyword=START TRANSACTION||content=%s", strconv.Quote(string(request)))
 	//    return []byte{0x07, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00}
