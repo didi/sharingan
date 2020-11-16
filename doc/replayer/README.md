@@ -130,6 +130,16 @@ Replayer-Agent默认配置的本地回放，如需修改，请参考：[Replayer
 
 详见: [SUT启动脚本-3. 与Replayer-Agent分开部署](./replayer-sut.md#3-与replayer-agent分开部署)
 
+#### 6.跨语言流量回放
+
+新版本 replayer-agent/v1.2.0 支持跨语言流量回放。即 支持使用录制的PHP流量在go模块进行回放，来支持使用GO重构PHP模块的测试需求。
+
+PHP流量特点：inbound是fastcgi协议，outbound支持http、Redis、MySQL、thrift协议。
+
+GO流量特点：inbound是http/thrift协议，outbound支持http、Redis、MySQL、thrift协议。
+
+新版本的 replayer-agent 会自动识别inbound协议，将fastcgi协议转为http协议，进行流量回放；同时会模拟mysql部分非业务交互，解决PHP流量未录制部分MySQL交互请求的问题。
+
 <br>
 
 ## 四、常见问题
