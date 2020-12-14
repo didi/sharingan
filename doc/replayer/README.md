@@ -7,7 +7,7 @@
 <br>
 
 ## 一、名词解释
-* **SUT**: System Under Test, 在这里特指被测业务服务。
+* **SUT**: System Under Test, 在这里特指被测业务服务。目前支持http server 和 grpc server。
 * **Inbound**: 指SUT对外提供的 HTTP/Thrift 接口的请求和响应，即Inbound Request/Response。目前支持对外提供 HTTP/Thrift 接口的SUT回放。
 * **Outbound**: 指SUT提供的 http/thrift 接口内调用的下游请求和响应，即Outboud Request/Response。目前支持的Outbound协议有 MYSQL、REDIS、HTTP、Binary Thrift、Compact Thrift。
 * **流量**: 指在TCP层对SUT录制的Inbound请求/响应 和 对应的Outbound请求/响应。
@@ -59,6 +59,10 @@ cd ./replayer-agent && go build && nohup ./replayer-agent >> run.log 2>&1 &
 
 #### 2. 配置并启动SUT
 
+目前，SUT既支持http server，也支持 grpc server。
+
+##### 2.1 http server
+
 > 需要使用定制的golang，并通过指定tag来编译 引入回放包的SUT代码。
 
 首先，配置定制版golang环境，目前支持go1.10 ~ go1.14，参考：[golang安装](https://github.com/didi/sharingan-go/tree/recorder)
@@ -81,6 +85,25 @@ go build -tags="replayer" -gcflags="all=-N -l"
 > SUT一键接入和启动 [脚本](../../example/replayer/sut_replayer.sh) 及其 [使用方法](./replayer-sut.md)
 
 至此，浏览器打开 [http://127.0.0.1:8998](http://127.0.0.1:8998) 或 local_ip 即可开始回放啦~
+
+##### 2.2 grpc server
+
+回放使用的 [grpc server](../../grpc-server) 基于开源的 [grpc-go](https://github.com/grpc/grpc-go) 进行了定制化，目前支持的版本是v1.33.2。
+
+引入定制的 [grpc server](../../grpc-server) 方式有两种：
+
+方式一：
+
+将 [grpc server](../../grpc-server) 代码提交到SUT的代码仓库，直接使用。
+
+方式二：
+
+将 [grpc server](../../grpc-server) 提交到一个新的代码仓库后，发包v1.33.2，然后在SUT的 go.mod 内使用replace 替换开源的grpc包:
+
+> replace google.golang.org/grpc => xxx/grpc v1.33.2
+
+
+其他操作，同 [2.1 http server](#2.1-http-server) 。
 
 <br>
 
