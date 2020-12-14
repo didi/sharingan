@@ -111,6 +111,9 @@ func (srg ShaRinGan) Replayed(w http.ResponseWriter, r *http.Request, ps httprou
 		return
 	}
 
+	// 更新模块信息，刷新本地缓存
+	nuwaplt.Reload()
+
 	// fetch sessions
 	stat, resp, replayer := ReplayedFetchAndPlay(ctx, sid, req)
 	if stat != 0 {

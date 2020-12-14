@@ -8,16 +8,16 @@ import (
 )
 
 /* global goroutine manager */
-var globalThreads IThreads
+var ReplayerGlobalThreads IThreads
 
 func init() {
-	globalThreads = NewThreads()
+	ReplayerGlobalThreads = NewThreads()
 
 	// gc
 	go func() {
 		for {
 			time.Sleep(time.Second * 10)
-			globalThreads.Recycle()
+			ReplayerGlobalThreads.Recycle()
 		}
 	}()
 }
@@ -99,5 +99,5 @@ func (t *Threads) Recycle() {
 		}
 	}
 
-	globalThreads = newGlobalThreads
+	ReplayerGlobalThreads = newGlobalThreads
 }

@@ -14,10 +14,16 @@ import (
 	"github.com/didi/sharingan/replayer/monkey"
 )
 
+const (
+	HTTP_SERVER = "HTTP_SERVER"
+	GRPC_SERVER = "GRPC_SERVER"
+)
+
 var (
 	// inbound header feature, include traceID、replay Time
-	traceRegex = regexp.MustCompile(`Sharingan-Replayer-Trace(?:id|ID)\s?: (\w{32})\r\n`)
-	timeRegex  = regexp.MustCompile(`Sharingan-Replayer-Time\s?: (\d{19})\r\n`)
+	traceRegex  = regexp.MustCompile(`Sharingan-Replayer-Trace(?:id|ID)\s?: (\w{32})\r\n`)
+	timeRegex   = regexp.MustCompile(`Sharingan-Replayer-Time\s?: (\d{19})\r\n`)
+	serverRegex = regexp.MustCompile(`Sharingan-Replayer-Server\s?: (\w{11})\r\n`)
 
 	// outbound traffic prefix, include traceID、origin connect addr
 	trafficPrefix = `/*{"rid":"%s","addr":"%s"}*/`
@@ -85,7 +91,7 @@ func mockTCPConnRead() {
 		fd := internal.GetConnFD(conn)
 
 		// accsess
-		globalThreads.Access(threadID)
+		ReplayerGlobalThreads.Access(threadID)
 		// globalSockets.Access(fd)  // ignore Read Access
 
 		// origin Read
@@ -98,24 +104,31 @@ func mockTCPConnRead() {
 
 		// Inbound Hook
 		newb, newn := b, n
-		traceID, replayTime := "", int64(0)
+		traceID, replayTime, serverType := "", int64(0), ""
+
+		// get and remove server-type header
+		if ss := serverRegex.FindAllSubmatch(newb, -1); len(ss) >= 1 {
+			serverType = string(ss[0][1])
+			newb = bytes.Replace(newb, ss[0][0], []byte(""), -1)
+			newn -= len(ss[0][0])
+		}
 
 		// get and remove traceID header
-		if ss := traceRegex.FindAllSubmatch(newb, -1); len(ss) >= 1 {
+		if ss := traceRegex.FindAllSubmatch(newb, -1); GRPC_SERVER != serverType && len(ss) >= 1 {
 			traceID = string(ss[0][1])
 			newb = bytes.Replace(newb, ss[0][0], []byte(""), -1)
 			newn -= len(ss[0][0])
 		}
 
 		// get and remove time header
-		if ss := timeRegex.FindAllSubmatch(newb, -1); len(ss) >= 1 {
+		if ss := timeRegex.FindAllSubmatch(newb, -1); GRPC_SERVER != serverType && len(ss) >= 1 {
 			replayTime, _ = strconv.ParseInt(string(ss[0][1]), 10, 64)
 			newb = bytes.Replace(newb, ss[0][0], []byte(""), -1)
 			newn -= len(ss[0][0])
 		}
 
 		if traceID != "" || replayTime != 0 {
-			globalThreads.Set(threadID, traceID, replayTime)
+			ReplayerGlobalThreads.Set(threadID, traceID, replayTime)
 		}
 
 		// remove header
@@ -137,7 +150,7 @@ func mockTCPConnWrite() {
 		fd := internal.GetConnFD(conn)
 
 		// accsess
-		globalThreads.Access(threadID)
+		ReplayerGlobalThreads.Access(threadID)
 		globalSockets.Access(fd)
 
 		// ingore inbound
@@ -147,7 +160,7 @@ func mockTCPConnWrite() {
 
 		// get traceID
 		traceID := ""
-		thread := globalThreads.Get(threadID)
+		thread := ReplayerGlobalThreads.Get(threadID)
 		if thread != nil {
 			traceID = thread.traceID
 		}
