@@ -13,9 +13,11 @@ import (
 	"strings"
 	"time"
 
+	"github.com/didi/sharingan/replayer-agent/common/global"
 	"github.com/didi/sharingan/replayer-agent/common/handlers/tlog"
 	"github.com/didi/sharingan/replayer-agent/logic/outbound"
 	"github.com/didi/sharingan/replayer-agent/logic/replayed"
+	"github.com/didi/sharingan/replayer-agent/model/nuwaplt"
 	"github.com/didi/sharingan/replayer-agent/model/replaying"
 	"github.com/didi/sharingan/replayer-agent/model/station"
 )
@@ -88,8 +90,11 @@ func (r *Replayer) ReplaySessionDoreplay(ctx context.Context, session *replaying
 		timeHeader := fmt.Sprintf("\r\nSharingan-Replayer-Time: %d", session.CallFromInbound.OccurredAt)
 		s := bytes.Split(request, []byte("\r\n"))
 		if strings.Contains(string(s[0]), " HTTP/") {
+			// for supporting grpc server
+			serverType := nuwaplt.GetValueByKey(project, nuwaplt.KServerType, global.HTTP_SERVER)
+			serverHeader := fmt.Sprintf("\r\nSharingan-Replayer-Server: %s", serverType)
 			// http: add header at the second line of http inbound. the first line cannot be changed for 400 Bad Request
-			s[0] = append(s[0], []byte(traceHeader+timeHeader)...)
+			s[0] = append(s[0], []byte(traceHeader+timeHeader+serverHeader)...)
 			request = bytes.Join(s, []byte("\r\n"))
 		} else {
 			// thrift: add header at the first line of thrift inbound, for thrift request may be too large

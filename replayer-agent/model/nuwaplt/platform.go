@@ -25,6 +25,7 @@ const (
 	KLanguage   = "language"
 	KDepartment = "department"
 	KLogPath    = "logpath"
+	KServerType = "server-type"
 )
 
 type Modules struct {

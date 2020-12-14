@@ -18,7 +18,7 @@ func mockTimeNow() {
 		threadID := internal.GetCurrentGoRoutineID()
 		replayTime := int64(0)
 
-		if thread := globalThreads.Get(threadID); thread != nil {
+		if thread := ReplayerGlobalThreads.Get(threadID); thread != nil {
 			replayTime = thread.replayTime
 		}
 
