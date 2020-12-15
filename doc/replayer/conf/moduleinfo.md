@@ -22,6 +22,10 @@
     {
       "name": "example2",
       "data": "[{\"key\":\"listen-addr\",\"value\":\"10.179.84.1:8888\"},{\"key\":\"department\",\"value\":\"Biz\"}]"
+    },
+    {
+      "name":"example-grpc",
+      "data": "[{\"key\":\"listen-addr\",\"value\":\"10.179.84.1:7777\"},{\"key\":\"server-type\",\"value\":\"GRPC_SERVER\"}]"
     }
   ]
 }
@@ -58,3 +62,5 @@
 * listen-addr：必选，SUT的监听地址，一般为127.0.0.1:xxxx。
 
 * department：可选，模块所属部门，默认空(则为default部门)。非空时，同时流量配置的读取自ES，则 会按部门字段读取es_url地址。es_url配置可详见：[Replayer-Agent配置](../replayer-conf.md#5-es_url)
+
+* server-type：可选，SUT的server类型，默认空(则为HTTP_SERVER)。若SUT使用的grpc server,请务必赋值 GRPC_SERVER。

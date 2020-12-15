@@ -102,8 +102,11 @@ go build -tags="replayer" -gcflags="all=-N -l"
 
 > replace google.golang.org/grpc => xxx/grpc v1.33.2
 
+<br>
 
-其他操作，同 [2.1 http server](#2.1-http-server) 。
+回放其他操作，同 [2.1 http server](#2.1-http-server) 。
+
+不同的是，模块配置需增加 server-type 字段，且赋值为 GRPC_SERVER。详见：[回放模块配置](./conf/moduleinfo.md)
 
 <br>
 
