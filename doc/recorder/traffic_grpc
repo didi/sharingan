@@ -1,0 +1,114 @@
+{
+    "Context": "72206febea6e ",
+    "SessionId": "1609244417484273281-222",
+    "ThreadId": 222,
+    "TraceHeader": null,
+    "NextSessionId": "1609244418995036871-222",
+    "CallFromInbound": {
+      "ActionIndex": 0,
+      "OccurredAt": 1609244417484281478,
+      "ActionType": "CallFromInbound",
+      "Peer": {
+        "IP": "127.0.0.1",
+        "Port": 52170,
+        "Zone": ""
+      },
+      "UnixAddr": {
+        "Name": "",
+        "Net": ""
+      },
+      "Request": ":authority: :8990\r\n:path: /Dirpc.SDK.TripcloudPassengerGo.TripcloudPassengerGo/PMultiCancelOrder\r\naccept: */*\r\nx-real-port: 52744\r\n\r\ncontent-length: 91\r\nx-real-ip: 10.183.96.125\r\ncontent-type: application/grpc\r\nx-forwarded-for: 10.183.96.12510.183.96.125, 127.0.0.1\r\nx-forwarded-host: 100.69.238.44:8000\r\nx-forwarded-proto: http\r\nuser-agent: grpc-go/1.33.2\r\n\r\n{\"order_id\":\"290130419824185204\",\"cancel_reason\":\"0\"}"
+    },
+    "ReturnInbound": {
+      "ActionIndex": 4,
+      "OccurredAt": 1609244418994918640,
+      "ActionType": "ReturnInbound",
+      "Response": "{\"errmsg\":\"yjyjyj----yjyjyjyjyj参数错误\"}"
+    },
+    "Actions": [
+      {
+        "ActionIndex": 0,
+        "OccurredAt": 1609244417523939943,
+        "ActionType": "CallOutbound",
+        "SocketFD": 122,
+        "Peer": {
+          "IP": "10.190.3.187",
+          "Port": 8002,
+          "Zone": ""
+        },
+        "ResponseTime": 1609244417845958176,
+        "UnixAddr": {
+          "Name": "",
+          "Net": ""
+        },
+        "Request": "GET /roles HTTP/1.1\r\nHost: 10.190.3.187:8002\r\nUser-Agent: Go-http-client/1.1\r\nAccept-Encoding: gzip\r\n\r\n",
+        "Response": "HTTP/1.1 200 OK\r\nAccess-Control-Allow-Credentials: true\r\nAccess-Control-Allow-Headers: cookie,DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type\r\nAccess-Control-Allow-Methods: GET\r\nAccess-Control-Allow-Origin: \r\nContent-Type: application/json\r\nDate: Tue, 29 Dec 2020 12:20:17 GMT\r\nContent-Length: 40\r\n\r\n{\"isAdmin\":false,\"roles\":[],\"groups\":[]}",
+        "CSpanId": ""
+      },
+      {
+        "ActionIndex": 1,
+        "OccurredAt": 1609244417882203026,
+        "ActionType": "CallOutbound",
+        "SocketFD": 123,
+        "Peer": {
+          "IP": "10.190.3.187",
+          "Port": 8002,
+          "Zone": ""
+        },
+        "ResponseTime": 1609244417923856012,
+        "UnixAddr": {
+          "Name": "",
+          "Net": ""
+        },
+        "Request": "GET /validate/login HTTP/1.1\r\nHost: 10.190.3.187:8002\r\nUser-Agent: Go-http-client/1.1\r\nAccept-Encoding: gzip\r\n\r\n",
+        "Response": "HTTP/1.1 200 OK\r\nAccess-Control-Allow-Credentials: true\r\nAccess-Control-Allow-Headers: cookie,DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type\r\nAccess-Control-Allow-Methods: GET\r\nAccess-Control-Allow-Origin: \r\nContent-Type: application/json\r\nDate: Tue, 29 Dec 2020 12:20:17 GMT\r\nContent-Length: 142\r\n\r\n{\"login\":false,\"user\":\"\",\"roles\":null,\"location\":\"http://mis-test.diditaxi.com.cn/auth/sso/login?app_id=1914\\x5cu0026jumpto=%2F\\x5cu0026version1.0\"}",
+        "CSpanId": ""
+      },
+      {
+        "ActionIndex": 2,
+        "OccurredAt": 1609244417959071508,
+        "ActionType": "CallOutbound",
+        "SocketFD": 124,
+        "Peer": {
+          "IP": "10.190.3.187",
+          "Port": 8002,
+          "Zone": ""
+        },
+        "ResponseTime": 1609244417994498478,
+        "UnixAddr": {
+          "Name": "",
+          "Net": ""
+        },
+        "Request": "GET /fastdev HTTP/1.1\r\nHost: 10.190.3.187:8002\r\nUser-Agent: Go-http-client/1.1\r\nAccept-Encoding: gzip\r\n\r\n",
+        "Response": "HTTP/1.1 200 OK\r\nAccess-Control-Allow-Credentials: true\r\nAccess-Control-Allow-Headers: cookie,DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type\r\nAccess-Control-Allow-Methods: POST, GET, OPTIONS, DELETE, PUT\r\nAccess-Control-Allow-Origin: \r\nContent-Type: text/html; charset=utf-8\r\nDate: Tue, 29 Dec 2020 12:20:17 GMT\r\nTransfer-Encoding: chunked\r\n\r\n1df0\r\n\n\n\u003c!DOCTYPE html\u003e\n\u003chtml\u003e\n\u003chead\u003e\n    \u003cmeta charset=\"UTF-8\"\u003e\n    \u003ctitle\u003enuwa platform\u003c/title\u003e\n    \u003clink rel=\"stylesheet\" href=\"/public/css/elementui.css\"\u003e\n    \u003clink rel=\"stylesheet\" href=\"/public/css/common.css\"\u003e\n\n\u003c/head\u003e\n\u003cbody\u003e\n\n\u003cel-row id=\"header\"\u003e\n    \u003cel-col :span=\"4\"\u003e\n        \u003cimg class=\"logo\" src=\"/public/img/nuwa.jpg\" style=\"width:75%;\" alt=\"nuwa\"\u003e\n    \u003c/el-col\u003e\n    \u003cel-col :span=\"20\"\u003e\n        \u003cel-menu\n                 :default-active=\"activeIndex\"\n                 mode=\"horizontal\"\u003e\n            \u003cel-menu-item index=\"1\" @click=\"href('/static')\"\u003e静态分析\u003c/el-menu-item\u003e\n            \u003cel-menu-item index=\"2\" @click=\"href('/fastdev')\"\u003eFastdev\u003c/el-menu-item\u003e\n            \u003cel-menu-item index=\"3\" @click=\"href('/toolkit')\"\u003e小工具集\u003c/el-menu-item\u003e\n            \u003cel-menu-item index=\"4\" @click=\"href('/statistics')\"\u003e统计分析\u003c/el-menu-item\u003e\n            \u003cel-menu-item index=\"5\" @click=\"href('/idldoc')\"\u003e服务接口文档\u003c/el-menu-item\u003e\n\n        \u003c/el-menu\u003e\n    \u003c/el-col\u003e\n\u003c/el-row\u003e\n\u003cdiv style=\"margin:20px\"\u003e\u003c/div\u003e\n\n\n\u003cel-row id=\"app\" :gutter=\"15\"\u003e\n    \u003cel-col :span=\"4\"\u003e\n        \u003cel-menu\n                :default-active=\"active\"\n                style=\"min-height: 550px;\"\u003e\n            \u003cel-menu-item index=\"1\" @click.native.prevent=\"getDsl\"\u003e\n                \u003ci class=\"el-icon-share\"\u003e\u003c/i\u003e\n                \u003cspan slot=\"title\"\u003eES查询\u003c/span\u003e\n            \u003c/el-menu-item\u003e\n            \u003cel-menu-item index=\"2\" @click.native.prevent=\"getNoise\"\u003e\n                \u003ci class=\"el-icon-menu\"\u003e\u003c/i\u003e\n                \u003cspan slot=\"title\"\u003e回放噪音\u003c/span\u003e\n            \u003c/el-menu-item\u003e\n        \u003c/el-menu\u003e\n    \u003c/el-col\u003e\n    \u003cel-col :span=\"19\"\u003e\n        \u003cel-table tooltip-effect=\"dark\" key=\"tableData\" :data=\"tableData\" v-if=\"esSearch\"\u003e\n            \u003cel-table-column\n                    prop=\"id\"\n                    label=\"ID\"\n                    width=\"50%\"\u003e\n            \u003c/el-table-column\u003e\n            \u003cel-table-column\n                    prop=\"tag\"\n                    label=\"查询名称\"\n                    width=\"100%\"\u003e\n            \u003c/el-table-column\u003e\n            \u003cel-table-column\n                    prop=\"dsl\"\n                    label=\"查询DSL\"\n                    show-overflow-tooltip\u003e\n            \u003c/el-table-column\u003e\n            \u003cel-table-column\n                    prop=\"user\"\n                    label=\"上报用户\"\n                    width=\"100%\"\u003e\n            \u003c/el-table-column\u003e\n            \u003cel-table-column\n                    prop=\"addTime\"\n                    label=\"上报时间\"\n                    width=\"160%\"\u003e\n            \u003c/el-table-column\u003e\n            \u003cel-table-column\n                    prop=\"modifyTime\"\n                    label=\"修改时间\"\n                    width=\"160%\"\u003e\n            \u003c/el-table-column\u003e\n            \u003cel-table-column\n                    prop=\"recommend\"\n                    label=\"推荐\"\n                    width=\"120%\"\u003e\n\t\t\u003ctemplate slot-scope=\"scope\"\u003e\n\t\t    \u003cel-switch\n\t\t\t@change=\"updateRow(scope.$index, scope.row)\"\n\t\t\tactive-text=\"yes\"\n\t\t\tinactive-text=\"no\"\n  \t\t    \tv-model=\"scope.row.recommend\"\n  \t\t    \tactive-color=\"#13ce66\"\n  \t\t    \tinactive-color=\"#ff4949\"\u003e\n\t\t    \u003c/el-switch\u003e\n\t\t\u003c/template\u003e\n            \u003c/el-table-column\u003e\n            \u003cel-table-column\n                    prop=\"project\"\n                    label=\"项目筛选\"\n                    width=\"100%\"\n                    :filters=\"[\n                    { text: 'passenger', value: 'passenger' },\n                    { text: 'driver', value: 'driver' },\n                    { text: 'carpool', value: 'carpool' },\n                    { text: 'themis', value: 'themis' },\n                    { text: 'horae', value: 'horae' },\n                    { text: 'openapi', value: 'openapi' },\n     ",
+        "CSpanId": ""
+      },
+      {
+        "ActionIndex": 3,
+        "OccurredAt": 1609244418029748219,
+        "ActionType": "CallOutbound",
+        "SocketFD": 126,
+        "Peer": {
+          "IP": "10.190.3.187",
+          "Port": 8002,
+          "Zone": ""
+        },
+        "ResponseTime": 1609244418064980151,
+        "UnixAddr": {
+          "Name": "",
+          "Net": ""
+        },
+        "Request": "GET /validate/login HTTP/1.1\r\nHost: 10.190.3.187:8002\r\nUser-Agent: Go-http-client/1.1\r\nAccept-Encoding: gzip\r\n\r\n",
+        "Response": "HTTP/1.1 200 OK\r\nAccess-Control-Allow-Credentials: true\r\nAccess-Control-Allow-Headers: cookie,DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type\r\nAccess-Control-Allow-Methods: GET\r\nAccess-Control-Allow-Origin: \r\nContent-Type: application/json\r\nDate: Tue, 29 Dec 2020 12:20:18 GMT\r\nContent-Length: 142\r\n\r\n{\"login\":false,\"user\":\"\",\"roles\":null,\"location\":\"http://mis-test.diditaxi.com.cn/auth/sso/login?app_id=1914\\x5cu0026jumpto=%2F\\x5cu0026version1.0\"}",
+        "CSpanId": ""
+      },
+      {
+        "ActionIndex": 4,
+        "OccurredAt": 1609244418994918640,
+        "ActionType": "ReturnInbound",
+        "Response": "{\"errmsg\":\"yjyjyj----yjyjyjyjyj参数错误\"}"
+      }
+    ],
+    "TraceId": "c0a801065fe1b47c8509176110310603",
+    "SpanId": "2a6e370b6ee4fab3"
+  }

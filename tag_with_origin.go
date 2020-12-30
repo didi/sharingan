@@ -1,4 +1,5 @@
 // +build !recorder
+// +build !recorder_grpc
 // +build !replayer
 
 package sharingan

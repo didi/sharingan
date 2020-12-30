@@ -4,6 +4,8 @@
 
 ## 一、接入流程
 
+下面 第1-4步骤 是http server的标准录制流程，第5步骤 是 grpc serser的录制流程。
+
 ### 1、使用定制版golang【必须】
 
 * 目前支持go1.10 ~ go1.14，参考：[golang安装](https://github.com/didi/sharingan-go/tree/recorder)
@@ -81,6 +83,59 @@ cd /path/to/your/project && ./$project           // 使用上一步编译生成�
 * 启动recorder-agent：[recorder-agent](https://github.com/didi/sharingan/blob/master/doc/recorder/recorder-agent.md)
 * 录制成功标志：/path/to/your/sharingan/recorder-agent/log/recorder.log存在流量，一条流量占一行。
 * 线上流量回放，参考：[流量回放](https://github.com/didi/sharingan/tree/master/doc/replayer)。
+
+### 5、grpc server录制
+
+#### 5.1、与http server标准录制流程区别
+
+##### 5.1.1、编译前，使用定制的grpc替换开源grpc【必须】
+
+录制使用的 [grpc server](../../grpc-server) 基于开源的 [grpc-go](https://github.com/grpc/grpc-go) 进行了定制化，目前支持的版本是v1.33.2。
+
+引入定制的 [grpc server](../../grpc-server) 方式有两种：
+
+方式一：
+
+将 [grpc server](../../grpc-server) 代码提交到SUT的代码仓库，直接使用。
+
+方式二：
+
+将 [grpc server](../../grpc-server) 提交到一个新的代码仓库后，发包v1.33.2，然后在SUT的 go.mod 内使用replace 替换开源的grpc包:
+
+> replace google.golang.org/grpc => xxx/grpc v1.33.2
+
+##### 5.1.2、指定新的tag编译【必须】
+
+```shell
+cd /path/to/your/project
+go build -tags="recorder_grpc"
+```
+
+注意，此处tag值是 "recorder_grpc"。
+
+<br>
+
+grpc server的其他录制操作，同 上面http server标准录制流程的1-4步骤 。
+
+#### 5.2、流量demo
+
+详见 [grpc server录制流量demo](./recorder-agent.md) 。
+
+#### 5.3、待支持功能
+
+##### 5.3.1、Outbound 为 grpc协议 的录制
+
+即 grpc client端录制【待定制的grpc和koala_grpc支持】
+
+##### 5.3.2、grpc协议 的回放
+
+即 inbound 和 outbound为grpc协议的回放【待sharingan支持】
+
+>温馨提示：对于使用grpc框架做PHP转GO的模块，跨语言流量回放是支持的。
+>
+>因为已经支持 [grpc server回放](../replayer/README.md#2.2-grpc-server)，回放时是将fastcgi转为http协议回放的（grpc框架流量：http协议→ grpc-gateway→ grpc协议→grpc server）。
+>
+>因此，对于使用http协议，且基于grpc-gateway的模块，跨语言回放不受影响。
 
 ## 二、最佳实践【**线上流量录制，强烈推荐**】
 
