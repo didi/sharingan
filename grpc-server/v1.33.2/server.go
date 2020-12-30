@@ -20,6 +20,7 @@ package grpc
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -996,6 +997,9 @@ func (s *Server) incrCallsFailed() {
 }
 
 func (s *Server) sendResponse(t transport.ServerTransport, stream *transport.Stream, msg interface{}, cp Compressor, opts *transport.Options, comp encoding.Compressor) error {
+	msgSpan, _ := json.Marshal(msg)
+	registerOnGrpcSend(msgSpan)
+
 	data, err := encode(s.getCodec(stream.ContentSubtype()), msg)
 	if err != nil {
 		channelz.Error(logger, s.channelzID, "grpc: server failed to encode response: ", err)
@@ -1174,6 +1178,7 @@ func (s *Server) processUnaryRPC(t transport.ServerTransport, stream *transport.
 		payInfo = &payloadInfo{}
 	}
 	d, err := recvAndDecompress(&parser{r: stream}, stream, dc, s.opts.maxReceiveMessageSize, payInfo, decomp)
+
 	if err != nil {
 		if e := t.WriteStatus(stream, status.Convert(err)); e != nil {
 			channelz.Warningf(logger, s.channelzID, "grpc: Server.processUnaryRPC failed to write status %v", e)
@@ -1187,6 +1192,11 @@ func (s *Server) processUnaryRPC(t transport.ServerTransport, stream *transport.
 		if err := s.getCodec(stream.ContentSubtype()).Unmarshal(d, v); err != nil {
 			return status.Errorf(codes.Internal, "grpc: error unmarshalling request: %v", err)
 		}
+
+		// for grpc recorder
+		reqData, _ := json.Marshal(v)
+		registerOnGrpcRecv(stream, reqData)
+
 		if sh != nil {
 			sh.HandleRPC(stream.Context(), &stats.InPayload{
 				RecvTime:   time.Now(),
@@ -1501,7 +1511,8 @@ func (s *Server) processStreamingRPC(t transport.ServerTransport, stream *transp
 }
 
 func (s *Server) handleStream(t transport.ServerTransport, stream *transport.Stream, trInfo *traceInfo) {
-    handleReplayerHeader(stream)
+	handleReplayerHeader(stream)
+	registerOnGrpcAccept(stream)
 	sm := stream.Method()
 	if sm != "" && sm[0] == '/' {
 		sm = sm[1:]
