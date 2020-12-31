@@ -119,23 +119,27 @@ grpc server的其他录制操作，同 上面http server标准录制流程的1-4
 
 #### 5.2、流量demo
 
-详见 [grpc server录制流量demo](./recorder-agent.md) 。
+详见 [grpc server录制流量demo](./traffic_grpc) 。
 
 #### 5.3、待支持功能
 
 ##### 5.3.1、Outbound 为 grpc协议 的录制
 
-即 grpc client端录制【待定制的grpc和koala_grpc支持】
+即 grpc client端录制【待定制的[grpc-server](../../grpc-server)和[koala_grpc](../../recorder/koala_grpc)支持】
 
 ##### 5.3.2、grpc协议 的回放
 
-即 inbound 和 outbound为grpc协议的回放【待sharingan支持】
+即 inbound 和 outbound为grpc协议的回放【待[replayer-agent](../../replayer-agent)支持】
 
->温馨提示：对于使用grpc框架做PHP转GO的模块，跨语言流量回放是支持的。
->
->因为已经支持 [grpc server回放](../replayer/README.md#2.2-grpc-server)，回放时是将fastcgi转为http协议回放的（grpc框架流量：http协议→ grpc-gateway→ grpc协议→grpc server）。
->
->因此，对于使用http协议，且基于grpc-gateway的模块，跨语言回放不受影响。
+>温馨提示：
+
+>对于使用grpc-server做PHP转GO的模块，跨语言流量回放是支持的。
+
+replayer-agent已经支持 [grpc server回放](../replayer/README.md#2.2-grpc-server)，回放时replayer-agent将fastcgi转为http协议回放。
+
+grpc server框架流量：http协议→ grpc-gateway→ grpc协议→grpc server.
+
+因此，对于使用http协议，且基于grpc-gateway的模块，跨语言回放不受影响。
 
 ## 二、最佳实践【**线上流量录制，强烈推荐**】
 

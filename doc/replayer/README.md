@@ -37,9 +37,9 @@
 ##### 快速安装(推荐)
 ```shell script
 # mac
-wget https://github.com/didi/sharingan/releases/download/v1.0.1/replayer-agent.mac.tar
+wget https://github.com/didi/sharingan/releases/download/replayer-agent%2Fv1.3.0/replayer-agent.mac
 # linux
-wget https://github.com/didi/sharingan/releases/download/v1.0.1/replayer-agent.linux.tar
+wget https://github.com/didi/sharingan/releases/download/replayer-agent%2Fv1.3.0/replayer-agent.linux
 ```
 最新版本请查看 [releases](https://github.com/didi/sharingan/releases) 
 
