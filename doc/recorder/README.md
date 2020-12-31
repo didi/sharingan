@@ -111,7 +111,7 @@ cd /path/to/your/project
 go build -tags="recorder_grpc"
 ```
 
-注意，此处tag值是 "recorder_grpc"。
+注意，此处tag值是 **"recorder_grpc"**。
 
 <br>
 
@@ -135,9 +135,9 @@ grpc server的其他录制操作，同 上面http server标准录制流程的1-4
 
 >对于使用grpc-server做PHP转GO的模块，跨语言流量回放是支持的。
 
-replayer-agent已经支持 [grpc server回放](../replayer/README.md#2.2-grpc-server)，回放时replayer-agent将fastcgi转为http协议回放。
+replayer-agent已经支持 [grpc server回放](../replayer/README.md#22-grpc-server)，回放时，replayer-agent自动识别inbound的fastcgi协议，并转为http协议后进行回放。
 
-grpc server框架流量：http协议→ grpc-gateway→ grpc协议→grpc server.
+grpc server框架流量链路：http协议→ grpc-gateway→ grpc协议→grpc server.
 
 因此，对于使用http协议，且基于grpc-gateway的模块，跨语言回放不受影响。
 

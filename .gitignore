@@ -28,5 +28,9 @@ replayer-agent/agent
 replayer-agent/replayer-agent
 replayer-agent/agent.log
 replayer-agent/agent.pid
+replayer-agent/conf.tar
+replayer-agent/template.tar
+replayer-agent/replayer-agent.linux
+replayer-agent/replayer-agent.mac
 
 vendor/

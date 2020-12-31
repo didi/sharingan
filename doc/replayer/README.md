@@ -43,6 +43,8 @@ wget https://github.com/didi/sharingan/releases/download/replayer-agent%2Fv1.3.0
 ```
 最新版本请查看 [releases](https://github.com/didi/sharingan/releases) 
 
+将上步wget的bin文件与 [replayer-agent/conf](https://github.com/didi/sharingan/releases/download/replayer-agent%2Fv1.3.0/conf.tar) 和 [replayer-agent/template](https://github.com/didi/sharingan/releases/download/replayer-agent%2Fv1.3.0/template.tar) 放到一个目录下，启动bin文件即可。
+
 ##### 编译安装
 首先，确保本地存在go环境(官方或定制版均可，且版本无要求), 并根据本地go版本选择go mod或glide来安装sharingan的依赖。
 ```shell script
