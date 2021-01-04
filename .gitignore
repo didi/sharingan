@@ -9,6 +9,7 @@
 example/example
 example/example.test
 example/nohup.out
+example/recorder/recorder
 example/replayer/replayer
 example/replayer/replayer.test
 example/replayer/example.test

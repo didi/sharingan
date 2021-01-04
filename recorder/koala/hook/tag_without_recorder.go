@@ -1,6 +1,6 @@
 // +build !recorder
 
-package internal
+package hook
 
 import (
 	"net"

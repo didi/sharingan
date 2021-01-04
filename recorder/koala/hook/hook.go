@@ -4,8 +4,7 @@ import (
 	"net"
 	"syscall"
 
-	"github.com/didi/sharingan/recorder/internal"
-	"github.com/didi/sharingan/recorder/sut"
+	"github.com/didi/sharingan/recorder/koala/sut"
 
 	"github.com/v2pro/plz/countlog"
 )
@@ -23,8 +22,8 @@ func Start() {
 }
 
 func setupAcceptHook() {
-	internal.RegisterOnAccept(func(serverSocketFD int, clientSocketFD int, sa syscall.Sockaddr) {
-		gid := sut.ThreadID(internal.GetCurrentGoRoutineID())
+	RegisterOnAccept(func(serverSocketFD int, clientSocketFD int, sa syscall.Sockaddr) {
+		gid := sut.ThreadID(GetCurrentGoRoutineID())
 
 		origAddr := sockaddrToTCP(sa)
 
@@ -43,8 +42,8 @@ func setupAcceptHook() {
 }
 
 func setupConnectHook() {
-	internal.RegisterOnConnect(func(fd int, sa syscall.Sockaddr) {
-		gid := sut.ThreadID(internal.GetCurrentGoRoutineID())
+	RegisterOnConnect(func(fd int, sa syscall.Sockaddr) {
+		gid := sut.ThreadID(GetCurrentGoRoutineID())
 
 		ipv4Addr, _ := sa.(*syscall.SockaddrInet4)
 		if ipv4Addr == nil {
@@ -73,8 +72,8 @@ func setupConnectHook() {
 }
 
 func setupSendHook() {
-	internal.RegisterOnSend(func(fd int, network string, raddr net.Addr, span []byte) {
-		gid := sut.ThreadID(internal.GetCurrentGoRoutineID())
+	RegisterOnSend(func(fd int, network string, raddr net.Addr, span []byte) {
+		gid := sut.ThreadID(GetCurrentGoRoutineID())
 		if gid == ignoreThreadID {
 			return
 		}
@@ -94,8 +93,8 @@ func setupSendHook() {
 }
 
 func setupRecvHook() {
-	internal.RegisterOnRecv(func(fd int, network string, raddr net.Addr, span []byte) {
-		gid := sut.ThreadID(internal.GetCurrentGoRoutineID())
+	RegisterOnRecv(func(fd int, network string, raddr net.Addr, span []byte) {
+		gid := sut.ThreadID(GetCurrentGoRoutineID())
 		if gid == ignoreThreadID {
 			return
 		}
@@ -111,7 +110,7 @@ func setupRecvHook() {
 }
 
 func setupCloseHook() {
-	internal.RegisterOnClose(func(fd int) {
+	RegisterOnClose(func(fd int) {
 		countlog.Debug("event!sut.close", "socketFD", fd)
 		sut.RemoveGlobalSock(sut.SocketFD(fd))
 	})
@@ -119,7 +118,7 @@ func setupCloseHook() {
 
 func setupGoRoutineExitHook() {
 	// true goroutineID
-	internal.RegisterOnGoRoutineExit(func(gid int64) {
+	RegisterOnGoRoutineExit(func(gid int64) {
 		countlog.Debug("event!sut.goroutine_exit", "threadID", gid)
 		sut.OperateThreadOnRecordingSession(sut.ThreadID(gid), func(thread *sut.Thread) {
 			thread.OnShutdown()

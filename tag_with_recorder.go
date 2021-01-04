@@ -8,9 +8,9 @@ import (
 
 	"github.com/didi/sharingan/plugins"
 	"github.com/didi/sharingan/recorder"
-	"github.com/didi/sharingan/recorder/hook"
-	"github.com/didi/sharingan/recorder/logger"
-	"github.com/didi/sharingan/recorder/sut"
+	"github.com/didi/sharingan/recorder/koala/hook"
+	"github.com/didi/sharingan/recorder/koala/logger"
+	"github.com/didi/sharingan/recorder/koala/sut"
 )
 
 // GetCurrentGoRoutineID get current goroutineID incase SetDelegatedFromGoRoutineID

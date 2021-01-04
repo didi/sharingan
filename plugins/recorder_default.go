@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"github.com/didi/sharingan/recorder"
-	"github.com/didi/sharingan/recorder/recording"
+	"github.com/didi/sharingan/recorder/koala/recording"
 	"github.com/didi/sharingan/recorder/utils"
 
 	"github.com/v2pro/plz/countlog"
