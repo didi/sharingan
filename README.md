@@ -174,10 +174,7 @@ $ 页面选择要回放的流量点执行          # 内置提前录制好的3�
 
 ### 6.5、联系我们
 
-* 微信交流群
+* 微信交流群 【加管理员微信，拉进交流群】
 
-![WEIXIN](http://img-hxy021.didistatic.com/static/sharingan/weixin_v2.jpeg)
+![WEIXIN](http://img-ys011.didistatic.com/static/dhack_wakeup/weixin_sharingan.png)
 
-* QQ交流群「群号:417146801，长期有效」
-
-![QQ](http://img-hxy021.didistatic.com/static/sharingan/QQ_v2.JPG)
