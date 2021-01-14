@@ -176,5 +176,5 @@ $ 页面选择要回放的流量点执行          # 内置提前录制好的3�
 
 * 微信交流群 【加管理员微信，拉进交流群】
 
-![WEIXIN](http://img-ys011.didistatic.com/static/dhack_wakeup/weixin_sharingan.png)
+![WEIXIN](http://img-ys011.didistatic.com/static/dhack_wakeup/weixin_sharingan_v2.jpg)
 
