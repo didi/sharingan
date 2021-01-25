@@ -47,7 +47,7 @@ $ git clone https://github.com/didi/sharingan.git
 $ cd sharingan
 
 # Step2: 使用定制版golang，以go1.13为例「慢？科学上网试试」
-$ sh install.sh go1.13 # 支持go1.10 ~ go1.14，限mac、linux amd64系统
+$ sh install.sh go1.13 # 支持go1.10 ~ go1.15，限mac、linux amd64系统
 $ export GOROOT=/tmp/recorder-go1.13
 $ export PATH=$GOROOT/bin:$PATH
 

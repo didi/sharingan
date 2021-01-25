@@ -23,9 +23,9 @@ if [ ! -n "$1" ] ; then
     exit
 fi
 
-# only support go1.10 ~ go1.14
-if [ "$1" != "go1.10" ] && [ "$1" != "go1.11" ] && [ "$1" != "go1.12" ] && [ "$1" != "go1.13" ] && [ "$1" != "go1.14" ]; then
-    printf "${warn_msg}-> only support go1.10 ~ go1.14!!!\n"
+# only support go1.10 ~ go1.15
+if [ "$1" != "go1.10" ] && [ "$1" != "go1.11" ] && [ "$1" != "go1.12" ] && [ "$1" != "go1.13" ] && [ "$1" != "go1.14" ] && [ "$1" != "go1.15" ]; then
+    printf "${warn_msg}-> only support go1.10 ~ go1.15!!!\n"
     printf "${info_msg}--> usage: sh install.sh go1.13\n"
     exit
 fi

@@ -8,7 +8,7 @@
 
 ### 1、使用定制版golang【必须】
 
-* 目前支持go1.10 ~ go1.14，参考：[golang安装](https://github.com/didi/sharingan-go/tree/recorder)
+* 目前支持go1.10 ~ go1.15，参考：[golang安装](https://github.com/didi/sharingan-go/tree/recorder)
 
 ```shell
 # go1.13使用示例，github域名不太稳定，失败可以换成其它方式，参考golang安装

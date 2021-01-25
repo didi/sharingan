@@ -16,7 +16,7 @@ sut_replayer.sh 默认使用 **go mod方式**，即 sut_replayer_gomod.sh 脚本
 
 ##### 1. 环境
 
-* GO 「定制版本golang，目前支持go1.10 ~ go1.14」
+* GO 「定制版本golang，目前支持go1.10 ~ go1.15」
 * 包管理工具由SUT决定 (GO>=1.13推荐go mod, 低版本推荐glide)
 
 <br>
