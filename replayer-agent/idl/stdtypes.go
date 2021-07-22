@@ -30,6 +30,7 @@ type SearchReq struct {
 	// inferred fields
 	Start string `json:"-"`
 	End   string `json:"-"`
+	Extend interface{} `json:"extend"`
 }
 
 type SearchResp struct {
