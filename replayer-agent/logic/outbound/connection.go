@@ -114,24 +114,20 @@ func (cs *ConnState) readRequest(ctx context.Context) ([]byte, error) {
 	request = append(request, buf[:bytesRead]...)
 	helper.SetQuickAck(cs.conn)
 
-	// 可能还有数据没读完
-	if bytesRead >= len(buf) {
-		for {
-			cs.conn.SetReadDeadline(time.Now().Add(time.Millisecond * 25))
-			bytesRead, err := cs.conn.Read(buf)
-			if err != nil {
-				break
-			}
-			helper.SetQuickAck(cs.conn)
-			request = append(request, buf[:bytesRead]...)
-			if bytesRead < len(buf) {
-				break
-			}
+	for {
+		cs.conn.SetReadDeadline(time.Now().Add(time.Millisecond * 25))
+		bytesRead, err := cs.conn.Read(buf)
+		if err != nil {
+			break
+		}
+		helper.SetQuickAck(cs.conn)
+		request = append(request, buf[:bytesRead]...)
+		if bytesRead < len(buf) {
+			break
 		}
 	}
 
 	request = cs.rmTrafixPrefix(ctx, request)
-
 	return request[:len(request)], nil
 }
 
@@ -157,7 +153,7 @@ func (cs *ConnState) match(ctx context.Context, request []byte) error {
 	cs.Handler = loadHandler(ctx, string(cs.traceID))
 	if cs.Handler == nil {
 		tlog.Handler.Warnf(ctx, tlog.DebugTag, "errmsg=find Handler failed||request=%s||traceID=%s", quotedRequest, string(cs.traceID))
-		return nil
+		return errors.New("find Handler failed")
 	}
 
 	ctx = cs.Handler.Ctx
