@@ -107,6 +107,11 @@ func (cs *ConnState) readRequest(ctx context.Context) ([]byte, error) {
 
 	request := pool.GetBuf(81920, true)
 
+	// SetReadDeadline sets the deadline for future Read calls
+	// and any currently-blocked Read call.
+	// A zero value for t means Read will not time out.
+	cs.conn.SetReadDeadline(time.Time{})
+
 	bytesRead, err := cs.conn.Read(buf)
 	if err != nil {
 		return nil, err
@@ -153,8 +158,10 @@ func (cs *ConnState) match(ctx context.Context, request []byte) error {
 	cs.Handler = loadHandler(ctx, string(cs.traceID))
 	if cs.Handler == nil {
 		tlog.Handler.Warnf(ctx, tlog.DebugTag, "errmsg=find Handler failed||request=%s||traceID=%s", quotedRequest, string(cs.traceID))
-		return errors.New("find Handler failed")
+		return nil
 	}
+
+	ctx = cs.Handler.Ctx
 
 	// 去掉COM_STMT_CLOSE
 	if request = removeMysqlStmtClose(request); len(request) == 0 {
