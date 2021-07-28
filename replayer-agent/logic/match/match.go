@@ -13,7 +13,9 @@ import (
 	"github.com/didi/sharingan/replayer-agent/model/protocol"
 	"github.com/didi/sharingan/replayer-agent/model/recording"
 	"github.com/didi/sharingan/replayer-agent/model/replaying"
+	"github.com/didi/sharingan/replayer-agent/utils/fastcgi"
 	"github.com/didi/sharingan/replayer-agent/utils/helper"
+	"github.com/didi/sharingan/replayer-agent/utils/protocol/pthrift"
 )
 
 var expect100 = []byte("Expect: 100-continue")
@@ -126,6 +128,10 @@ func (m *Matcher) DoMatchOutboundTalk(
 		m.MaxMatchedIndex = maxScoreIndex
 	}
 	m.Visited[maxScoreIndex] = true
+
+	if bytes.HasPrefix(session.CallFromInbound.Raw, fastcgi.FastCGIRequestHeader) {
+		pthrift.ReplaceSequenceId(request, session.CallOutbounds[maxScoreIndex])
+	}
 	return maxScoreIndex, mark, session.CallOutbounds[maxScoreIndex]
 }
 

@@ -160,6 +160,8 @@ func (cs *ConnState) match(ctx context.Context, request []byte) error {
 		return nil
 	}
 
+	ctx = cs.Handler.Ctx
+
 	// 去掉COM_STMT_CLOSE
 	if request = removeMysqlStmtClose(request); len(request) == 0 {
 		return nil

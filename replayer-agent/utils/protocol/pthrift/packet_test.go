@@ -2,6 +2,7 @@ package pthrift
 
 import (
 	"bytes"
+	"reflect"
 	"testing"
 
 	"github.com/modern-go/parse"
@@ -262,5 +263,37 @@ func TestDecodeCompact(t *testing.T) {
 		actual, err := DecodeCompact(tc.raw)
 		should.NoError(err)
 		should.Equal(tc.expect, actual, "case #%d fail", idx)
+	}
+}
+
+func TestIntToBytes(t *testing.T) {
+	type args struct {
+		n int
+		b byte
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    []byte
+		wantErr bool
+	}{
+		{
+			name: "1",
+			args: args{n: 10, b: 4},
+			want: []byte{0, 0, 0, 0x0a},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := IntToBytes(tt.args.n, tt.args.b)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("IntToBytes() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("IntToBytes() got = %v, want %v", got, tt.want)
+			}
+		})
 	}
 }

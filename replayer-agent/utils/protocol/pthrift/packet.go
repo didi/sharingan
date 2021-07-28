@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"errors"
 
+	"github.com/didi/sharingan/replayer-agent/model/recording"
+	"github.com/didi/sharingan/replayer-agent/utils/protocol/helper"
 	"github.com/modern-go/parse"
 	"github.com/modern-go/parse/model"
 )
@@ -405,5 +407,33 @@ func decodeFieldValueCompact(src *parse.Source, vType CompactKind) (interface{},
 		return v.Map(), err
 	default:
 		return nil, errInvalidFeildType
+	}
+}
+
+func ReplaceSequenceId(request []byte, callOutbound *recording.CallOutbound) {
+	if len(request) <= 4 {
+		return
+	}
+	thrift, DecErr := DecodeBinary(request[4:])
+	if DecErr != nil {
+		return
+	}
+
+	seqId := thrift["sequence_id"]
+	seqIdBytes ,err := helper.IntToBytes(seqId.(int), 4)
+	if err != nil {
+		return
+	}
+
+	name := thrift["name"].(string)
+	nameBytes := []byte(name)
+	begin := bytes.LastIndex(callOutbound.Response, nameBytes)
+	if begin == -1 {
+		return
+	}
+
+	begin += len(nameBytes)
+	for i, v := range seqIdBytes {
+		callOutbound.Response[begin+i] = v
 	}
 }
