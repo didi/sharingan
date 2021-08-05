@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/didi/sharingan/replayer-agent/utils/protocol/helper"
 	"github.com/modern-go/parse"
 	"github.com/modern-go/parse/model"
 	"github.com/stretchr/testify/require"
@@ -278,15 +279,15 @@ func TestIntToBytes(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "1",
-			args: args{n: 10, b: 4},
-			want: []byte{0, 0, 0, 0x0a},
+			name:    "1",
+			args:    args{n: 10, b: 4},
+			want:    []byte{0, 0, 0, 0x0a},
 			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := IntToBytes(tt.args.n, tt.args.b)
+			got, err := helper.IntToBytes(tt.args.n, tt.args.b)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("IntToBytes() error = %v, wantErr %v", err, tt.wantErr)
 				return

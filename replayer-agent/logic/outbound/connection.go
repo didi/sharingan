@@ -107,11 +107,6 @@ func (cs *ConnState) readRequest(ctx context.Context) ([]byte, error) {
 
 	request := pool.GetBuf(81920, true)
 
-	// SetReadDeadline sets the deadline for future Read calls
-	// and any currently-blocked Read call.
-	// A zero value for t means Read will not time out.
-	cs.conn.SetReadDeadline(time.Time{})
-
 	bytesRead, err := cs.conn.Read(buf)
 	if err != nil {
 		return nil, err
@@ -119,16 +114,19 @@ func (cs *ConnState) readRequest(ctx context.Context) ([]byte, error) {
 	request = append(request, buf[:bytesRead]...)
 	helper.SetQuickAck(cs.conn)
 
-	for {
-		cs.conn.SetReadDeadline(time.Now().Add(time.Millisecond * 25))
-		bytesRead, err := cs.conn.Read(buf)
-		if err != nil {
-			break
-		}
-		helper.SetQuickAck(cs.conn)
-		request = append(request, buf[:bytesRead]...)
-		if bytesRead < len(buf) {
-			break
+	// 可能还有数据没读完
+	if bytesRead >= len(buf) {
+		for {
+			cs.conn.SetReadDeadline(time.Now().Add(time.Millisecond * 25))
+			bytesRead, err := cs.conn.Read(buf)
+			if err != nil {
+				break
+			}
+			helper.SetQuickAck(cs.conn)
+			request = append(request, buf[:bytesRead]...)
+			if bytesRead < len(buf) {
+				break
+			}
 		}
 	}
 
