@@ -24,6 +24,7 @@ const DLTagUndefined = " _undef"
 
 // ILog log interface
 type ILog interface {
+	Enable(level zapcore.Level) bool
 	Debugf(ctx context.Context, tag string, format string, args ...interface{})
 	Infof(ctx context.Context, tag string, format string, args ...interface{})
 	Warnf(ctx context.Context, tag string, format string, args ...interface{})
@@ -98,6 +99,11 @@ type TLog struct {
 // NewTLog ...
 func NewTLog(log *zap.Logger) *TLog {
 	return &TLog{log: log}
+}
+
+// Enable ...
+func (tl *TLog) Enable(level zapcore.Level) bool {
+	return tl.log.Core().Enabled(level)
 }
 
 // Debugf ...

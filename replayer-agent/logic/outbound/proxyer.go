@@ -3,9 +3,11 @@ package outbound
 import (
 	"context"
 	"net"
+	"strconv"
 
 	"github.com/didi/sharingan/replayer-agent/common/handlers/tlog"
 	"github.com/didi/sharingan/replayer-agent/utils/helper"
+	"go.uber.org/zap/zapcore"
 )
 
 // Proxyer Proxyer
@@ -33,6 +35,7 @@ func (p *Proxyer) Write(ctx context.Context, proxyAddr string, request []byte) e
 			tlog.Handler.Errorf(ctx, tlog.DebugTag, "errmsg=DialTCP error||err=%s", err)
 			return err
 		}
+		tlog.Handler.Debugf(ctx, tlog.DebugTag, "dial tcp %s success", proxyAddr)
 
 		// 1.2、代理
 		errch := make(chan error, 1)
@@ -61,24 +64,26 @@ func (p *Proxyer) Write(ctx context.Context, proxyAddr string, request []byte) e
 }
 
 func (p *Proxyer) proxy(ctx context.Context, errch chan error) {
-	var (
-		err  error
-		rnum int
-	)
-
 	for {
 		buffer := make([]byte, 2048)
-		rnum, err = p.dstConn.Read(buffer)
-
+		rnum, err := p.dstConn.Read(buffer)
 		if err != nil || rnum <= 0 {
 			errch <- err
 			return
+		}
+
+		if tlog.Handler.Enable(zapcore.DebugLevel) {
+			tlog.Handler.Debugf(ctx, tlog.DebugTag, "proxyRead=%s", strconv.QuoteToASCII(string(buffer[:rnum])))
 		}
 
 		_, err = p.srcConn.Write(buffer[:rnum])
 		if err != nil {
 			errch <- err
 			return
+		}
+
+		if tlog.Handler.Enable(zapcore.DebugLevel) {
+			tlog.Handler.Debugf(ctx, tlog.DebugTag, "proxyWrite=%s", strconv.QuoteToASCII(string(buffer[:rnum])))
 		}
 	}
 }

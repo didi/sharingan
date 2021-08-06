@@ -16,6 +16,7 @@ import (
 	"github.com/didi/sharingan/replayer-agent/model/recording"
 	"github.com/didi/sharingan/replayer-agent/model/replaying"
 	"github.com/didi/sharingan/replayer-agent/utils/helper"
+	"go.uber.org/zap/zapcore"
 )
 
 // 回放流量标识，示例：/*{"rid":"7f0000015e7885919ead09b93a768bb0","addr":"127.0.0.1:8888"}*/
@@ -59,6 +60,10 @@ func (cs *ConnState) ProcessRequest(ctx context.Context, requestID int) bool {
 			cs.tcpAddr.String(), requestID, request, err)
 
 		return false
+	}
+
+	if tlog.Handler.Enable(zapcore.DebugLevel) {
+		tlog.Handler.Debugf(ctx, tlog.DebugTag, "readRequest=%s", strconv.QuoteToASCII(string(request)))
 	}
 
 	// case: mysqlGreeting, proxy
@@ -114,6 +119,10 @@ func (cs *ConnState) readRequest(ctx context.Context) ([]byte, error) {
 	request = append(request, buf[:bytesRead]...)
 	helper.SetQuickAck(cs.conn)
 
+	if tlog.Handler.Enable(zapcore.DebugLevel) {
+		tlog.Handler.Debugf(ctx, tlog.DebugTag, "request.0=%s", strconv.QuoteToASCII(string(buf[:bytesRead])))
+	}
+
 	// 可能还有数据没读完
 	if bytesRead >= len(buf) {
 		for {
@@ -124,6 +133,9 @@ func (cs *ConnState) readRequest(ctx context.Context) ([]byte, error) {
 			}
 			helper.SetQuickAck(cs.conn)
 			request = append(request, buf[:bytesRead]...)
+			if tlog.Handler.Enable(zapcore.DebugLevel) {
+				tlog.Handler.Debugf(ctx, tlog.DebugTag, "request.1=%s", strconv.QuoteToASCII(string(buf[:bytesRead])))
+			}
 			if bytesRead < len(buf) {
 				break
 			}
