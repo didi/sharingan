@@ -110,7 +110,11 @@ func handleOutbound(serverAddr *net.TCPAddr, conn *net.TCPConn) {
 	}
 
 	for i := 0; ; i++ {
-		cont := cs.ProcessRequest(ctx, i)
+		tracer := tlog.NewTracer(map[string]string{
+			"tcp_addr": tcpAddr.String(),
+			"trace_id": strconv.FormatInt(int64(i), 10),
+		})
+		cont := cs.ProcessRequest(tlog.TraceContext(ctx, tracer), i)
 		if !cont {
 			break
 		}

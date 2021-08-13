@@ -14,6 +14,7 @@ type Session struct {
 	MockFiles       map[string][][]byte
 	AppendFiles     []*recording.AppendFile
 	TracePaths      []string
+	ReadStorages    []*recording.ReadStorage
 }
 
 func NewSession() *Session {

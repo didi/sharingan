@@ -145,5 +145,10 @@ func (tl *TLog) format(ctx context.Context, level string, format string, args ..
 	// igonre dir
 	file = strings.TrimPrefix(file, path.Root+"/")
 
-	return fmt.Sprintf("[%s][%s][%s:%d] %s", level, ts, file, line, fmt.Sprintf(format, args...))
+	var ctxString string
+	if t, ok := ctx.Value(tracerKey).(Tracer); ok {
+		ctxString = t.Format()
+	}
+
+	return fmt.Sprintf("[%s][%s][%s:%d] %s%s", level, ts, file, line, ctxString, fmt.Sprintf(format, args...))
 }

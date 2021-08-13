@@ -33,6 +33,7 @@ func (t *Transformer) BuildSessions(sessions []esmodel.Session) ([]*replaying.Se
 		replayingSession.MockFiles = t.buildMockFiles(session.Actions)
 		replayingSession.CallOutbounds = t.buildCallOutBound(session.Actions)
 		replayingSession.AppendFiles = t.buildAppendFile(session.Actions)
+		replayingSession.ReadStorages = t.buildReadStorage(session.Actions)
 
 		replayingSessions = append(replayingSessions, replayingSession)
 	}
@@ -298,4 +299,17 @@ func (t *Transformer) buildAppendFile(actions []esmodel.Action) []*recording.App
 		}
 	}
 	return appendFiles
+}
+
+func (t *Transformer) buildReadStorage(actions []esmodel.Action) []*recording.ReadStorage {
+	var readStorages []*recording.ReadStorage
+	for _, action := range actions {
+		switch action.ActionType {
+		case "ReadStorage":
+			readStorages = append(readStorages, &recording.ReadStorage{
+				Content: action.Content.Data,
+			})
+		}
+	}
+	return readStorages
 }
