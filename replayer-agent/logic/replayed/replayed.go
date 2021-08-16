@@ -22,6 +22,7 @@ import (
 	"github.com/didi/sharingan/replayer-agent/model/recording"
 	"github.com/didi/sharingan/replayer-agent/model/replaying"
 	"github.com/didi/sharingan/replayer-agent/utils/helper"
+	"github.com/didi/sharingan/replayer-agent/utils/protocol/pmysql"
 )
 
 const (
@@ -97,14 +98,16 @@ func DiffReplayed(ctx context.Context, sess *Session, project string) []*DiffRec
 	// 防止后续Outbounds追加数据引发panic
 	outbounds := sess.Outbounds
 
-	ajaxs := make([]*DiffRecord, len(outbounds)+1)
+	var ajaxs []*DiffRecord
 	// 等待所有inbound和outbound比对结束
 	c.Add(len(outbounds) + 1)
-	c.DiffInbound(ctx, ajaxs)
-	if len(outbounds) > 0 {
-		// requests send by sut
-		for i := range outbounds {
-			c.DiffOutbounds(ctx, ajaxs, i)
+	ajaxs = append(ajaxs, c.DiffInbound(ctx))
+
+	// requests send by sut
+	for i := range outbounds {
+		if ajax := c.DiffOutbounds(ctx, i); ajax != nil {
+			ajax.Id = len(ajaxs)
+			ajaxs = append(ajaxs, ajax)
 		}
 	}
 	c.Wait()
@@ -118,8 +121,11 @@ func DiffReplayed(ctx context.Context, sess *Session, project string) []*DiffRec
 	}
 
 	// fill the missing requests
-	for i := range sess.OnlineOutbounds {
-		ajaxs = c.DiffOther(ctx, ajaxs, i)
+	for i := range sess.OnlineOutbounds {	
+		if ajax := c.DiffOther(ctx, c.Sess.OnlineOutbounds[i]); ajax != nil {
+			ajax.Id = len(ajaxs)
+			ajaxs = append(ajaxs, ajax)
+		}
 	}
 	return ajaxs
 }
@@ -163,7 +169,7 @@ func (c *Composer) SetMatchedIndex(id int) {
 	c.MatchedIndex[id] = true
 }
 
-func (c *Composer) DiffInbound(ctx context.Context, ajaxs []*DiffRecord) {
+func (c *Composer) DiffInbound(ctx context.Context) *DiffRecord {
 	defer func() {
 		if err := recover(); err != nil {
 			tlog.Handler.Errorf(context.Background(), tlog.DLTagUndefined, "panic in %s goroutine||errmsg=%s||stack info=%s", "DiffInbounds", err, strconv.Quote(string(debug.Stack())))
@@ -208,7 +214,7 @@ func (c *Composer) DiffInbound(ctx context.Context, ajaxs []*DiffRecord) {
 	ajax.BinaryOnlineRes = binaryOnlineRes
 	ajax.Protocol = protocol
 
-	ajaxs[0] = ajax
+	return ajax
 }
 
 // UnzipHttpRepsonse 尝试解压gzip数据，忽略失败
@@ -254,7 +260,7 @@ func ParseGzip(ctx context.Context, data []byte) ([]byte, error) {
 	return undatas, nil
 }
 
-func (c *Composer) DiffOutbounds(ctx context.Context, ajaxs []*DiffRecord, cnt int) {
+func (c *Composer) DiffOutbounds(ctx context.Context, cnt int) *DiffRecord {
 	defer func() {
 		if err := recover(); err != nil {
 			tlog.Handler.Errorf(context.Background(), tlog.DLTagUndefined, "panic in %s goroutine||errmsg=%s||stack info=%s", "DiffOutbounds", err, strconv.Quote(string(debug.Stack())))
@@ -262,11 +268,14 @@ func (c *Composer) DiffOutbounds(ctx context.Context, ajaxs []*DiffRecord, cnt i
 	}()
 	defer c.Done()
 
+	out := c.Sess.Outbounds[cnt]
+	if !c.filterOutbound(out) {
+		return nil
+	}
+
 	ajax := new(DiffRecord)
-	ajax.Id = cnt + 1
 	ajax.Project = c.Project
 
-	out := c.Sess.Outbounds[cnt]
 	// put back to buffer pool
 	defer pool.PutBuf(out.Request)
 
@@ -349,7 +358,45 @@ func (c *Composer) DiffOutbounds(ctx context.Context, ajaxs []*DiffRecord, cnt i
 	ajax.OnlineReq = optimizeDisReq(ajax.Protocol, out.MatchedRequest)
 	ajax.TestReq = optimizeDisReq(ajax.Protocol, out.Request)
 
-	ajaxs[cnt+1] = ajax
+	return ajax
+}
+
+//  过滤mysql连接请求
+func (c *Composer) filterOutbound(out *replaying.CallOutbound) bool {
+	// mysql连接中密码交互
+	if bytes.Index(out.MatchedRequest, []byte{0, 0, 1, 141}) == 1 {
+		return false
+	}
+
+	if pmysql.DecodePacketWithoutHeader(out.MatchedRequest) == nil {
+		return true
+	}
+
+	// mysql连接中初始化数据库请求
+	if bytes.Index(out.MatchedRequest, []byte{0, 0, 0, 2}) == 1 {
+		return false
+	}
+
+	// 空请求
+	if bytes.Index(out.MatchedRequest, []byte{0, 0, 0, 1}) == 1 {
+		return false
+	}
+
+	req := helper.BytesToString(out.MatchedRequest)
+	if strings.Contains(req, "SET NAMES utf8") {
+		return false
+	}
+	return true
+}
+
+func (c *Composer) filterOnlineOutbound(out *recording.CallOutbound) bool {
+	if  pmysql.DecodePacketWithoutHeader(out.Request)== nil {
+		return true
+	}
+	if bytes.Index(out.Request, []byte{0, 0, 0, 2}) == 1 {
+		return false
+	}
+	return true
 }
 
 func (c *Composer) getLatestHTTPHeader(cnt int) (string, string) {
@@ -461,29 +508,35 @@ func (c *Composer) getTestPublic(online string) (string, error) {
 	return strings.TrimSpace(helper.BytesToString(out)), err
 }
 
-func (c *Composer) DiffOther(ctx context.Context, ajaxs []*DiffRecord, cnt int) []*DiffRecord {
-	out := c.Sess.OnlineOutbounds[cnt]
+func (c *Composer) DiffOther(ctx context.Context, out *recording.CallOutbound) *DiffRecord {
 	// put back to buffer pool
 	defer pool.PutBuf(out.Request)
 
 	// ignore Online Request
 	if c.ignoreOnlineRequest(out) {
-		return ajaxs
+		return nil
 	}
 
 	if c.GetMatchedIndex(out.ActionIndex) {
-		return ajaxs
+		return nil
+	}
+
+	if !c.filterOnlineOutbound(out) {
+		return nil
 	}
 
 	tlog.Handler.Debugf(ctx, tlog.DebugTag, "%s||actionIndex=%v", helper.CInfo(LogStatusMissed), out.ActionIndex)
 
 	ajax := new(DiffRecord)
-	ajax.Id = len(ajaxs)
 	ajax.Project = c.Project
 
 	ajax.OnlineReq = helper.BytesToString(out.Request)
 	binaryOnlineReq := base64.StdEncoding.EncodeToString(out.Request)
 	ajax.BinaryOnlineReq = binaryOnlineReq
+	if ajax.OnlineReq == "" {
+		return nil
+	}
+
 	// 优化Req展示
 	ajax.OnlineReq = optimizeDisReq(ajax.Protocol, out.Request)
 
@@ -493,7 +546,7 @@ func (c *Composer) DiffOther(ctx context.Context, ajaxs []*DiffRecord, cnt int) 
 
 	if out.IgnoreFlag || mockOutbound(out, c.RequestMark) {
 		setTestStatus(ajax, 1, ReqStatusIgnored)
-		return append(ajaxs, ajax)
+		return ajax
 	}
 
 	if len(out.Request) != 0 {
@@ -502,9 +555,9 @@ func (c *Composer) DiffOther(ctx context.Context, ajaxs []*DiffRecord, cnt int) 
 		bytesDiff := &Diff{A: helper.BytesToString(out.Request), B: "", Noise: nil}
 		_, _, _, ajax.Protocol = bytesDiff.ParseProtocol(bytesDiff.A)
 		ajax.ScorePercentage = "0%"
-		return append(ajaxs, ajax)
+		return ajax
 	}
-	return ajaxs
+	return ajax
 }
 
 var limit = make(chan int, 1)
