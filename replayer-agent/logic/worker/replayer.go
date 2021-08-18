@@ -61,9 +61,10 @@ func (r *Replayer) ReplaySession(ctx context.Context, session *replaying.Session
 }
 
 func (r *Replayer) ReplaySessionPreHandle(ctx context.Context, session *replaying.Session) (int, error) {
+
 	if session == nil || session.CallFromInbound == nil || session.ReturnInbound == nil {
 		err := errors.New("CallFromInbound is nill or ReturnInbound is nil")
-		tlog.Handler.Errorf(ctx, tlog.DebugTag, "errmsg=", err)
+		tlog.Handler.Errorf(ctx, tlog.DebugTag, "errmsg=%v", err)
 		return 1, err
 	}
 

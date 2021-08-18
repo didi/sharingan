@@ -24,6 +24,7 @@ const DLTagUndefined = " _undef"
 
 // ILog log interface
 type ILog interface {
+	Enable(level zapcore.Level) bool
 	Debugf(ctx context.Context, tag string, format string, args ...interface{})
 	Infof(ctx context.Context, tag string, format string, args ...interface{})
 	Warnf(ctx context.Context, tag string, format string, args ...interface{})
@@ -100,6 +101,11 @@ func NewTLog(log *zap.Logger) *TLog {
 	return &TLog{log: log}
 }
 
+// Enable ...
+func (tl *TLog) Enable(level zapcore.Level) bool {
+	return tl.log.Core().Enabled(level)
+}
+
 // Debugf ...
 func (tl *TLog) Debugf(ctx context.Context, tag string, format string, args ...interface{}) {
 	tl.log.Debug(tl.format(ctx, "DEBUG", format, args...))
@@ -139,5 +145,10 @@ func (tl *TLog) format(ctx context.Context, level string, format string, args ..
 	// igonre dir
 	file = strings.TrimPrefix(file, path.Root+"/")
 
-	return fmt.Sprintf("[%s][%s][%s:%d] %s", level, ts, file, line, fmt.Sprintf(format, args...))
+	var ctxString string
+	if t, ok := ctx.Value(tracerKey).(Tracer); ok {
+		ctxString = t.Format()
+	}
+
+	return fmt.Sprintf("[%s][%s][%s:%d] %s%s", level, ts, file, line, ctxString, fmt.Sprintf(format, args...))
 }
