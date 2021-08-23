@@ -12,6 +12,7 @@ import (
 
 	"github.com/didi/sharingan/replayer-agent/common/handlers/conf"
 	"github.com/didi/sharingan/replayer-agent/common/handlers/tlog"
+	"github.com/didi/sharingan/replayer-agent/logic/outbound/match"
 	"github.com/didi/sharingan/replayer-agent/model/pool"
 	"github.com/didi/sharingan/replayer-agent/model/recording"
 	"github.com/didi/sharingan/replayer-agent/model/replaying"
@@ -92,7 +93,7 @@ func (cs *ConnState) ProcessRequest(ctx context.Context, requestID int) bool {
 
 	// 1、非回放阶段, 代理请求
 	// 2、回放阶段，匹配请求
-	if cs.traceID == "" {
+	if cs.traceID == "" || match.Ignored(request) {
 		err = cs.proxyer.Write(ctx, cs.proxyAddr, request)
 	} else {
 		err = cs.match(ctx, request)

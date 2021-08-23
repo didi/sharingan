@@ -632,12 +632,12 @@ func (c *Composer) ignoreOnlineRequest(out *recording.CallOutbound) bool {
 		return true
 	}
 
-	// data below general is mysql response like 'set names utf8'
+	// ignore data what is mysql response like 'set names utf8'
 	if bytes.Equal(out.Response, []byte{0x07, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00}) {
 		return true
 	}
 
-	// mysql request quit
+	// ignore mysql request quit
 	if bytes.Equal(out.Request, []byte{0x01, 0x00, 0x00, 0x00, 0x01}) {
 		return true
 	}
