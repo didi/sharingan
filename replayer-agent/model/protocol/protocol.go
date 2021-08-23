@@ -1,7 +1,6 @@
 package protocol
 
 import (
-	"encoding/binary"
 	"encoding/json"
 	"errors"
 	"strings"
@@ -67,14 +66,7 @@ func (this *BinaryThrift) Parse(body string) (pairs map[string]json.RawMessage, 
 		return
 	}
 
-	buf := []byte(body)
-	b4 := binary.BigEndian.Uint32(buf[:4])
-	if b4 == uint32(len(body)-4) {
-		buf = buf[4:]
-	}
-
-	// version 0x8001
-	thrift, DecErr := pthrift.DecodeBinary(buf)
+	thrift, DecErr := pthrift.DecodeBinary([]byte(body)[4:])
 	if DecErr != nil && this.Next != nil {
 		pairs, requestMark, err, protocal = this.Next.Parse(body)
 		return
@@ -110,14 +102,7 @@ func (this *CompactThrift) Parse(body string) (pairs map[string]json.RawMessage,
 		return
 	}
 
-	buf := []byte(body)[:]
-	b4 := binary.BigEndian.Uint32(buf[:4])
-	if b4 == uint32(len(body)-4) {
-		buf = buf[4:]
-	}
-
-	// version 0x8001
-	thrift, DecErr := pthrift.DecodeCompact(buf)
+	thrift, DecErr := pthrift.DecodeCompact([]byte(body)[4:])
 	if DecErr != nil && this.Next != nil {
 		pairs, requestMark, err, protocal = this.Next.Parse(body)
 		return
