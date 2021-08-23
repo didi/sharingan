@@ -12,6 +12,7 @@ import (
 
 	"github.com/didi/sharingan/replayer-agent/common/handlers/conf"
 	"github.com/didi/sharingan/replayer-agent/common/handlers/tlog"
+	"github.com/didi/sharingan/replayer-agent/logic/outbound/match"
 	"github.com/didi/sharingan/replayer-agent/model/pool"
 	"github.com/didi/sharingan/replayer-agent/model/recording"
 	"github.com/didi/sharingan/replayer-agent/model/replaying"
@@ -92,7 +93,7 @@ func (cs *ConnState) ProcessRequest(ctx context.Context, requestID int) bool {
 
 	// 1、非回放阶段, 代理请求
 	// 2、回放阶段，匹配请求
-	if cs.traceID == "" {
+	if cs.traceID == "" || match.Ignored(request) {
 		err = cs.proxyer.Write(ctx, cs.proxyAddr, request)
 	} else {
 		err = cs.match(ctx, request)
@@ -112,6 +113,11 @@ func (cs *ConnState) readRequest(ctx context.Context) ([]byte, error) {
 
 	request := pool.GetBuf(81920, true)
 
+	// SetReadDeadline sets the deadline for future Read calls
+	// and any currently-blocked Read call.
+	// A zero value for t means Read will not time out.
+	cs.conn.SetReadDeadline(time.Time{})
+
 	bytesRead, err := cs.conn.Read(buf)
 	if err != nil {
 		return nil, err
@@ -123,22 +129,19 @@ func (cs *ConnState) readRequest(ctx context.Context) ([]byte, error) {
 		tlog.Handler.Debugf(ctx, tlog.DebugTag, "request.0=%s", strconv.QuoteToASCII(string(buf[:bytesRead])))
 	}
 
-	// 可能还有数据没读完
-	if bytesRead >= len(buf) {
-		for {
-			cs.conn.SetReadDeadline(time.Now().Add(time.Millisecond * 25))
-			bytesRead, err := cs.conn.Read(buf)
-			if err != nil {
-				break
-			}
-			helper.SetQuickAck(cs.conn)
-			request = append(request, buf[:bytesRead]...)
-			if tlog.Handler.Enable(zapcore.DebugLevel) {
-				tlog.Handler.Debugf(ctx, tlog.DebugTag, "request.1=%s", strconv.QuoteToASCII(string(buf[:bytesRead])))
-			}
-			if bytesRead < len(buf) {
-				break
-			}
+	for {
+		cs.conn.SetReadDeadline(time.Now().Add(time.Millisecond * 25))
+		bytesRead, err = cs.conn.Read(buf)
+		if err != nil {
+			break
+		}
+		helper.SetQuickAck(cs.conn)
+		request = append(request, buf[:bytesRead]...)
+		if tlog.Handler.Enable(zapcore.DebugLevel) {
+			tlog.Handler.Debugf(ctx, tlog.DebugTag, "request.1=%s", strconv.QuoteToASCII(string(buf[:bytesRead])))
+		}
+		if bytesRead < len(buf) {
+			break
 		}
 	}
 
@@ -185,8 +188,9 @@ func (cs *ConnState) match(ctx context.Context, request []byte) error {
 	if err := applySimulation(ctx, simulateHttp, request, cs.conn, callOutbound); err != nil {
 		return err
 	}
+
 	// some mysql connection setup interaction might not recorded
-	if err := applySimulation(ctx, simulateMysql, request, cs.conn, callOutbound); err != nil {
+	if err := applySimulation(ctx, simulateMysql, request, cs.conn, nil); err != nil {
 		return err
 	}
 
