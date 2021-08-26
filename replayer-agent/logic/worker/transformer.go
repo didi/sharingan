@@ -163,11 +163,11 @@ func (t *Transformer) buildMockFiles(actions []esmodel.Action) map[string][][]by
 
 		object := make([]string, 0, 2)
 		if toggleStatus == "1" {
-			object = append(object, time.Now().AddDate(-1, 0, 0).Format("2006-01-02"))
-			object = append(object, time.Now().AddDate(1, 0, 0).Format("2006-01-02"))
+			object = append(object, time.Now().AddDate(-1, 0, 0).Format("2006-01-02 15:04"))
+			object = append(object, time.Now().AddDate(1, 0, 0).Format("2006-01-02 15:04"))
 		} else {
-			object = append(object, time.Now().AddDate(1, 0, 0).Format("2006-01-02"))
-			object = append(object, time.Now().Format("2006-01-02"))
+			object = append(object, time.Now().AddDate(1, 0, 0).Format("2006-01-02 15:04"))
+			object = append(object, time.Now().Format("2006-01-02 15:04"))
 		}
 		objects := make([][]string, 0, 1)
 		objects = append(objects, object)
@@ -188,7 +188,7 @@ func (t *Transformer) buildMockFiles(actions []esmodel.Action) map[string][][]by
 				Namespace:      "gs_api",
 				Name:           toggleName,
 				Version:        0,
-				LastModifyTime: time.Now().Unix(),
+				LastModifyTime: time.Now().Unix() * 1000,
 				LogRate:        0,
 				Rule: Rule{
 					Subject: "date_time_period",
