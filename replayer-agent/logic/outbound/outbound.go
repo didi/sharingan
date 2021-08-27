@@ -103,10 +103,9 @@ func handleOutbound(serverAddr *net.TCPAddr, conn *net.TCPConn) {
 	tlog.Handler.Debugf(ctx, tlog.DebugTag, "new outbound||addr=%s||begin", tcpAddr.String())
 
 	cs := &ConnState{
-		LastMatchedIndex: -1,
-		conn:             conn,
-		tcpAddr:          tcpAddr,
-		proxyer:          NewProxyer(conn),
+		conn:    conn,
+		tcpAddr: tcpAddr,
+		proxyer: NewProxyer(conn),
 	}
 
 	for i := 0; ; i++ {
