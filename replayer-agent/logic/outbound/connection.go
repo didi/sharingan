@@ -217,7 +217,7 @@ func (cs *ConnState) match(ctx context.Context, request []byte) error {
 	}
 
 	// some mysql connection setup interaction might not recorded
-	if err := applySimulation(ctx, simulateMysql, request, cs.conn, nil); err != nil {
+	if err := applySimulation(ctx, simulateMysql, request, cs.conn, callOutbound); err != nil {
 		return err
 	}
 
