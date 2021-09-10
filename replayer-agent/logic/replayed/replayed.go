@@ -65,6 +65,7 @@ type DiffRecord struct {
 	Protocol        string        `json:"protocol"`
 	ScorePercentage string        `json:"scorePercentage"`
 	NoWebDisplay    bool          `json:"noWebDisplay"`
+	MatchedIndex    int           `json:"matchedIndex"`
 }
 
 /**
@@ -174,6 +175,7 @@ func (c *Composer) DiffInbound(ctx context.Context, ajaxs []*DiffRecord) {
 	// 项目名称:passenger,driver...
 	ajax.Id = 0
 	ajax.Project = c.Project
+	ajax.MatchedIndex = -1
 
 	unzipOnlineResponse := UnzipHttpRepsonse(ctx, c.Sess.OnlineResponse)
 	unzipTestResponse := UnzipHttpRepsonse(ctx, c.Sess.TestResponse)
@@ -281,12 +283,14 @@ func (c *Composer) DiffOutbounds(ctx context.Context, ajaxs []*DiffRecord, cnt i
 			bytesDiff := &Diff{A: "", B: helper.BytesToString(out.Request), Noise: nil}
 			_, _, _, ajax.Protocol = bytesDiff.ParseProtocol(bytesDiff.B)
 			ajax.ScorePercentage = "0%"
+			ajax.MatchedIndex = -1
 		}
 	} else {
 		if c.GetMatchedIndex(out.MatchedActionIndex) {
 			tlog.Handler.Debugf(ctx, tlog.DebugTag, "%s||outboundIndex=%v||actionIndex=%v", helper.CInfo(LogStatusRepeated), cnt, out.MatchedActionIndex)
 		}
 		c.SetMatchedIndex(out.MatchedActionIndex)
+		ajax.MatchedIndex = out.MatchedActionIndex
 
 		ajax.OnlineReq = helper.BytesToString(out.MatchedRequest)
 		binaryOnlineReq := base64.StdEncoding.EncodeToString(out.MatchedRequest)
@@ -389,6 +393,7 @@ func (c *Composer) DiffAppendFile(ctx context.Context, ajaxs []*DiffRecord, cnt 
 	ajax := new(DiffRecord)
 	ajax.Id = len(ajaxs)
 	ajax.Project = c.Project
+	ajax.MatchedIndex = -1
 
 	bytesDiff := &Diff{
 		A:                          onlinePublic,
@@ -480,6 +485,7 @@ func (c *Composer) DiffOther(ctx context.Context, ajaxs []*DiffRecord, cnt int) 
 	ajax := new(DiffRecord)
 	ajax.Id = len(ajaxs)
 	ajax.Project = c.Project
+	ajax.MatchedIndex = -1
 
 	ajax.OnlineReq = helper.BytesToString(out.Request)
 	binaryOnlineReq := base64.StdEncoding.EncodeToString(out.Request)
