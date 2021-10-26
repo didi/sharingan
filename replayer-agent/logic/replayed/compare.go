@@ -27,6 +27,7 @@ var (
 	PublicLogFormatErr        = errors.New("malformed public log")
 	PublicLogNotDefinedErr    = errors.New("log path not defined")
 	PublicLogKeyNotDefinedErr = errors.New("key not defined")
+	PublicLogPathErr          = errors.New("logpath not set")
 )
 
 type FormatDiff struct {
