@@ -441,17 +441,17 @@ func (c *Composer) getTestPublic(online string) (string, error) {
 	// key of public log
 	traceId, err := extractPublicKey(online, "trace_id=")
 	if err != nil {
-		return "", err
+		return "trace_id is not exist", err
 	}
 	opKey, err := extractPublicKey(online, "opera_stat_key=")
 	if err != nil {
-		return "", err
+		return "opera_stat_key is not exist", err
 	}
 
 	// path of public log
 	logPath := nuwaplt.GetValueWithProject(c.Project, nuwaplt.KLogPath, "")
 	if logPath == "" {
-		return "", PublicLogNotDefinedErr
+		return "logpath is not set", PublicLogPathErr
 	}
 
 	cnt, ok := c.PublogCnt[opKey]
