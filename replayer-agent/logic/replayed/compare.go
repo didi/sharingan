@@ -2,15 +2,20 @@ package replayed
 
 import (
 	"bytes"
+	"context"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
+	"math/rand"
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 	"unicode"
 
 	"github.com/didi/sharingan/replayer-agent/common/handlers/conf"
 	"github.com/didi/sharingan/replayer-agent/common/handlers/ignore"
+	"github.com/didi/sharingan/replayer-agent/common/handlers/tlog"
 	"github.com/didi/sharingan/replayer-agent/model/nuwaplt"
 	"github.com/didi/sharingan/replayer-agent/model/protocol"
 	"github.com/didi/sharingan/replayer-agent/utils/helper"
@@ -126,6 +131,9 @@ func (d *Diff) generateDiffs(compared []*FormatDiff, prefix, keyPrefix string, a
 		if ok {
 			delete(bFormat, aKey)
 		}
+
+		aValue = json.RawMessage(helper.Decode(aValue))
+		bValue = json.RawMessage(helper.Decode(bValue))
 		aRaw, bRaw := getRawLabel(aValue, bValue)
 
 		diff := new(FormatDiff)
@@ -162,6 +170,7 @@ func (d *Diff) generateDiffs(compared []*FormatDiff, prefix, keyPrefix string, a
 	}
 
 	for bKey, bValue := range bFormat {
+		bValue = json.RawMessage(helper.Decode(bValue))
 		aRaw, bRaw := getRawLabel(nil, bValue)
 
 		diff := new(FormatDiff)
@@ -277,10 +286,16 @@ func getRawLabel(aValue, bValue json.RawMessage) (json.RawMessage, json.RawMessa
 		}
 	} else if la >= 2 && aValue[0] == 34 && bValue[0] != 34 {
 		if aValue[la-1] == 34 && bytes.Equal(aValue[1:la-1], bValue) {
+			if rand.Intn(10)%10 == 0 {
+				tlog.Handler.Infof(context.TODO(), tlog.DLTagUndefined, "aValue=%v", "bValue=%v", base64.StdEncoding.EncodeToString(aValue), base64.StdEncoding.EncodeToString(bValue))
+			}
 			return json.RawMessage(strconv.Quote(string(aValue))), bValue
 		}
 	} else if aValue[0] != 34 && lb >= 2 && bValue[0] == 34 {
 		if bValue[lb-1] == 34 && bytes.Equal(aValue, bValue[1:lb-1]) {
+			if rand.Intn(10)%10 == 0 {
+				tlog.Handler.Infof(context.TODO(), tlog.DLTagUndefined, "aValue=%v", "bValue=%v", base64.StdEncoding.EncodeToString(aValue), base64.StdEncoding.EncodeToString(bValue))
+			}
 			return aValue, json.RawMessage(strconv.Quote(string(bValue)))
 		}
 	}
@@ -334,4 +349,8 @@ func compare(a, b []byte) (n int) {
 		return 1
 	}
 	return 0
+}
+
+func init() {
+	rand.Seed(time.Now().UnixNano())
 }
