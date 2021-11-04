@@ -3,6 +3,7 @@ package helper
 import (
 	"bytes"
 	"reflect"
+	"strconv"
 	"unicode"
 	"unsafe"
 )
@@ -121,4 +122,35 @@ func StringToBytes(s string) []byte {
 	sh := (*reflect.StringHeader)(unsafe.Pointer(&s))
 	bh := reflect.SliceHeader{sh.Data, sh.Len, sh.Len}
 	return *(*[]byte)(unsafe.Pointer(&bh))
+}
+
+// Decode 将 \u1234 转为中文，将 \/ 转为 /。
+func Decode(b []byte) []byte {
+	n := len(b)
+	var buf bytes.Buffer
+	for i := 0; i < n; i++ {
+		if c := b[i]; c != '\\' {
+			buf.WriteByte(c)
+			continue
+		}
+		if i+1 >= n {
+			continue
+		}
+		i++
+		switch c := b[i]; c {
+		case '/':
+			buf.WriteByte(c)
+		case 'u':
+			r, err := strconv.ParseInt(string(b[i+1:i+5]), 16, 32)
+			if err != nil {
+				continue
+			}
+			buf.WriteRune(rune(r))
+			i += 4
+		default:
+			buf.WriteByte('\\')
+			buf.WriteByte(c)
+		}
+	}
+	return buf.Bytes()
 }
