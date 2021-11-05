@@ -480,6 +480,10 @@ func (c *Composer) DiffOther(ctx context.Context, ajaxs []*DiffRecord, cnt int) 
 		return ajaxs
 	}
 
+	if match(ignore.NotMatchedNoise, "", helper.BytesToString(out.Request)) {
+		out.IgnoreFlag = true
+	}
+
 	tlog.Handler.Debugf(ctx, tlog.DebugTag, "%s||actionIndex=%v", helper.CInfo(LogStatusMissed), out.ActionIndex)
 
 	ajax := new(DiffRecord)

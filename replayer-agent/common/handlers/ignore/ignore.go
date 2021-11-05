@@ -56,6 +56,11 @@ func Init() {
 		"SET autocommit=1":      NoiseMeta{NoiseContains, ""},
 	}
 
+	notMatches := conf.HandlerInfo.GetStringSlice("ignore.notMatch")
+	for _, notMatch := range notMatches {
+		NotMatchedNoise[notMatch] = NoiseMeta{NoiseContains, ""}
+	}
+
 	proxyHttps := conf.HandlerInfo.GetStringSlice("ignore.proxyHttp")
 	for _, proxyHttp := range proxyHttps {
 		ProxyHttp[proxyHttp] = NoiseMeta{NoiseProxyHttp, ""}
