@@ -149,62 +149,72 @@ func (t *Transformer) buildMockFiles(actions []esmodel.Action) map[string][][]by
 			continue
 		}
 		splits := strings.Split(string(action.Content.Data), "\t")
-		if splits == nil || len(splits) <= 3 || splits[0] != "1" {
-			continue
+
+		if len(splits) == 2 && splits[0] == "2" { // Go Apollo
+			ss := strings.Split(splits[1], "||")
+			toggleName := strings.Split(ss[0], "=")[1]
+			toggleStatus := strings.Split(ss[1], "=")[1]
+			m[toggleName] = t.buildApollo(m, []string{"2", toggleName, toggleStatus})
 		}
 
-		toggleName := splits[1]
-		toggleStatus := splits[2]
-
-		contents, ok := m[toggleName]
-		if !ok {
-			contents = make([][]byte, 0)
+		if len(splits) > 3 && splits[0] == "1" { // PHP Apollo
+			toggleName := splits[1]
+			m[toggleName] = t.buildApollo(m, splits)
 		}
-
-		object := make([]string, 0, 2)
-		if toggleStatus == "1" {
-			object = append(object, time.Now().AddDate(-1, 0, 0).Format("2006-01-02 15:04"))
-			object = append(object, time.Now().AddDate(1, 0, 0).Format("2006-01-02 15:04"))
-		} else {
-			object = append(object, time.Now().AddDate(1, 0, 0).Format("2006-01-02 15:04"))
-			object = append(object, time.Now().Format("2006-01-02 15:04"))
-		}
-		objects := make([][]string, 0, 1)
-		objects = append(objects, object)
-		experiment := Experiment{}
-		if len(splits) > 3 {
-			names := strings.Split(splits[3], ":")
-			experiment.Groups = []Group{Group{
-				Name: names[len(names)-1],
-				Rule: Rule{
-					Subject: "date_time_period",
-					Verb:    "=",
-					Objects: objects,
-				},
-			}}
-		}
-		mockData := MockData{
-			Toggle: Toggle{
-				Namespace:      "gs_api",
-				Name:           toggleName,
-				Version:        0,
-				LastModifyTime: time.Now().Unix() * 1000,
-				LogRate:        0,
-				Rule: Rule{
-					Subject: "date_time_period",
-					Verb:    "=",
-					Objects: objects,
-				},
-				Experiment:    experiment,
-				SchemaVersion: "1.4.0",
-			},
-		}
-		dm, _ := json.Marshal(mockData)
-
-		contents = append(contents, dm)
-		m[toggleName] = contents
 	}
 	return m
+}
+
+func (t *Transformer) buildApollo(m map[string][][]byte, splits []string) [][]byte {
+
+	toggleName := splits[1]
+	toggleStatus := splits[2]
+	contents, ok := m[toggleName]
+	if !ok {
+		contents = make([][]byte, 0)
+	}
+
+	object := make([]string, 0, 2)
+	if toggleStatus == "1" || toggleStatus == "true" {
+		object = append(object, time.Now().AddDate(-1, 0, 0).Format("2006-01-02 15:04"))
+		object = append(object, time.Now().AddDate(1, 0, 0).Format("2006-01-02 15:04"))
+	} else {
+		object = append(object, time.Now().AddDate(1, 0, 0).Format("2006-01-02 15:04"))
+		object = append(object, time.Now().Format("2006-01-02 15:04"))
+	}
+	objects := make([][]string, 0, 1)
+	objects = append(objects, object)
+	experiment := Experiment{}
+	if len(splits) > 3 {
+		names := strings.Split(splits[3], ":")
+		experiment.Groups = []Group{{
+			Name: names[len(names)-1],
+			Rule: Rule{
+				Subject: "date_time_period",
+				Verb:    "=",
+				Objects: objects,
+			},
+		}}
+	}
+	mockData := MockData{
+		Toggle: Toggle{
+			Namespace:      "gs_api",
+			Name:           toggleName,
+			Version:        0,
+			LastModifyTime: time.Now().Unix() * 1000,
+			LogRate:        0,
+			Rule: Rule{
+				Subject: "date_time_period",
+				Verb:    "=",
+				Objects: objects,
+			},
+			Experiment:    experiment,
+			SchemaVersion: "1.4.0",
+		},
+	}
+	dm, _ := json.Marshal(mockData)
+	contents = append(contents, dm)
+	return contents
 }
 
 func (t *Transformer) buildCallOutBound(actions []esmodel.Action) []*recording.CallOutbound {
