@@ -154,7 +154,11 @@ func (t *Transformer) buildMockFiles(actions []esmodel.Action) map[string][][]by
 			ss := strings.Split(splits[1], "||")
 			toggleName := strings.Split(ss[0], "=")[1]
 			toggleStatus := strings.Split(ss[1], "=")[1]
-			m[toggleName] = t.buildApollo(m, []string{"2", toggleName, toggleStatus})
+			params := []string{"2", toggleName, toggleStatus}
+			if len(ss) > 2 {
+				params = append(params, strings.Split(ss[2], "=")[1])
+			}
+			m[toggleName] = t.buildApollo(m, params)
 		}
 
 		if len(splits) > 3 && splits[0] == "1" { // PHP Apollo
