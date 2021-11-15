@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"math/rand"
+	"reflect"
 	"strconv"
 	"strings"
 	"sync"
@@ -142,6 +143,30 @@ func (d *Diff) generateDiffs(compared []*FormatDiff, prefix, keyPrefix string, a
 		diff.Children[1] = map[string]interface{}{"label": helper.BytesToString(bRaw), "OoT": "T"}
 
 		is := compare(bValue, aValue)
+		if is != 0 {
+			var aVal interface{}
+			var bVal interface{}
+			a, err := strconv.Unquote(helper.BytesToString(aValue))
+			if err != nil {
+				goto label
+			}
+			b, err := strconv.Unquote(helper.BytesToString(bValue))
+			if err != nil {
+				goto label
+			}
+			err = json.Unmarshal([]byte(a), &aVal)
+			if err != nil {
+				goto label
+			}
+			err = json.Unmarshal([]byte(b), &bVal)
+			if err != nil {
+				goto label
+			}
+			if reflect.DeepEqual(aVal, bVal) {
+				is = 0
+			}
+		}
+	label:
 		if is == 0 {
 			compared = append(compared, diff)
 			continue
