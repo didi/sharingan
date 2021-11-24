@@ -16,6 +16,7 @@ func Json2SingleLayerMap(body []byte) (map[string]json.RawMessage, error) {
 
 	if err := json.Unmarshal(body, &msgMap); err == nil {
 		for key, value := range msgMap {
+			key = BytesToString(Decode(StringToBytes(key)))
 			smap, err := Json2SingleLayerMap(value)
 			if err != nil || len(smap) == 0 {
 				singleLayerMap[key] = value
