@@ -35,21 +35,21 @@ func getInt16(b []byte) (int, error) {
 	if len(b) < 2 {
 		return 0, errNotI16
 	}
-	return int(binary.BigEndian.Uint16(b)), nil
+	return int(int16(binary.BigEndian.Uint16(b))), nil
 }
 
 func getInt32(b []byte) (int, error) {
 	if len(b) < 4 {
 		return 0, errNotI32
 	}
-	return int(binary.BigEndian.Uint32(b)), nil
+	return int(int32(binary.BigEndian.Uint32(b))), nil
 }
 
 func getInt64(b []byte) (int, error) {
 	if len(b) < 8 {
 		return 0, errNotI64
 	}
-	return int(binary.BigEndian.Uint64(b)), nil
+	return int(int64(binary.BigEndian.Uint64(b))), nil
 }
 
 func getBool(b byte) bool {
