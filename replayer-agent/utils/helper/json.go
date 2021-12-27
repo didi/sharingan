@@ -2,16 +2,17 @@ package helper
 
 import (
 	"encoding/json"
+	"errors"
 	"strconv"
 )
 
-// json解析成单层map, 打平多层嵌套,多层嵌套通过"."连接key
-// 对于数组采用数字作为key
+// Json2SingleLayerMap json解析成单层map, 打平多层嵌套,多层嵌套通过"."连接key，对于数组采用数字作为key。
 func Json2SingleLayerMap(body []byte) (map[string]json.RawMessage, error) {
-	singleLayerMap := make(map[string]json.RawMessage)
+
 	var (
-		msgMap   map[string]json.RawMessage
-		msgSlice []json.RawMessage
+		msgMap         map[string]json.RawMessage
+		msgSlice       []json.RawMessage
+		singleLayerMap = make(map[string]json.RawMessage)
 	)
 
 	if err := json.Unmarshal(body, &msgMap); err == nil {
@@ -27,11 +28,10 @@ func Json2SingleLayerMap(body []byte) (map[string]json.RawMessage, error) {
 				}
 			}
 		}
-	} else {
-		err = json.Unmarshal(body, &msgSlice)
-		if err != nil {
-			return singleLayerMap, err
-		}
+		return singleLayerMap, nil
+	}
+
+	if err := json.Unmarshal(body, &msgSlice); err == nil {
 		for key, value := range msgSlice {
 			smap, err := Json2SingleLayerMap(value)
 			if err != nil {
@@ -44,7 +44,21 @@ func Json2SingleLayerMap(body []byte) (map[string]json.RawMessage, error) {
 				}
 			}
 		}
+		return singleLayerMap, nil
 	}
 
+	str, err := strconv.Unquote(BytesToString(body))
+	if err != nil || len(body) == len(str) {
+		return nil, errors.New("value is not map or slice")
+	}
+
+	smap, err := Json2SingleLayerMap(StringToBytes(str))
+	if err != nil {
+		return nil, err
+	}
+
+	for k, v := range smap {
+		singleLayerMap["\"\"."+k] = v
+	}
 	return singleLayerMap, nil
 }
