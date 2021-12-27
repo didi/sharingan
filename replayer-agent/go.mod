@@ -12,6 +12,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/ppltools/binding v0.0.7
 	github.com/spf13/viper v1.6.3
+	github.com/stretchr/testify v1.5.1
 	github.com/ugorji/go v1.1.7 // indirect
 	go.uber.org/zap v1.15.0
 	golang.org/x/sys v0.0.0-20190412213103-97732733099d
