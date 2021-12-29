@@ -275,7 +275,17 @@ func (d *Diff) markNoiseStatus(diff *FormatDiff, prefix, key string) error {
 
 	var noiseInfo nuwaplt.NoiseInfo
 	if !exists && len(d.Noise) > 0 {
-		noiseInfo, exists = d.Noise[prefix+"."+key]
+		fullKeyPath := prefix + "." + key
+		noiseInfo, exists = d.Noise[fullKeyPath]
+		if !exists {
+			noisePrefix := strings.Split(fullKeyPath, ".\"\"")[0]
+			for key, _ := range d.Noise {
+				if strings.Contains(key, noisePrefix) {
+					exists = true
+					noiseInfo = d.Noise[key]
+				}
+			}
+		}
 	}
 
 	if exists {
