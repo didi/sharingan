@@ -20,7 +20,7 @@ type Transformer struct {
 	//apcuKeyIdx map[string]int // to filter redundant req of redis get
 }
 
-func (t *Transformer) BuildSessions(sessions []esmodel.Session) ([]*replaying.Session, error) {
+func (t *Transformer) BuildSessions(sessions []esmodel.Session, project string) ([]*replaying.Session, error) {
 	replayingSessions := make([]*replaying.Session, 0, len(sessions))
 
 	for _, session := range sessions {
@@ -30,7 +30,7 @@ func (t *Transformer) BuildSessions(sessions []esmodel.Session) ([]*replaying.Se
 		replayingSession.SessionId = session.SessionId
 		replayingSession.CallFromInbound = t.buildCallFromInBound(session.CallFromInbound)
 		replayingSession.ReturnInbound = t.buildReturnInBound(session.ReturnInbound, session.Actions)
-		replayingSession.MockFiles = t.buildMockFiles(session.Actions)
+		replayingSession.MockFiles = t.buildMockFiles(session.Actions, project)
 		replayingSession.CallOutbounds = t.buildCallOutBound(session.Actions)
 		replayingSession.AppendFiles = t.buildAppendFile(session.Actions)
 		replayingSession.ReadStorages = t.buildReadStorage(session.Actions)
@@ -142,7 +142,7 @@ type MockData struct {
 }
 
 //TODO:对外是否删掉
-func (t *Transformer) buildMockFiles(actions []esmodel.Action) map[string][][]byte {
+func (t *Transformer) buildMockFiles(actions []esmodel.Action, project string) map[string][][]byte {
 	m := make(map[string][][]byte)
 	for _, action := range actions {
 		if action.ActionType != "SendUDP" || action.Peer.IP.String() != "127.0.0.1" || action.Peer.Port != 9891 {
@@ -151,6 +151,9 @@ func (t *Transformer) buildMockFiles(actions []esmodel.Action) map[string][][]by
 		splits := strings.Split(string(action.Content.Data), "\t")
 
 		if len(splits) == 2 && splits[0] == "2" { // Go Apollo
+			if strings.HasPrefix(project, "php2go") {
+				continue
+			}
 			ss := strings.Split(splits[1], "||")
 			toggleName := strings.Split(ss[0], "=")[1]
 			toggleStatus := strings.Split(ss[1], "=")[1]
