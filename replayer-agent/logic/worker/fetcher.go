@@ -19,7 +19,7 @@ func FetchSessions(ctx context.Context, sessionId string, project string) []*rep
 	}
 
 	t := &Transformer{}
-	sessions, err := t.BuildSessions(esSessions)
+	sessions, err := t.BuildSessions(esSessions, project)
 	if err != nil {
 		tlog.Handler.Errorf(ctx, tlog.DLTagUndefined, "errmsg=fetch session failed||err=%s", err)
 	}
