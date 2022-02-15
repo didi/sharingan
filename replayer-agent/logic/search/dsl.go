@@ -45,7 +45,15 @@ func toDSL(req *idl.SearchReq) ([]byte, error) {
 	must = append(must, newCond("exists", "field", "ReturnInbound"))
 
 	if p, ok := nuwaplt.Module2Host[req.Project]; ok {
-		must = append(must, newCond("match_phrase", "Context", p))
+		var conds []interface{}
+		for _, s := range strings.Split(p, ",") {
+			conds = append(conds, newCond("match_phrase", "Context", s))
+		}
+		must = append(must, map[string]interface{}{
+			"bool": map[string]interface{}{
+				"should": conds,
+			},
+		})
 	}
 
 	if req.InboundRequest != "" {
