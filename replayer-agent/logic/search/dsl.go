@@ -50,7 +50,8 @@ func toDSL(req *idl.SearchReq) ([]byte, error) {
 		}
 		must = append(must, map[string]interface{}{
 			"bool": map[string]interface{}{
-				"should": conds,
+				"should":               conds,
+				"minimum_should_match": 1,
 			},
 		})
 	}
