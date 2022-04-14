@@ -3,7 +3,6 @@ package search
 import (
 	"encoding/json"
 	"fmt"
-	"strconv"
 	"strings"
 	"time"
 
@@ -109,21 +108,44 @@ func unionMulti(must []interface{}, mustNot []interface{}, field string, words s
 }
 
 func unionTime(must []interface{}, start, end string) []interface{} {
-	dates := strings.Split(start, "T")
-	st, err := time.ParseInLocation("2006-01-02", dates[0], time.Local)
-	if err == nil {
-		must = append(must, map[string]interface{}{
-			"range": newCond("CallFromInbound.OccurredAt", "gte", strconv.FormatInt(st.UnixNano(), 10)),
-		})
+	if start == "" && end == "" {
+		return must
 	}
-	dates = strings.Split(end, "T")
-	ed, err := time.ParseInLocation("2006-01-02", dates[0], time.Local)
-	if err == nil {
-		must = append(must, map[string]interface{}{
-			"range": newCond("CallFromInbound.OccurredAt", "lte", strconv.FormatInt(ed.UnixNano()+86400*1e9, 10)),
-		})
+
+	timeRange := map[string]int64{}
+	if start != "" {
+		st, _ := parseTime(start)
+		timeRange["gte"] = st.UnixNano()
 	}
+	if end != "" {
+		ed, hasTime := parseTime(end)
+		if !hasTime {
+			ed = ed.Add(24 * time.Hour)
+		}
+		timeRange["lt"] = ed.UnixNano()
+	}
+
+	must = append(must, map[string]interface{}{
+		"range": map[string]interface{}{
+			"CallFromInbound.OccurredAt": timeRange,
+		},
+	})
 	return must
+}
+
+func parseTime(str string) (time.Time, bool) {
+	hasTime := true
+	if strings.Index(str, "T") < 0 {
+		str += "T00:00:00"
+		hasTime = false
+	}
+
+	layout := "2006-01-02T15:04:05"
+	t, err := time.ParseInLocation(layout, str, time.Local)
+	if err != nil {
+		return time.Now(), hasTime
+	}
+	return t, hasTime
 }
 
 func parseCond(field string, word string) map[string]interface{} {
