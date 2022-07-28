@@ -2,8 +2,8 @@
 [http]
 http_addr = ":9003"      # Listen ip:port, http server地址
 handlerTimeout = 1000    # Handler timeout(ms), default 5000
-readTimeout = 1000       # Recieve http request timeout(ms), including the body
-writeTimeout = 1000      # Recieve http body and response timeout(ms)
+readTimeout = 1000       # Receive http request timeout(ms), including the body
+writeTimeout = 1000      # Receive http body and response timeout(ms)
 idleTimeout = 5000       # Keep-alive timeout(ms)
 
 [log]

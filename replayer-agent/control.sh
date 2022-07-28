@@ -127,7 +127,7 @@ function build() {
     printf "${info_msg}go mod download, please wait~ \n"
     go mod download
     if [ $? -ne 0 ]; then
-        printf "${error_msg}build failed at executing go mod download, please check \$GOPROXY or try agian!!!\n"
+        printf "${error_msg}build failed at executing go mod download, please check \$GOPROXY or try again!!!\n"
         exit 1
     fi
 
