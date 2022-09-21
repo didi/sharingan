@@ -178,7 +178,7 @@ $ 页面选择要回放的流量点执行          # 内置提前录制好的3�
 
 ![WEIXIN](http://img-ys011.didistatic.com/static/dhack_wakeup/weixin_sharingan_v3.jpg)
 
-### 七、常见问题
+## 七、常见问题
 
 - 执行 `$ sudo sh install.sh go1.13` 提示 `wget: command not found...`
 
