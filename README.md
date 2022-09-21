@@ -47,7 +47,7 @@ $ git clone https://github.com/didi/sharingan.git
 $ cd sharingan
 
 # Step2: 使用定制版golang，以go1.13为例「慢？科学上网试试」
-$ sh install.sh go1.13 # 支持go1.10 ~ go1.15，限mac、linux amd64系统
+$ sudo sh install.sh go1.13 # 支持go1.10 ~ go1.15，限mac、linux、amd64「执行出错？请查看底部常见问题」
 $ export GOROOT=/tmp/recorder-go1.13
 $ export PATH=$GOROOT/bin:$PATH
 
@@ -178,3 +178,19 @@ $ 页面选择要回放的流量点执行          # 内置提前录制好的3�
 
 ![WEIXIN](http://img-ys011.didistatic.com/static/dhack_wakeup/weixin_sharingan_v3.jpg)
 
+### 七、常见问题
+
+- 执行 `$ sudo sh install.sh go1.13` 提示 `wget: command not found...`
+
+  - 使用 [brew](http://brew.sh/)
+  ```shell
+  # 首先安装 brew
+  $ ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  # 然后用 `brew` 安装 `wget`：
+  $ brew install wget
+  ```
+  - 使用 [MacPorts](https://www.macports.org/install.php)
+  ```shell
+  # 下载并运行上述连接中安装包后
+  $ sudo port install wget
+  ```
