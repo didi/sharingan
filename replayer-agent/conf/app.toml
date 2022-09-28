@@ -5,8 +5,8 @@ version = "1.0.2"
 addr = ":8998"           # 默认agent启动端口，可以修改
 handlerTimeout = 60000   # Handler timeout(ms), default 5000
 readHeaderTimeout = 2000 # Request header timeout(ms), default 2000
-readTimeout = 5000       # Recieve http request timeout(ms), including the body, default 5000
-writeTimeout = 21000     # Recieve http body and response timeout(ms), default 10000
+readTimeout = 5000       # Receive http request timeout(ms), including the body, default 5000
+writeTimeout = 21000     # Receive http body and response timeout(ms), default 10000
 idleTimeout = 60000      # Keep-alive timeout(ms), default 60000
 
 [log]

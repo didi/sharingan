@@ -21,8 +21,8 @@ Replayer-Agent的配置文件都在 **[./replayer-agent/conf](../../replayer-age
 * addr = ":8998"           # Replayer-Agent Web Server默认监听端口，可以修改
 * handlerTimeout = 60000   # Handler timeout(ms), default 60000
 * readHeaderTimeout = 2000 # Request header timeout(ms), default 2000
-* readTimeout = 5000       # Recieve http request timeout(ms), including the body, default 5000
-* writeTimeout = 21000     # Recieve http body and response timeout(ms), default 21000
+* readTimeout = 5000       # Receive http request timeout(ms), including the body, default 5000
+* writeTimeout = 21000     # Receive http body and response timeout(ms), default 21000
 * idleTimeout = 60000      # Keep-alive timeout(ms), default 60000
 
 <br>
