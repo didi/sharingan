@@ -11,5 +11,5 @@ require (
 	github.com/spf13/viper v1.6.3
 	github.com/tebeka/strftime v0.1.4 // indirect
 	go.uber.org/zap v1.15.0
-	golang.org/x/sys v0.0.0-20200323222414-85ca7c5b95cd // indirect
+	golang.org/x/sys v0.1.0 // indirect
 )
