@@ -62,8 +62,7 @@ type DefaultRecorder struct {
 func (r *DefaultRecorder) Record(session *recording.Session) {
 	defer func() {
 		if err := recover(); err != nil {
-			countlog.Fatal("event!kafka_recorder.panic", "err", err,
-				"stacktrace", countlog.ProvideStacktrace)
+			countlog.LogPanic(err, "kafka_recorder.panic")
 		}
 	}()
 
