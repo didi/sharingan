@@ -1,7 +1,11 @@
 package zap
 
 import (
+	"context"
+	"fmt"
 	"log"
+	"runtime"
+	"strings"
 	"time"
 
 	"github.com/didi/sharingan/recorder-agent/common/conf"
@@ -48,4 +52,26 @@ func init() {
 	)
 
 	Logger = zap.New(core)
+}
+
+func Format(ctx context.Context, level string, format string, args ...interface{}) string {
+	// time
+	ts := time.Now().Format("2006-01-02 15:04:05.000000")
+
+	// file, line
+	_, file, line, ok := runtime.Caller(2)
+	if !ok {
+		file = "file"
+		line = -1
+	}
+
+	// igonre dir
+	file = strings.TrimPrefix(file, path.Root+"/")
+
+	var ctxString string
+	if t, ok := ctx.Value(tracerKey).(Tracer); ok {
+		ctxString = t.Format()
+	}
+
+	return fmt.Sprintf("[%s][%s][%s:%d] %s%s", level, ts, file, line, ctxString, fmt.Sprintf(format, args...))
 }

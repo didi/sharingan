@@ -26,6 +26,7 @@ func (hc *HttpClient) Get(ctx context.Context, url string) (*http.Response, []by
 		tlog.Handler.Errorf(ctx, tlog.DLTagUndefined, err.Error())
 		return nil, nil, err
 	}
+	req.SetBasicAuth("username", "password")
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
 
 	client := &http.Client{}
@@ -48,6 +49,7 @@ func (hc *HttpClient) Post(ctx context.Context, url string, jsonBytes []byte, ti
 		tlog.Handler.Errorf(ctx, tlog.DLTagUndefined, err.Error())
 		return nil, nil, err
 	}
+	req.SetBasicAuth("username", "password")
 	//默认 application/json
 	req.Header.Set("Content-Type", "application/json;charset=utf-8")
 	//headers 优先级更高

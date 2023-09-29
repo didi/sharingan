@@ -11,3 +11,6 @@ filename = "log/recorder.log.%Y%m%d%H"
 linkname = "log/recorder.log"
 maxHourAge    = 4 # 默认日志保留4小时
 maxHourRotate = 1 # 默认日志按小时切分
+
+[es_url]
+# 确保录制机器可以访问，check：`curl http://127.0.0.1:9002/xxx/recorder_index/_search`能写入数据

@@ -1,9 +1,24 @@
 package recording
 
 import (
+	"bufio"
+	"bytes"
+	"compress/gzip"
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"net"
+	"net/http"
+	"strings"
 	"unicode/utf8"
+
+	"golang.org/x/text/encoding/simplifiedchinese"
+	"golang.org/x/text/transform"
+)
+
+const (
+	callOutboundAction  = "callOutbound"
+	returnInboundAction = "returnInbound"
 )
 
 // Action Action
@@ -63,7 +78,7 @@ func (returnInbound *ReturnInbound) MarshalJSON() ([]byte, error) {
 		Response json.RawMessage
 	}{
 		ReturnInbound: *returnInbound,
-		Response:      EncodeAnyByteArray(returnInbound.Response),
+		Response:      ParesResponse(returnInbound.Response, returnInboundAction),
 	})
 }
 
@@ -90,7 +105,7 @@ func (callOutbound *CallOutbound) MarshalJSON() ([]byte, error) {
 	}{
 		CallOutbound: *callOutbound,
 		Request:      EncodeAnyByteArray(callOutbound.Request),
-		Response:     EncodeAnyByteArray(callOutbound.Response),
+		Response:     ParesResponse(callOutbound.Response, callOutboundAction),
 		CSpanID:      EncodeAnyByteArray(callOutbound.CSpanID),
 	})
 }
@@ -309,4 +324,60 @@ func EncodeAnyByteArray(s []byte) json.RawMessage {
 	}
 	encoded = append(encoded, '"')
 	return json.RawMessage(encoded)
+}
+
+// ParesResponse ...
+func ParesResponse(s []byte, action string) json.RawMessage {
+	encoded := []byte{'"'}
+	if !bytes.Contains(s, []byte("Content-Encoding: gzip")) {
+		return EncodeAnyByteArray(s)
+	}
+
+	// handle gzip response
+	reader := bufio.NewReader(strings.NewReader(string(s)))
+	resp, err := http.ReadResponse(reader, nil)
+	if err != nil {
+		fmt.Println("反序列化HTTP响应出错：", err)
+		return encoded
+	}
+	defer resp.Body.Close()
+
+	// 解析响应体
+	bodyBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Println("读取响应体出错：", err)
+		return encoded
+	}
+
+	// 检查Content-Encoding，并解压缩响应体
+	if resp.Header.Get("Content-Encoding") == "gzip" {
+		reader, err := gzip.NewReader(bytes.NewReader(bodyBytes))
+		if err != nil {
+			fmt.Println("创建gzip解压缩读取器出错：", err)
+			return encoded
+		}
+		defer reader.Close()
+
+		bodyBytes, err = ioutil.ReadAll(reader)
+		if err != nil {
+			fmt.Println("读取解压缩后的内容出错：", err)
+			return encoded
+		}
+
+		switch action {
+		case returnInboundAction:
+			return bodyBytes
+		case callOutboundAction:
+			// 将GBK编码转换为UTF-8编码
+			utf8Bytes, err := ioutil.ReadAll(transform.NewReader(bytes.NewReader(bodyBytes), simplifiedchinese.GBK.NewDecoder()))
+			if err != nil {
+				fmt.Println("err: ", err)
+				return encoded
+			}
+
+			return utf8Bytes
+		}
+	}
+
+	return encoded
 }
