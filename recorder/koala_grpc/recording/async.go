@@ -29,12 +29,8 @@ func (recorder *AsyncRecorder) Start() {
 // backgroundRecord backgroundRecord
 func (recorder *AsyncRecorder) backgroundRecord() {
 	defer func() {
-		recovered := recover()
-		if recovered != nil {
-			countlog.Error("event!recording.panic",
-				"err", recovered,
-				"ctx", recorder.Context,
-				"stacktrace", countlog.ProvideStacktrace)
+		if recovered := recover(); recovered != nil {
+			countlog.LogPanic(recovered, "recording.panic")
 		}
 	}()
 	for {

@@ -38,8 +38,7 @@ func init() {
 func gcStatesInBackground() {
 	defer func() {
 		if recovered := recover(); recovered != nil {
-			countlog.Fatal("event!sut.gc_states_in_background.panic", "err", recovered,
-				"stacktrace", countlog.ProvideStacktrace)
+			countlog.LogPanic(recovered, "sut.gc_states_in_background.panic")
 		}
 	}()
 

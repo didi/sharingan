@@ -5,16 +5,26 @@ import (
 	"log"
 	"net/http"
 	"runtime/debug"
+	"time"
 
 	"github.com/didi/sharingan/recorder-agent/common/conf"
+	"github.com/didi/sharingan/recorder-agent/common/httpclient"
 	"github.com/didi/sharingan/recorder-agent/common/zap"
 	"github.com/didi/sharingan/recorder-agent/record"
 	"github.com/didi/sharingan/recorder-agent/server"
 )
 
+const (
+	timeOut = 10 * time.Second
+)
+
 var (
 	svr = server.New()
 )
+
+func init() {
+	httpclient.Init()
+}
 
 func main() {
 	defer func() {
@@ -57,8 +67,16 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TO log
-	w.Write([]byte("OK"))
-	zap.Logger.Info(string(buf)) // 日志收集，最终入ES
+	// 日志收集，最终入ES
+	url := conf.Handler.GetString("es_url.default")
+	if _, _, err := httpclient.Handler.Post(r.Context(), url, buf, timeOut); err != nil {
+		zap.Logger.Error(zap.Format(r.Context(), "ERROR", "send data to es err: %v", err))
+
+		// TO log
+		w.Write([]byte("OK"))
+		zap.Logger.Info(string(buf))
+		return
+	}
+
 	return
 }

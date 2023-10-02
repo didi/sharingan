@@ -5,6 +5,10 @@ import (
 	"strings"
 
 	"github.com/v2pro/plz/countlog"
+	"github.com/v2pro/plz/countlog/output"
+	"github.com/v2pro/plz/countlog/output/async"
+	"github.com/v2pro/plz/countlog/output/json"
+	"github.com/v2pro/plz/countlog/output/lumberjack"
 )
 
 var logFile = "STDOUT"
@@ -21,14 +25,17 @@ func Init() {
 		SetLogFile(file)
 	}
 
-	logWriter := countlog.NewAsyncLogWriter(logLevel, countlog.NewFileLogOutput(logFile))
-	logWriter.LogFormatter = &countlog.HumanReadableFormat{
-		ContextPropertyNames: []string{"threadID", "outboundSrc"},
-		StringLengthCap:      512,
-	}
+	writer := async.NewAsyncWriter(async.AsyncWriterConfig{
+		Writer: &lumberjack.Logger{
+			Filename: logFile,
+		},
+	})
+	defer writer.Close()
 
-	logWriter.Start()
-	countlog.LogWriters = append(countlog.LogWriters, logWriter)
+	countlog.EventWriter = output.NewEventWriter(output.EventWriterConfig{
+		Format: &json.JsonFormat{},
+		Writer: writer,
+	})
 }
 
 // SetLogFile set log file, default: STDOUT
